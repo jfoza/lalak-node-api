@@ -30,15 +30,6 @@ export class UserRules {
   @IsEmail()
   email: string;
 
-  @IsNotEmpty()
-  @MaxLength(100)
-  @IsString()
-  password: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  active: boolean;
-
   @IsDate()
   @IsOptional()
   createdAt?: Date;

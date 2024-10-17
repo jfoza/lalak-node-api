@@ -1,21 +1,21 @@
 import { Core } from '@/common/domain/core/core';
 
-export type RuleProps = {
+export type AbilityProps = {
   description: string;
   subject: string;
   action: string;
   active: boolean;
 };
 
-export class Rule extends Core<RuleProps> {
+export class Ability extends Core<AbilityProps> {
   constructor(
-    public readonly props: RuleProps,
+    public readonly props: AbilityProps,
     uuid?: string,
   ) {
     super(props, uuid);
   }
 
-  static async create(props: RuleProps, uuid?: string): Promise<Rule> {
+  static async create(props: AbilityProps, uuid?: string): Promise<Ability> {
     return new this(props, uuid);
   }
 

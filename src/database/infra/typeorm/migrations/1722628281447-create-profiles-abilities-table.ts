@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { readSqlMigrationFile } from '@/database/infra/typeorm/utils';
+import { readSqlMigrationFile } from '../utils';
 
-export class CreateFunctionGetUserRules1722976370181
+export class CreateProfilesAbilitiesTable1722628281447
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const queryUp: string = readSqlMigrationFile(
-      '1722976370181-create_function_get_user_rules.sql',
+      '1722628281447-create-profiles-abilities-table.sql',
     );
 
     await queryRunner.query(queryUp);

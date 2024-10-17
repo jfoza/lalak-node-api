@@ -4,10 +4,14 @@ import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 
 export abstract class PolicyUseCase {
   @Inject(Policy)
-  protected policy: Policy;
+  private _policy: Policy;
 
-  setAbilities(abilities: string[]): void {
-    this.policy.setAbilities(abilities);
+  get policy(): Policy {
+    return this._policy;
+  }
+
+  set policy(policy: Policy) {
+    this._policy = policy;
   }
 
   protected profileHierarchyValidation(

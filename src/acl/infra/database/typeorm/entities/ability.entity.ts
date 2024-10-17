@@ -8,8 +8,8 @@ import {
 } from 'typeorm';
 import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/profile.entity';
 
-@Entity({ schema: 'user_schema', name: 'rules' })
-export class RuleEntity {
+@Entity({ schema: 'user_schema', name: 'abilities' })
+export class AbilityEntity {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
@@ -31,6 +31,9 @@ export class RuleEntity {
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
 
-  @ManyToMany(() => ProfileEntity, (profile: ProfileEntity) => profile.rules)
+  @ManyToMany(
+    () => ProfileEntity,
+    (profile: ProfileEntity) => profile.abilities,
+  )
   profiles: ProfileEntity[];
 }

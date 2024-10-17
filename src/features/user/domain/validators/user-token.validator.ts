@@ -1,14 +1,15 @@
 import {
   IsDate,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsString,
   IsUUID,
   validate,
 } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
 import { UserTokenProps } from '@/features/user/domain/core/user-token';
+import { TokenTypesEnum } from '@/common/infra/enums/token-types.enum';
 
 export class UserTokenRules {
   @IsNotEmpty()
@@ -20,8 +21,10 @@ export class UserTokenRules {
   token: string;
 
   @IsNotEmpty()
-  @IsString()
-  tokenType: string;
+  @IsEnum(TokenTypesEnum, {
+    message: 'The tokenType field must be a valid token type',
+  })
+  tokenType: TokenTypesEnum;
 
   @IsDate()
   @IsOptional()

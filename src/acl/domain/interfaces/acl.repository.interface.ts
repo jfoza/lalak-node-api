@@ -1,6 +1,6 @@
-import { Rule } from '@/acl/domain/core/rule';
+import { Ability } from '@/acl/domain/core/ability';
 
 export interface IAclRepository {
-  findAllByUserId(userUuid: string): Promise<Rule[]>;
-  getUserRuleDescriptions(userUuid: string): Promise<string[]>;
+  findAllByUserId(userUuid: string): Promise<Ability[]>;
+  getUserAbilityDescriptions(userUuid: string): Promise<string[]>;
 }

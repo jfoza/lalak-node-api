@@ -5,6 +5,8 @@ import { Policy } from '@/acl/domain/core/policy';
 import { AdminUserListUseCase } from '@/features/user/application/use-cases/admin-user-list.use-case';
 import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
+import { ForbiddenException } from '@nestjs/common';
+import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 
 describe('Admin User List UseCase', () => {
   let sut: AdminUserListUseCase;
@@ -34,13 +36,13 @@ describe('Admin User List UseCase', () => {
 
   it.each([
     {
-      rule: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
+      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
     },
     {
-      rule: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
+      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
     },
-  ])('should to list admin users by ability', async ({ rule }) => {
-    sut.setAbilities([rule]);
+  ])('should to list admin users by ability', async ({ ability }) => {
+    sut.policy.abilities = [ability];
 
     const result = await sut.execute(adminUserSearchParamsDto);
 
@@ -53,5 +55,16 @@ describe('Admin User List UseCase', () => {
     expect(result.perPage).toBe(lengthAwarePaginator.perPage);
     expect(result.to).toBe(lengthAwarePaginator.to);
     expect(result.total).toBe(lengthAwarePaginator.total);
+  });
+
+  it('Should return exception if user has not permission', async () => {
+    sut.policy.abilities = ['ABC'];
+
+    await expect(sut.execute(adminUserSearchParamsDto)).rejects.toThrow(
+      ForbiddenException,
+    );
+    await expect(sut.execute(adminUserSearchParamsDto)).rejects.toThrow(
+      ErrorMessagesEnum.NOT_AUTHORIZED,
+    );
   });
 });

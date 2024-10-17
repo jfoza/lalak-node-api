@@ -2,7 +2,7 @@ import { Mapper } from '@/common/infra/database/typeorm/Mapper';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
 import { Person, PersonProps } from '@/features/user/domain/core/person';
 import { Injectable } from '@nestjs/common';
-import { City } from '@/features/city/domain/core/City';
+import { City } from '@/features/city/domain/core/city';
 
 @Injectable()
 export class PersonMapper extends Mapper<PersonEntity, Person, PersonProps> {

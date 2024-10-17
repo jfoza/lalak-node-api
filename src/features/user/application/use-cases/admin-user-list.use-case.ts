@@ -27,10 +27,10 @@ export class AdminUserListUseCase
     this.adminUserSearchParamsDto = adminUserSearchParamsDto;
 
     switch (true) {
-      case this.policy.haveRule(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
         return this.findAllByAdminMaster();
 
-      case this.policy.haveRule(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
         return this.findAllByEmployee();
 
       default:

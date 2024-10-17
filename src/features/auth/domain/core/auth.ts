@@ -27,7 +27,7 @@ export class Auth extends Core<AuthProps> {
 
   static async create(props: AuthProps, uuid?: string): Promise<Auth> {
     await this.validate(props);
-    return new Auth(props, uuid);
+    return new this(props, uuid);
   }
 
   get userUuid(): string {

@@ -1,18 +1,18 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RuleEntity } from '@/acl/infra/database/typeorm/entities/rule.entity';
-import { GetUserRulesRoutine } from '@/acl/infra/database/typeorm/routines/get-user-rules.routine';
+import { AbilityEntity } from '@/acl/infra/database/typeorm/entities/ability.entity';
+import { GetUserAbilitiesRoutine } from '@/acl/infra/database/typeorm/routines/get-user-abilities.routine';
 import { AclRepository } from '@/acl/infra/database/typeorm/repositories/acl.repository';
 import { AclService } from '@/acl/application/services/acl.service';
 import { Policy } from '@/acl/domain/core/policy';
-import { RuleMapper } from '@/acl/infra/database/typeorm/mappers/rule.mapper';
+import { AbilityMapper } from '@/acl/infra/database/typeorm/mappers/ability.mapper';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([RuleEntity])],
+  imports: [TypeOrmModule.forFeature([AbilityEntity])],
   providers: [
-    GetUserRulesRoutine,
-    RuleMapper,
+    GetUserAbilitiesRoutine,
+    AbilityMapper,
     AclRepository,
     {
       provide: 'IAclRepository',
@@ -27,7 +27,7 @@ import { RuleMapper } from '@/acl/infra/database/typeorm/mappers/rule.mapper';
         const abilities = await aclService.handle();
 
         const policy = new Policy();
-        policy.setAbilities(abilities);
+        policy.abilities = abilities;
 
         return policy;
       },

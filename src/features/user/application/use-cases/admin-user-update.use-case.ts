@@ -43,16 +43,19 @@ export class AdminUserUpdateUseCase
     super();
   }
 
-  execute(uuid: string, updateAdminUserDto: UpdateAdminUserDto): Promise<User> {
+  async execute(
+    uuid: string,
+    updateAdminUserDto: UpdateAdminUserDto,
+  ): Promise<User> {
     this.uuid = uuid;
     this.updateAdminUserDto = updateAdminUserDto;
 
     switch (true) {
-      case this.policy.haveRule(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE):
-        return this.updateByAdminMaster();
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE):
+        return await this.updateByAdminMaster();
 
-      case this.policy.haveRule(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE):
-        return this.updateByEmployee();
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE):
+        return await this.updateByEmployee();
 
       default:
         this.policy.policyException();

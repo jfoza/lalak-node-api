@@ -11,28 +11,35 @@ import { ICustomerRepository } from '@/features/customer/domain/interfaces/repos
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { CityValidations } from '@/features/city/application/validations/city.validations';
 import { Helper } from 'src/common/infra/helpers';
+import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 
 @Injectable()
 export class CustomerUpdateUseCase
   extends PolicyUseCase
   implements ICustomerUpdateUseCase
 {
-  @Inject('ICityRepository')
-  private readonly cityRepository: ICityRepository;
+  constructor(
+    @Inject('ICityRepository')
+    private readonly cityRepository: ICityRepository,
 
-  @Inject('IPersonRepository')
-  private readonly personRepository: IPersonRepository;
+    @Inject('IPersonRepository')
+    private readonly personRepository: IPersonRepository,
 
-  @Inject('IUserRepository')
-  private readonly userRepository: IUserRepository;
+    @Inject('IUserRepository')
+    private readonly userRepository: IUserRepository,
 
-  @Inject('ICustomerRepository')
-  private readonly customerRepository: ICustomerRepository;
+    @Inject('ICustomerRepository')
+    private readonly customerRepository: ICustomerRepository,
+  ) {
+    super();
+  }
 
   async execute(
     uuid: string,
     updateCustomerDto: UpdateCustomerDto,
   ): Promise<User> {
+    this.policy.can(AbilitiesEnum.CUSTOMERS_UPDATE);
+
     const user = await CustomerValidations.customerExists(
       uuid,
       this.customerRepository,

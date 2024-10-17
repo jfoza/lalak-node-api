@@ -1,5 +1,4 @@
 import { Core } from '@/common/domain/core/core';
-import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
 import { CityValidatorFactory } from '@/features/city/domain/validators/city.validator';
 
 export type CityProps = {
@@ -31,22 +30,6 @@ export class City extends Core<CityProps> {
 
   get createdAt(): Date {
     return this.props.createdAt;
-  }
-
-  set description(description: string) {
-    this.props.description = description;
-  }
-
-  set uf(uf: BrazilianStates) {
-    this.props.description = uf;
-  }
-
-  set active(active: boolean) {
-    this.props.active = active;
-  }
-
-  set createdAt(createdAt: Date) {
-    this.props.createdAt = createdAt;
   }
 
   static async validate(props: CityProps): Promise<void> {

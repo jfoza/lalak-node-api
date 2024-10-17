@@ -1,23 +1,9 @@
-import {
-  IsDate,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  validate,
-} from 'class-validator';
+import { IsDate, IsOptional, validate } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
 import { ProfileProps } from '@/features/user/domain/core/profile';
 
 export class ProfileRules {
-  @IsNotEmpty()
-  @IsString()
-  description: string;
-
-  @IsNotEmpty()
-  @IsString()
-  uniqueName: string;
-
   @IsDate()
   @IsOptional()
   createdAt?: Date;

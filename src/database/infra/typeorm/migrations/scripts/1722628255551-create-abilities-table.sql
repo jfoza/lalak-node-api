@@ -1,4 +1,4 @@
-create table user_schema.rules
+create table user_schema.abilities
 (
     uuid uuid default uuid_generate_v4() not null primary key,
     description varchar not null constraint "UQ_029f52e88a42d77eba77064466d" unique,

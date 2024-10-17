@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsDate,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -9,7 +10,9 @@ import {
 } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
-import { AuthProps } from '@/features/auth/domain/core/Auth';
+import { AuthProps } from '@/features/auth/domain/core/auth';
+import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
+import { AuthTypesEnum } from '@/common/infra/enums/auth-types.enum';
 
 export class AuthRules {
   @IsNotEmpty()
@@ -25,20 +28,10 @@ export class AuthRules {
   finalDate: Date;
 
   @IsNotEmpty()
-  @IsString()
-  token: string;
-
-  @IsNotEmpty()
-  @IsString()
-  ipAddress: string;
-
-  @IsNotEmpty()
-  @IsString()
-  authType: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  active: string;
+  @IsEnum(AuthTypesEnum, {
+    message: 'The auth field must be a valid type.',
+  })
+  authType: AuthTypesEnum;
 
   @IsDate()
   @IsOptional()

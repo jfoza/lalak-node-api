@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
-import { RuleEntity } from '@/acl/infra/database/typeorm/entities/rule.entity';
+import { AbilityEntity } from '@/acl/infra/database/typeorm/entities/ability.entity';
 
 @Entity({ schema: 'user_schema', name: 'profiles' })
 export class ProfileEntity {
@@ -36,18 +36,22 @@ export class ProfileEntity {
 
   @JoinTable({
     schema: 'user_schema',
-    name: 'profiles_rules',
+    name: 'profiles_abilities',
     joinColumn: {
       name: 'profile_uuid',
       referencedColumnName: 'uuid',
     },
     inverseJoinColumn: {
-      name: 'rule_uuid',
+      name: 'ability_uuid',
       referencedColumnName: 'uuid',
     },
   })
-  @ManyToMany(() => RuleEntity, (rule: RuleEntity) => rule.profiles, {
-    cascade: true,
-  })
-  rules: RuleEntity[];
+  @ManyToMany(
+    () => AbilityEntity,
+    (ability: AbilityEntity) => ability.profiles,
+    {
+      cascade: true,
+    },
+  )
+  abilities: AbilityEntity[];
 }

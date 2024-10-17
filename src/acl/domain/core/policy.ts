@@ -3,22 +3,22 @@ import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 
 @Injectable()
 export class Policy {
-  private abilities: string[] = [];
+  private _abilities: string[] = [];
 
-  setAbilities(abilities: string[]): void {
-    this.abilities = abilities;
+  get abilities(): string[] {
+    return this._abilities;
   }
 
-  getAbilities(): string[] {
-    return this.abilities;
+  set abilities(abilities: string[]) {
+    this._abilities = abilities;
   }
 
-  haveRule(rule: string): boolean {
-    return this.getAbilities().includes(rule);
+  has(ability: string): boolean {
+    return this.abilities.includes(ability);
   }
 
-  can(rule: string): void {
-    if (!this.haveRule(rule)) {
+  can(ability: string): void {
+    if (!this.has(ability)) {
       this.policyException();
     }
   }

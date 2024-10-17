@@ -6,10 +6,10 @@ import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.reposito
 import { IAclRepository } from '@/acl/domain/interfaces/acl.repository.interface';
 import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
 import { IJwtToken } from '@/jwt/domain/interfaces/jwt-token.interface';
-import { Rule } from '@/acl/domain/core/rule';
+import { Ability } from '@/acl/domain/core/ability';
 import { Hash } from '@/common/infra/utils/hash';
 import { AuthTypesEnum } from '@/common/infra/enums/auth-types.enum';
-import { Auth, AuthProps } from '@/features/auth/domain/core/Auth';
+import { Auth, AuthProps } from '@/features/auth/domain/core/auth';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 import { LoginUserTypesEnum } from '@/common/infra/enums/login-user-types.enum';
 import { IAuthResponse } from '@/features/auth/application/outputs/auth.response.interface';
@@ -22,17 +22,19 @@ export class LoginService implements ILoginService {
   private loginType: LoginUserTypesEnum;
   private user: User;
 
-  @Inject('IUserListByEmailLoginUseCase')
-  private readonly userListByEmailLoginUseCase: IUserListByEmailLoginUseCase;
+  constructor(
+    @Inject('IUserListByEmailLoginUseCase')
+    private readonly userListByEmailLoginUseCase: IUserListByEmailLoginUseCase,
 
-  @Inject('IAuthRepository')
-  private readonly authRepository: IAuthRepository;
+    @Inject('IAuthRepository')
+    private readonly authRepository: IAuthRepository,
 
-  @Inject('IAclRepository')
-  private readonly ruleRepository: IAclRepository;
+    @Inject('IAclRepository')
+    private readonly abilityRepository: IAclRepository,
 
-  @Inject(JwtAuthService)
-  private readonly jwtAuthService: JwtAuthService;
+    @Inject(JwtAuthService)
+    private readonly jwtAuthService: JwtAuthService,
+  ) {}
 
   async handle(
     authDto: AuthDto,
@@ -74,7 +76,7 @@ export class LoginService implements ILoginService {
 
     const authenticate: IJwtToken = this.jwtAuthService.authenticate(payload);
 
-    const ability: Rule[] = await this.ruleRepository.findAllByUserId(
+    const ability: Ability[] = await this.abilityRepository.findAllByUserId(
       this.user.uuid,
     );
 

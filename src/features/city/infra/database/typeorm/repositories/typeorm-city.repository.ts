@@ -1,5 +1,5 @@
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
-import { City } from '@/features/city/domain/core/City';
+import { City } from '@/features/city/domain/core/city';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CityEntity } from '@/features/city/infra/database/typeorm/entities/city.entity';
 import { Repository } from 'typeorm';

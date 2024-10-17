@@ -2,13 +2,15 @@ import { SendForgotPasswordEmailUseCase } from '@/features/user/application/use-
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { vi } from 'vitest';
-import { UserToken } from '@/features/user/domain/core/user-token';
+import {
+  UserToken,
+  UserTokenProps,
+} from '@/features/user/domain/core/user-token';
 import { Queue } from 'bull';
-import { User } from '@/features/user/domain/core/user';
-import { Person } from '@/features/user/domain/core/person';
-import { v4 as uuid4 } from 'uuid';
 import { NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { UUID } from '@/common/infra/utils/uuid';
+import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 
 describe('Send Forgot Password Email UseCase', () => {
   let sut: SendForgotPasswordEmailUseCase;
@@ -26,7 +28,13 @@ describe('Send Forgot Password Email UseCase', () => {
     } as unknown as IUserRepository;
 
     userTokenRepository = {
-      create: vi.fn(async () => new UserToken()),
+      create: vi.fn(
+        async () =>
+          new UserToken({
+            userUuid: UUID.generate(),
+            token: UUID.generate(),
+          } as UserTokenProps),
+      ),
     } as unknown as IUserTokenRepository;
 
     sut = new SendForgotPasswordEmailUseCase(
@@ -37,8 +45,8 @@ describe('Send Forgot Password Email UseCase', () => {
   });
 
   it('should successfully send a forgot password email', async () => {
-    const person = new Person('John Doe', 'JO');
-    const user = new User(person.uuid, uuid4(), 'test@test.com');
+    const person = UserDataBuilder.getPerson();
+    const user = await UserDataBuilder.getUserAdminType();
     user.person = person;
 
     userRepository.findByEmail = vi.fn(async () => user);

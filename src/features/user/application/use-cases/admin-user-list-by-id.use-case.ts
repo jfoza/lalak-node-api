@@ -25,10 +25,10 @@ export class AdminUserListByIdUseCase
     this.userUuid = userUuid;
 
     switch (true) {
-      case this.policy.haveRule(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
         return this.findByAdminMaster();
 
-      case this.policy.haveRule(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
         return this.findByEmployee();
 
       default:

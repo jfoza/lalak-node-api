@@ -1,4 +1,4 @@
-import { Rule } from '@/acl/domain/core/rule';
+import { Ability } from '@/acl/domain/core/ability';
 
 interface IAuthUser {
   uuid: string;
@@ -7,7 +7,7 @@ interface IAuthUser {
   shortName: string;
   role: string;
   status: boolean;
-  ability: Rule[];
+  ability: Ability[];
 }
 
 export interface IAuthResponse {

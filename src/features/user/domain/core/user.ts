@@ -91,10 +91,6 @@ export class User extends Core<UserProps> {
     this.props.profile = profile;
   }
 
-  set createdAt(createdAt: Date) {
-    this.props.createdAt = createdAt;
-  }
-
   static async validate(props: UserProps): Promise<void> {
     const validator = UserValidatorFactory.create();
     await validator.validate(props);

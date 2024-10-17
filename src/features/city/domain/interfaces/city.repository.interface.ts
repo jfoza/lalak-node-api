@@ -1,4 +1,4 @@
-import { City } from '@/features/city/domain/core/City';
+import { City } from '@/features/city/domain/core/city';
 
 export interface ICityRepository {
   findById(uuid: string): Promise<City | null>;

@@ -1,5 +1,5 @@
 import { Core } from '@/common/domain/core/core';
-import { City } from '@/features/city/domain/core/City';
+import { City } from '@/features/city/domain/core/city';
 import { PersonValidatorFactory } from '@/features/user/domain/validators/person.validator';
 
 export type PersonProps = {
@@ -130,10 +130,6 @@ export class Person extends Core<PersonProps> {
 
   set active(active: boolean) {
     this.props.active = active;
-  }
-
-  set createdAt(createdAt: Date) {
-    this.props.createdAt = createdAt;
   }
 
   set city(city: City) {

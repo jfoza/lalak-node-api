@@ -3,16 +3,17 @@ import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { Policy } from '@/acl/domain/core/policy';
 import { AdminUserListByIdUseCase } from '@/features/user/application/use-cases/admin-user-list-by-id.use-case';
-import { v4 as uuid4 } from 'uuid';
 import { User } from '@/features/user/domain/core/user';
 import { Profile } from '@/features/user/domain/core/profile';
 import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { UUID } from '@/common/infra/utils/uuid';
+import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 
 describe('Admin User List By Id UseCase', () => {
   let sut: AdminUserListByIdUseCase;
-  const uuid = uuid4();
+  const uuid = UUID.generate();
 
   const adminUserRepository = {
     findByUserUuid: vi.fn(async () => null),
@@ -26,43 +27,49 @@ describe('Admin User List By Id UseCase', () => {
 
   it.each([
     {
-      rule: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
+      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
       profile: {
         description: 'Admin Master',
         uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
       },
     },
     {
-      rule: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
+      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
       profile: {
         description: 'Employee',
         uniqueName: ProfileUniqueNameEnum.EMPLOYEE,
       },
     },
-  ])('should to list admin user id by ability', async ({ rule, profile }) => {
-    sut.setAbilities([rule]);
+  ])(
+    'should to list admin user id by ability',
+    async ({ ability, profile }) => {
+      sut.policy.abilities = [ability];
 
-    const user = new User();
-    user.profile = new Profile(profile.description, profile.uniqueName);
+      const user = await UserDataBuilder.getUserAdminType();
+      user.profile = new Profile({
+        description: profile.description,
+        uniqueName: profile.uniqueName,
+      });
 
-    adminUserRepository.findByUserUuid = vi.fn(async () => user);
+      adminUserRepository.findByUserUuid = vi.fn(async () => user);
 
-    const result = await sut.execute(uuid);
+      const result = await sut.execute(uuid);
 
-    expect(adminUserRepository.findByUserUuid).toHaveBeenCalled();
-    expect(result).toBeInstanceOf(User);
-  });
+      expect(adminUserRepository.findByUserUuid).toHaveBeenCalled();
+      expect(result).toBeInstanceOf(User);
+    },
+  );
 
   it.each([
     {
-      rule: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
+      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
       profile: {
         description: 'Customer',
         uniqueName: ProfileUniqueNameEnum.CUSTOMER,
       },
     },
     {
-      rule: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
+      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
       profile: {
         description: 'Customer',
         uniqueName: ProfileUniqueNameEnum.CUSTOMER,
@@ -70,11 +77,14 @@ describe('Admin User List By Id UseCase', () => {
     },
   ])(
     'should return exception if user is not reachable because of disallowed profile',
-    async ({ rule, profile }) => {
-      sut.setAbilities([rule]);
+    async ({ ability, profile }) => {
+      sut.policy.abilities = [ability];
 
-      const user = new User();
-      user.profile = new Profile(profile.description, profile.uniqueName);
+      const user = await UserDataBuilder.getUserAdminType();
+      user.profile = new Profile({
+        description: profile.description,
+        uniqueName: profile.uniqueName,
+      });
 
       adminUserRepository.findByUserUuid = vi.fn(async () => user);
 
@@ -87,19 +97,31 @@ describe('Admin User List By Id UseCase', () => {
 
   it.each([
     {
-      rule: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
+      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
     },
     {
-      rule: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
+      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
     },
-  ])('should return exception if admin user not exists', async ({ rule }) => {
-    sut.setAbilities([rule]);
+  ])(
+    'should return exception if admin user not exists',
+    async ({ ability }) => {
+      sut.policy.abilities = [ability];
 
-    adminUserRepository.findByUserUuid = vi.fn(async () => null);
+      adminUserRepository.findByUserUuid = vi.fn(async () => null);
 
-    await expect(sut.execute(uuid)).rejects.toThrow(NotFoundException);
+      await expect(sut.execute(uuid)).rejects.toThrow(NotFoundException);
+      await expect(sut.execute(uuid)).rejects.toThrow(
+        ErrorMessagesEnum.USER_NOT_FOUND,
+      );
+    },
+  );
+
+  it('Should return exception if user has not permission', async () => {
+    sut.policy.abilities = ['ABC'];
+
+    await expect(sut.execute(uuid)).rejects.toThrow(ForbiddenException);
     await expect(sut.execute(uuid)).rejects.toThrow(
-      ErrorMessagesEnum.USER_NOT_FOUND,
+      ErrorMessagesEnum.NOT_AUTHORIZED,
     );
   });
 });

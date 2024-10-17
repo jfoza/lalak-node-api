@@ -4,17 +4,19 @@ import { IUserRepository } from '@/features/user/domain/repositories/user-reposi
 
 @Injectable({ scope: Scope.REQUEST })
 export class JwtInfoService {
-  private user: User;
+  private _user: User;
 
-  @Inject('IUserRepository')
-  private readonly userRepository: IUserRepository;
+  constructor(
+    @Inject('IUserRepository')
+    private readonly userRepository: IUserRepository,
+  ) {}
 
-  setUser(user: User) {
-    this.user = user;
+  get user(): User | null {
+    return this._user;
   }
 
-  getUser(): User {
-    return this.user;
+  set user(user: User) {
+    this._user = user;
   }
 
   async getUserRelations(relation: string): Promise<User | null> {

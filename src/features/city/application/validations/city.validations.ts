@@ -1,7 +1,7 @@
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
 import { NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
-import { City } from '@/features/city/domain/core/City';
+import { City } from '@/features/city/domain/core/city';
 
 export class CityValidations {
   static async cityExists(

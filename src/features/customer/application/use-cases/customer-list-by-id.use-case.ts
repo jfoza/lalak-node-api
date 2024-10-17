@@ -11,8 +11,12 @@ export class CustomerListByIdUseCase
   extends PolicyUseCase
   implements ICustomerListByIdUseCase
 {
-  @Inject('ICustomerRepository')
-  private readonly customerRepository: ICustomerRepository;
+  constructor(
+    @Inject('ICustomerRepository')
+    private readonly customerRepository: ICustomerRepository,
+  ) {
+    super();
+  }
 
   async execute(userUuid: string): Promise<User> {
     this.policy.can(AbilitiesEnum.CUSTOMERS_VIEW);

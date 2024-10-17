@@ -2,11 +2,10 @@ import { vi } from 'vitest';
 import { User } from '@/features/user/domain/core/user';
 import { UserListByEmailLoginUseCase } from '@/features/user/application/use-cases/user-list-by-email-login.use-case';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { AdminUser } from '@/features/user/domain/core/admin-user';
-import { Customer } from '@/features/customer/domain/core/customer';
 import { LoginUserTypesEnum } from '@/common/infra/enums/login-user-types.enum';
 import { UnauthorizedException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 
 describe('Admin User List By Id UseCase', () => {
   let sut: UserListByEmailLoginUseCase;
@@ -28,9 +27,9 @@ describe('Admin User List By Id UseCase', () => {
   ])(
     'should to list user by email for authentication process',
     async ({ loginType }) => {
-      const user = new User();
-      user.adminUser = new AdminUser();
-      user.customer = new Customer();
+      const user = await UserDataBuilder.getUserAdminType();
+      user.props.adminUser = UserDataBuilder.getAdminUser();
+      user.props.customer = UserDataBuilder.getCustomer();
 
       userRepository.findByEmailInLogin = vi.fn(async () => user);
 
@@ -42,7 +41,8 @@ describe('Admin User List By Id UseCase', () => {
   );
 
   it('should return exception if admin relation not exists', async () => {
-    const user = new User();
+    const user = await UserDataBuilder.getUserAdminType();
+    user.props.adminUser = null;
 
     userRepository.findByEmailInLogin = vi.fn(async () => user);
 
@@ -55,7 +55,7 @@ describe('Admin User List By Id UseCase', () => {
   });
 
   it('should return exception if customer relation not exists', async () => {
-    const user = new User();
+    const user = await UserDataBuilder.getUserAdminType();
 
     userRepository.findByEmailInLogin = vi.fn(async () => user);
 

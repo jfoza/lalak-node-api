@@ -49,10 +49,10 @@ export class AdminUserCreateUseCase
     this.createAdminUserDto = createAdminUserDto;
 
     switch (true) {
-      case this.policy.haveRule(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT):
         return this.createByAdminMaster();
 
-      case this.policy.haveRule(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT):
         return this.createByEmployee();
 
       default:

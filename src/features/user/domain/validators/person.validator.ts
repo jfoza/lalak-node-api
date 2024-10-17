@@ -16,14 +16,6 @@ import { PersonProps } from '@/features/user/domain/core/person';
 import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
 
 export class PersonRules {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-
-  @IsNotEmpty()
-  @IsString()
-  shortName: string;
-
   @IsOptional()
   @IsString()
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
@@ -44,22 +36,6 @@ export class PersonRules {
   zipCode: string;
 
   @IsOptional()
-  @IsString()
-  address: string;
-
-  @IsOptional()
-  @IsString()
-  numberAddress: string;
-
-  @IsOptional()
-  @IsString()
-  complement?: string;
-
-  @IsOptional()
-  @IsString()
-  district: string;
-
-  @IsOptional()
   @IsEnum(BrazilianStates, {
     message: 'The state field must be a valid Brazilian state',
   })
@@ -68,10 +44,6 @@ export class PersonRules {
   @IsOptional()
   @IsUUID()
   cityUuid: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  active: boolean;
 
   @IsDate()
   @IsOptional()

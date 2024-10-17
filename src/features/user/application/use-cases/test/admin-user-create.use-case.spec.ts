@@ -5,7 +5,6 @@ import { IPersonRepository } from '@/features/user/domain/repositories/person-re
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { v4 as uuid } from 'uuid';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { Profile } from '@/features/user/domain/core/profile';
 import { User } from '@/features/user/domain/core/user';
@@ -16,25 +15,29 @@ import {
 } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 import { Policy } from '@/acl/domain/core/policy';
-import { Person } from '@/features/user/domain/core/person';
-import { AdminUser } from '@/features/user/domain/core/admin-user';
 import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
+import { UUID } from '@/common/infra/utils/uuid';
+import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 
 describe('Admin User Create UseCase', () => {
   let sut: AdminUserCreateUseCase;
   let createAdminUserDto: CreateAdminUserDto;
 
+  const person = UserDataBuilder.getPerson();
+  const user = UserDataBuilder.getUserAdminType();
+  const adminUser = UserDataBuilder.getAdminUser();
+
   const personRepository = {
-    create: vi.fn(async () => new Person()),
+    create: vi.fn(async () => person),
   } as unknown as IPersonRepository;
 
   const userRepository = {
-    create: vi.fn(async () => new User()),
+    create: vi.fn(async () => user),
     findByEmail: vi.fn(async () => null),
   } as unknown as IUserRepository;
 
   const adminUserRepository = {
-    create: vi.fn(async () => new AdminUser()),
+    create: vi.fn(async () => adminUser),
   } as unknown as IAdminUserRepository;
 
   const profileRepository = {
@@ -55,49 +58,58 @@ describe('Admin User Create UseCase', () => {
       name: 'John Doe',
       email: 'john.doe@example.com',
       password: 'password123',
-      profileUuid: uuid(),
+      profileUuid: UUID.generate(),
     } as CreateAdminUserDto;
   });
 
   it.each([
     {
-      rule: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT,
+      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT,
       profile: {
         description: 'Admin Master',
         uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
       },
     },
     {
-      rule: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT,
+      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT,
       profile: {
         description: 'Employee',
         uniqueName: ProfileUniqueNameEnum.EMPLOYEE,
       },
     },
-  ])('should create new admin user by abilities', async ({ rule, profile }) => {
-    sut.setAbilities([rule]);
+  ])(
+    'should create new admin user by abilities',
+    async ({ ability, profile }) => {
+      sut.policy.abilities = [ability];
 
-    profileRepository.findById = vi.fn(
-      async () => new Profile(profile.description, profile.uniqueName),
-    );
+      profileRepository.findById = vi.fn(
+        async () =>
+          new Profile({
+            description: profile.description,
+            uniqueName: profile.uniqueName,
+          }),
+      );
 
-    const result = await sut.execute(createAdminUserDto);
+      const result = await sut.execute(createAdminUserDto);
 
-    expect(personRepository.create).toHaveBeenCalled();
-    expect(userRepository.create).toHaveBeenCalled();
-    expect(adminUserRepository.create).toHaveBeenCalled();
-    expect(result).toBeInstanceOf(User);
-  });
+      expect(personRepository.create).toHaveBeenCalled();
+      expect(userRepository.create).toHaveBeenCalled();
+      expect(adminUserRepository.create).toHaveBeenCalled();
+      expect(result).toBeInstanceOf(User);
+    },
+  );
 
   it.each([
-    { rule: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT },
-    { rule: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT },
+    { ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT },
+    { ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT },
   ])(
     'should return exception if user email already exists',
-    async ({ rule }) => {
-      sut.setAbilities([rule]);
+    async ({ ability }) => {
+      sut.policy.abilities = [ability];
 
-      userRepository.findByEmail = vi.fn(async () => new User());
+      const user = await UserDataBuilder.getUserAdminType();
+
+      userRepository.findByEmail = vi.fn(async () => user);
 
       await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
         ConflictException,
@@ -109,10 +121,10 @@ describe('Admin User Create UseCase', () => {
   );
 
   it.each([
-    { rule: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT },
-    { rule: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT },
-  ])('should return exception if profile not exists', async ({ rule }) => {
-    sut.setAbilities([rule]);
+    { ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT },
+    { ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT },
+  ])('should return exception if profile not exists', async ({ ability }) => {
+    sut.policy.abilities = [ability];
 
     userRepository.findByEmail = vi.fn(async () => null);
     profileRepository.findById = vi.fn(async () => null);
@@ -127,14 +139,14 @@ describe('Admin User Create UseCase', () => {
 
   it.each([
     {
-      rule: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT,
+      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT,
       profile: {
         description: 'Customer',
         uniqueName: ProfileUniqueNameEnum.CUSTOMER,
       },
     },
     {
-      rule: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT,
+      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT,
       profile: {
         description: 'Customer',
         uniqueName: ProfileUniqueNameEnum.CUSTOMER,
@@ -142,13 +154,17 @@ describe('Admin User Create UseCase', () => {
     },
   ])(
     'should return exception if profile is not allowed',
-    async ({ rule, profile }) => {
-      sut.setAbilities([rule]);
+    async ({ ability, profile }) => {
+      sut.policy.abilities = [ability];
 
       userRepository.findByEmail = vi.fn(async () => null);
 
       profileRepository.findById = vi.fn(
-        async () => new Profile(profile.description, profile.uniqueName),
+        async () =>
+          new Profile({
+            description: profile.description,
+            uniqueName: profile.uniqueName,
+          }),
       );
 
       await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
@@ -159,4 +175,15 @@ describe('Admin User Create UseCase', () => {
       );
     },
   );
+
+  it('Should return exception if user has not permission', async () => {
+    sut.policy.abilities = ['ABC'];
+
+    await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
+      ForbiddenException,
+    );
+    await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
+      ErrorMessagesEnum.NOT_AUTHORIZED,
+    );
+  });
 });

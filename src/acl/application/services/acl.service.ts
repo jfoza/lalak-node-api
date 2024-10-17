@@ -14,36 +14,36 @@ export class AclService {
     private readonly jwtInfoService: JwtInfoService,
 
     @Inject('IRedisService')
-    private readonly redis: IRedisService,
+    private readonly redisService: IRedisService,
   ) {}
 
   async handle(): Promise<string[]> {
-    if (!this.jwtInfoService.getUser()) {
+    if (!this.jwtInfoService.user) {
       return [];
     }
 
-    const userUuid = this.jwtInfoService.getUser().uuid;
+    const userUuid = this.jwtInfoService.user.uuid;
 
-    let rules: string[];
+    let abilities: string[];
 
     if (userUuid) {
       const redisKey: string = CacheEnum.ABILITY_USER(userUuid);
 
-      rules = await this.redis.remember(
+      abilities = await this.redisService.remember(
         redisKey,
-        () => this.aclRepository.getUserRuleDescriptions(userUuid),
+        () => this.aclRepository.getUserAbilityDescriptions(userUuid),
         604800,
       );
     }
 
-    return rules;
+    return abilities;
   }
 
   async invalidate(userId: string): Promise<void> {
-    await this.redis.invalidate(CacheEnum.ABILITY_USER(userId));
+    await this.redisService.invalidate(CacheEnum.ABILITY_USER(userId));
   }
 
   async invalidateAll(): Promise<void> {
-    await this.redis.invalidateByPattern(CacheEnum.ABILITY_USER('*'));
+    await this.redisService.invalidateByPattern(CacheEnum.ABILITY_USER('*'));
   }
 }

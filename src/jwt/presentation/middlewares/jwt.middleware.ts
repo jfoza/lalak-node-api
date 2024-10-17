@@ -23,7 +23,7 @@ export class JwtMiddleware implements NestMiddleware {
           });
 
           if (payload) {
-            this.jwtInfoService.setUser(payload.user);
+            this.jwtInfoService.user = payload.user;
           }
         } catch {}
       }

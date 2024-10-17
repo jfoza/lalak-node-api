@@ -7,10 +7,10 @@ import {
   UserToken,
   UserTokenProps,
 } from '@/features/user/domain/core/user-token';
-import { v4 as uuid4 } from 'uuid';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { TokenTypesEnum } from '@/common/infra/enums/token-types.enum';
+import { UUID } from '@/common/infra/utils/uuid';
 
 @Injectable()
 export class SendForgotPasswordEmailUseCase
@@ -35,7 +35,7 @@ export class SendForgotPasswordEmailUseCase
 
     const userToken = await UserToken.createAndValidate({
       userUuid: user.uuid,
-      token: uuid4(),
+      token: UUID.generate(),
       tokenType: TokenTypesEnum.FORGOT_PASSWORD,
     } as UserTokenProps);
 

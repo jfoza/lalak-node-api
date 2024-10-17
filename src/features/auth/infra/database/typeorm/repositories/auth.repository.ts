@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.repository.interface';
 import { AuthEntity } from '@/features/auth/infra/database/typeorm/entities/auth.entity';
-import { Auth } from '@/features/auth/domain/core/Auth';
+import { Auth } from '@/features/auth/domain/core/auth';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {

@@ -27,10 +27,6 @@ export class Customer extends Core<CustomerProps> {
     return this.props.createdAt;
   }
 
-  set userUuid(userUuid: string) {
-    this.props.userUuid = userUuid;
-  }
-
   set verifiedEmail(verifiedEmail: boolean) {
     this.props.verifiedEmail = verifiedEmail;
   }
@@ -41,7 +37,6 @@ export class Customer extends Core<CustomerProps> {
   }
 
   static async create(props: CustomerProps, uuid?: string): Promise<Customer> {
-    await this.validate(props);
     return new this(props, uuid);
   }
 
