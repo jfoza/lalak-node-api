@@ -15,6 +15,7 @@ export class FiltersDto {
   )
   columnOrder: 'ASC' | 'DESC' = 'DESC';
 
+  @IsOptional()
   page: number | null = null;
 
   @Type(() => Number)

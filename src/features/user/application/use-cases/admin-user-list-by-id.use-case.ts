@@ -1,7 +1,7 @@
 import { IAdminUserListById } from '@/features/user/domain/use-cases/admin-user-list-by-id.use-case.interface';
 import { User } from '@/features/user/domain/core/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { PolicyUseCase } from '@/common/application/use-cases/policy.use-case';
+import { Application } from '@/common/application/use-cases/application';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { AdminUserValidations } from '@/features/user/application/validations/admin-user.validations';
@@ -9,7 +9,7 @@ import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.
 
 @Injectable()
 export class AdminUserListByIdUseCase
-  extends PolicyUseCase
+  extends Application
   implements IAdminUserListById
 {
   private userUuid: string;

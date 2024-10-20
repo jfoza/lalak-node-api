@@ -1,4 +1,4 @@
-import { Mapper } from '@/common/infra/database/typeorm/Mapper';
+import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import {
   UserToken,
   UserTokenProps,

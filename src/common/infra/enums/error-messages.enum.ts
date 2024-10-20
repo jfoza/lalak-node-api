@@ -15,5 +15,10 @@ export enum ErrorMessagesEnum {
   INVALID_COLUMN_NAME = 'A propridade columnName é inválida.',
   INVALID_COLUMN_ORDER = 'A propridade columnOrder é inválida.',
 
-  CITY_NOT_FOUND = 'Cidade não encontrada',
+  CITY_NOT_FOUND = 'Cidade não encontrada.',
+
+  THEME_NOT_FOUND = 'Tema não encontrado.',
+  THEME_NAME_ALREADY_EXISTS = 'Já existe um tema cadastrado com o nome informado.',
+  CATEGORY_NAME_ALREADY_EXISTS = 'Já existe uma categoria cadastrada com o nome informado.',
+  PRODUCT_NAME_ALREADY_EXISTS = 'Já existe um produto cadastrado com o nome informado.',
 }

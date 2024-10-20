@@ -81,9 +81,15 @@ VALUES
     (_ability10, 'CITIES_VIEW', 'CITIES', _view_action ),
     (_ability11, 'STATES_VIEW', 'STATES', _view_action),
 
-    (_ability12, 'CUSTOMERS_VIEW', 'CUSTOMERS_VIEW', _view_action),
-    (_ability13, 'CUSTOMERS_INSERT', 'CUSTOMERS_INSERT', _insert_action),
-    (_ability14, 'CUSTOMERS_UPDATE', 'CUSTOMERS_UPDATE', _update_action)
+    (_ability12, 'CUSTOMERS_VIEW', 'CUSTOMERS', _view_action),
+    (_ability13, 'CUSTOMERS_INSERT', 'CUSTOMERS', _insert_action),
+    (_ability14, 'CUSTOMERS_UPDATE', 'CUSTOMERS', _update_action),
+
+    (_ability15, 'THEMES_ADMIN_VIEW',   'THEMES_ADMIN', _view_action),
+    (_ability16, 'THEMES_CUSTOMER_VIEW',   'THEMES_CUSTOMER', _view_action),
+    (_ability17, 'THEMES_INSERT', 'THEMES', _insert_action),
+    (_ability18, 'THEMES_UPDATE', 'THEMES', _update_action),
+    (_ability19, 'THEMES_DELETE', 'THEMES', _delete_action)
 ;
 
 INSERT INTO user_schema.profiles (uuid, description, unique_name)
@@ -117,6 +123,10 @@ VALUES
     (_profile1, _ability12),
     (_profile1, _ability13),
     (_profile1, _ability14),
+    (_profile1, _ability15),
+    (_profile1, _ability16),
+    (_profile1, _ability17),
+    (_profile1, _ability18),
 
     -- EMPLOYEE
     (_profile2, _ability1),
@@ -126,6 +136,14 @@ VALUES
     (_profile2, _ability9),
     (_profile2, _ability10),
     (_profile2, _ability11),
-    (_profile2, _ability12)
+    (_profile2, _ability12),
+    (_profile2, _ability15),
+    (_profile2, _ability16),
+    (_profile2, _ability17),
+    (_profile2, _ability18),
+
+    -- CUSTOMER
+    (_profile3, _ability19)
+
 ;
 END $$;

@@ -1,4 +1,4 @@
-import { Mapper } from '@/common/infra/database/typeorm/Mapper';
+import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import { AbilityEntity } from '@/acl/infra/database/typeorm/entities/ability.entity';
 import { Ability, AbilityProps } from '@/acl/domain/core/ability';
 import { Injectable } from '@nestjs/common';

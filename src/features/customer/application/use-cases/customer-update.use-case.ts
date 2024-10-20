@@ -2,7 +2,7 @@ import { ICustomerUpdateUseCase } from '@/features/customer/domain/interfaces/us
 import { UpdateCustomerDto } from '@/features/customer/application/dto/update-customer.dto';
 import { User } from '@/features/user/domain/core/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { PolicyUseCase } from '@/common/application/use-cases/policy.use-case';
+import { Application } from '@/common/application/use-cases/application';
 import { CustomerValidations } from '@/features/customer/application/validations/customer.validations';
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
@@ -15,7 +15,7 @@ import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 
 @Injectable()
 export class CustomerUpdateUseCase
-  extends PolicyUseCase
+  extends Application
   implements ICustomerUpdateUseCase
 {
   constructor(

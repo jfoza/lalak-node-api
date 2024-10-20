@@ -3,13 +3,13 @@ import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Inject, Injectable } from '@nestjs/common';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
-import { PolicyUseCase } from '@/common/application/use-cases/policy.use-case';
+import { Application } from '@/common/application/use-cases/application';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
 
 @Injectable()
 export class AdminUserListUseCase
-  extends PolicyUseCase
+  extends Application
   implements IAdminUserListUseCase
 {
   private adminUserSearchParamsDto: AdminUserSearchParamsDto;

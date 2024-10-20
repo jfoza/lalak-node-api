@@ -37,21 +37,19 @@ export class AdminUserController {
   private readonly adminUserUpdateUseCase: IAdminUserUpdateUseCase;
 
   @Get()
-  async findAll(
+  async index(
     @Query() adminUserSearchParamsDto: AdminUserSearchParamsDto,
   ): Promise<ILengthAwarePaginator> {
     return await this.adminUserListUseCase.execute(adminUserSearchParamsDto);
   }
 
   @Get(':uuid')
-  async findOne(
-    @Param('uuid', new ParseUUIDPipe()) uuid: string,
-  ): Promise<User> {
+  async show(@Param('uuid', new ParseUUIDPipe()) uuid: string): Promise<User> {
     return await this.adminUserListById.execute(uuid);
   }
 
   @Post()
-  async create(@Body() createAdminUserDto: CreateAdminUserDto): Promise<User> {
+  async insert(@Body() createAdminUserDto: CreateAdminUserDto): Promise<User> {
     return await this.adminUserCreateUseCase.execute(createAdminUserDto);
   }
 

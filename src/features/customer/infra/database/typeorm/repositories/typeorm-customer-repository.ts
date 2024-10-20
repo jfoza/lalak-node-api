@@ -5,7 +5,7 @@ import { CustomerSearchParamsDto } from '@/features/customer/application/dto/cus
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
-import { paginate } from 'src/database/infra/typeorm/pagination';
+import { paginate } from '@/common/infra/database/typeorm/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from '@/features/customer/infra/database/typeorm/entities/customer.entity';

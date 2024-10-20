@@ -1,6 +1,6 @@
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
 import { User, UserProps } from '@/features/user/domain/core/user';
-import { Mapper } from '@/common/infra/database/typeorm/Mapper';
+import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import { Injectable } from '@nestjs/common';
 import { Profile } from '@/features/user/domain/core/profile';
 import { Person } from '@/features/user/domain/core/person';

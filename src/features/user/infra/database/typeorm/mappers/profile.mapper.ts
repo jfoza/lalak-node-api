@@ -1,4 +1,4 @@
-import { Mapper } from '@/common/infra/database/typeorm/Mapper';
+import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/profile.entity';
 import { Profile, ProfileProps } from '@/features/user/domain/core/profile';
 import { Injectable } from '@nestjs/common';

@@ -2,7 +2,7 @@ import { ForbiddenException, Inject } from '@nestjs/common';
 import { Policy } from '@/acl/domain/core/policy';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 
-export abstract class PolicyUseCase {
+export abstract class Application {
   @Inject(Policy)
   private _policy: Policy;
 

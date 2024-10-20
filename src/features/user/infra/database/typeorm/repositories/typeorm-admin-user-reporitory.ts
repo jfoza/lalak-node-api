@@ -5,7 +5,7 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
-import { paginate } from 'src/database/infra/typeorm/pagination';
+import { paginate } from '@/common/infra/database/typeorm/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import { AdminUser } from '@/features/user/domain/core/admin-user';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';

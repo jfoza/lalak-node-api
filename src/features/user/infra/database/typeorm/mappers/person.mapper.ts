@@ -1,4 +1,4 @@
-import { Mapper } from '@/common/infra/database/typeorm/Mapper';
+import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
 import { Person, PersonProps } from '@/features/user/domain/core/person';
 import { Injectable } from '@nestjs/common';

@@ -1,4 +1,4 @@
-import { Mapper } from '@/common/infra/database/typeorm/Mapper';
+import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import { AdminUserEntity } from '@/features/user/infra/database/typeorm/entities/admin-user.entity';
 import {
   AdminUser,

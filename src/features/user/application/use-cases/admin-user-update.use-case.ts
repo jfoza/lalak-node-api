@@ -6,7 +6,7 @@ import { IPersonRepository } from '@/features/user/domain/repositories/person-re
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { PolicyUseCase } from '@/common/application/use-cases/policy.use-case';
+import { Application } from '@/common/application/use-cases/application';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
@@ -19,7 +19,7 @@ import { Hash } from '@/common/infra/utils/hash';
 
 @Injectable()
 export class AdminUserUpdateUseCase
-  extends PolicyUseCase
+  extends Application
   implements IAdminUserUpdateUseCase
 {
   private userPayload: User;

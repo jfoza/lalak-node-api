@@ -2,7 +2,7 @@ import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-
 import { CreateAdminUserDto } from '@/features/user/application/dto/create-admin-user.dto';
 import { User, UserProps } from '@/features/user/domain/core/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { PolicyUseCase } from '@/common/application/use-cases/policy.use-case';
+import { Application } from '@/common/application/use-cases/application';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
@@ -23,7 +23,7 @@ import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-
 
 @Injectable()
 export class AdminUserCreateUseCase
-  extends PolicyUseCase
+  extends Application
   implements IAdminUserCreateUseCase
 {
   private createAdminUserDto: CreateAdminUserDto;

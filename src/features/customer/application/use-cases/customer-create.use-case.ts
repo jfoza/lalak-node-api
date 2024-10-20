@@ -6,7 +6,7 @@ import { ICustomerRepository } from '@/features/customer/domain/interfaces/repos
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { PolicyUseCase } from '@/common/application/use-cases/policy.use-case';
+import { Application } from '@/common/application/use-cases/application';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
@@ -22,7 +22,7 @@ import { ICityRepository } from '@/features/city/domain/interfaces/city.reposito
 
 @Injectable()
 export class CustomerCreateUseCase
-  extends PolicyUseCase
+  extends Application
   implements ICustomerCreateUseCase
 {
   constructor(
