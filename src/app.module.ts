@@ -13,6 +13,7 @@ import { CityModule } from '@/features/city/infra/modules/city.module';
 import { MailModule } from '@/mail/infra/modules/mail.module';
 import { AmqpModule } from '@/amqp/infra/modules/amqp.module';
 import { ThemeModule } from '@/features/themes/infra/modules/theme.module';
+import { CategoryModule } from '@/features/category/infra/modules/category.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ThemeModule } from '@/features/themes/infra/modules/theme.module';
     UserModule,
     CustomerModule,
     ThemeModule,
+    CategoryModule,
   ],
   controllers: [AppController],
 })

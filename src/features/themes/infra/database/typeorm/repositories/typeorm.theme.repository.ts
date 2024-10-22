@@ -39,7 +39,7 @@ export class TypeormThemeRepository implements ThemeRepository {
     return result;
   }
 
-  async findByName(description: string): Promise<Theme> {
+  async findByName(description: string): Promise<Theme | null> {
     const result = await this.themeEntityRepository.findOne({
       where: { description },
     });
@@ -47,7 +47,7 @@ export class TypeormThemeRepository implements ThemeRepository {
     return this.themeMapper.optional(result);
   }
 
-  async findByUuid(uuid: string): Promise<Theme> {
+  async findByUuid(uuid: string): Promise<Theme | null> {
     const result = await this.themeEntityRepository.findOne({
       where: { uuid },
     });
@@ -60,6 +60,7 @@ export class TypeormThemeRepository implements ThemeRepository {
       uuid: theme.uuid,
       description: theme.description,
       active: theme.active,
+      created_at: theme.createdAt,
     });
 
     await this.themeEntityRepository.save(themeEntity);

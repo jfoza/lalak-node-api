@@ -5,12 +5,10 @@ import {
 
 export type ThemeSearchParamsProps = {
   description?: string;
-};
+} & PaginationOrderProps;
 
 export class ThemeSearchParams extends SearchParams<ThemeSearchParamsProps> {
-  constructor(
-    public readonly props: ThemeSearchParamsProps & PaginationOrderProps,
-  ) {
+  constructor(public readonly props: ThemeSearchParamsProps) {
     super(props);
   }
 

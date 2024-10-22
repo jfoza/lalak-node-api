@@ -23,7 +23,7 @@ import { ICustomerUpdateUseCase } from '@/features/customer/domain/interfaces/us
 import { IManyCustomersCreateUseCase } from '@/features/customer/domain/interfaces/use-cases/many-customers-create.use-case.interface';
 
 @UseGuards(AuthGuard)
-@Controller('customers')
+@Controller('admin/customers')
 export class CustomerController {
   @Inject('ICustomerListUseCase')
   private readonly customerListUseCase: ICustomerListUseCase;

@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CategoryEntity } from '@/features/category/infra/database/typeorm/entities/category.entity';
 
 @Entity({ schema: 'products_schema', name: 'themes' })
 export class ThemeEntity {
@@ -22,4 +24,7 @@ export class ThemeEntity {
 
   @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @OneToMany(() => CategoryEntity, (category: CategoryEntity) => category.theme)
+  categories: CategoryEntity[];
 }

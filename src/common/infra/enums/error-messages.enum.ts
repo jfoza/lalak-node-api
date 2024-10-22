@@ -18,6 +18,7 @@ export enum ErrorMessagesEnum {
   CITY_NOT_FOUND = 'Cidade não encontrada.',
 
   THEME_NOT_FOUND = 'Tema não encontrado.',
+  CATEGORY_NOT_FOUND = 'Categoria não encontrada.',
   THEME_NAME_ALREADY_EXISTS = 'Já existe um tema cadastrado com o nome informado.',
   CATEGORY_NAME_ALREADY_EXISTS = 'Já existe uma categoria cadastrada com o nome informado.',
   PRODUCT_NAME_ALREADY_EXISTS = 'Já existe um produto cadastrado com o nome informado.',

@@ -22,7 +22,7 @@ describe('ThemeListByUuid Unit Tests', () => {
 
     sut.policy = new Policy();
 
-    sut.policy.abilities = [AbilitiesEnum.THEMES_ADMIN_VIEW];
+    sut.policy.abilities = [AbilitiesEnum.THEMES_VIEW];
   });
 
   it('Should return a unique Theme', async () => {

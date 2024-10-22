@@ -16,7 +16,7 @@ export class ThemeListByUuidUseCase
   }
 
   async execute(uuid: string): Promise<Theme> {
-    this.policy.can(AbilitiesEnum.THEMES_ADMIN_VIEW);
+    this.policy.can(AbilitiesEnum.THEMES_VIEW);
 
     return await ThemeValidations.themeExists(uuid, this.themeRepository);
   }

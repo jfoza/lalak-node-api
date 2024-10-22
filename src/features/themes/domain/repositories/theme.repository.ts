@@ -7,8 +7,8 @@ export abstract class ThemeRepository {
   abstract paginateResults(
     themeSearchParams: ThemeSearchParams,
   ): Promise<ILengthAwarePaginator>;
-  abstract findByUuid(uuid: string): Promise<Theme>;
-  abstract findByName(description: string): Promise<Theme>;
+  abstract findByUuid(uuid: string): Promise<Theme | null>;
+  abstract findByName(description: string): Promise<Theme | null>;
   abstract create(theme: Theme): Promise<Theme>;
   abstract update(theme: Theme): Promise<Theme>;
   abstract remove(uuid: string): Promise<void>;

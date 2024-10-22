@@ -85,11 +85,25 @@ VALUES
     (_ability13, 'CUSTOMERS_INSERT', 'CUSTOMERS', _insert_action),
     (_ability14, 'CUSTOMERS_UPDATE', 'CUSTOMERS', _update_action),
 
-    (_ability15, 'THEMES_ADMIN_VIEW',   'THEMES_ADMIN', _view_action),
-    (_ability16, 'THEMES_CUSTOMER_VIEW',   'THEMES_CUSTOMER', _view_action),
-    (_ability17, 'THEMES_INSERT', 'THEMES', _insert_action),
-    (_ability18, 'THEMES_UPDATE', 'THEMES', _update_action),
-    (_ability19, 'THEMES_DELETE', 'THEMES', _delete_action)
+    (_ability15, 'THEMES_VIEW',   'THEMES', _view_action),
+    (_ability16, 'THEMES_INSERT', 'THEMES', _insert_action),
+    (_ability17, 'THEMES_UPDATE', 'THEMES', _update_action),
+    (_ability18, 'THEMES_DELETE', 'THEMES', _delete_action),
+
+    (_ability19, 'CATEGORIES_VIEW',   'CATEGORIES', _view_action),
+    (_ability20, 'CATEGORIES_INSERT', 'CATEGORIES', _insert_action),
+    (_ability21, 'CATEGORIES_UPDATE', 'CATEGORIES', _update_action),
+    (_ability22, 'CATEGORIES_DELETE', 'CATEGORIES', _delete_action),
+
+    (_ability23, 'EVENTS_VIEW',   'EVENTS', _view_action),
+    (_ability24, 'EVENTS_INSERT', 'EVENTS', _insert_action),
+    (_ability25, 'EVENTS_UPDATE', 'EVENTS', _update_action),
+    (_ability26, 'EVENTS_DELETE', 'EVENTS', _delete_action),
+
+    (_ability27, 'PRODUCTS_VIEW',   'PRODUCTS', _view_action),
+    (_ability28, 'PRODUCTS_INSERT', 'PRODUCTS', _insert_action),
+    (_ability29, 'PRODUCTS_UPDATE', 'PRODUCTS', _update_action),
+    (_ability30, 'PRODUCTS_DELETE', 'PRODUCTS', _delete_action)
 ;
 
 INSERT INTO user_schema.profiles (uuid, description, unique_name)
@@ -127,6 +141,18 @@ VALUES
     (_profile1, _ability16),
     (_profile1, _ability17),
     (_profile1, _ability18),
+    (_profile1, _ability19),
+    (_profile1, _ability20),
+    (_profile1, _ability21),
+    (_profile1, _ability22),
+    (_profile1, _ability23),
+    (_profile1, _ability24),
+    (_profile1, _ability25),
+    (_profile1, _ability26),
+    (_profile1, _ability27),
+    (_profile1, _ability28),
+    (_profile1, _ability29),
+    (_profile1, _ability30),
 
     -- EMPLOYEE
     (_profile2, _ability1),
@@ -140,10 +166,15 @@ VALUES
     (_profile2, _ability15),
     (_profile2, _ability16),
     (_profile2, _ability17),
-    (_profile2, _ability18),
-
-    -- CUSTOMER
-    (_profile3, _ability19)
+    (_profile2, _ability19),
+    (_profile2, _ability20),
+    (_profile2, _ability21),
+    (_profile2, _ability23),
+    (_profile2, _ability24),
+    (_profile2, _ability25),
+    (_profile2, _ability27),
+    (_profile2, _ability28),
+    (_profile2, _ability29)
 
 ;
 END $$;

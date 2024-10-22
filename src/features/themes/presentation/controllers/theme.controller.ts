@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   Param,
   ParseUUIDPipe,
@@ -11,7 +14,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
-import { AbstractThemeListUseCase } from '@/features/themes/domain/use-cases/abstract.theme-list.use-case';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { ThemeSearchParamsDto } from '@/features/themes/application/dto/theme-search-params.dto';
 import { Theme } from '@/features/themes/domain/core/theme';
@@ -20,12 +22,14 @@ import { AbstractThemeUpdateUseCase } from '@/features/themes/domain/use-cases/a
 import { CreateThemeDto } from '@/features/themes/application/dto/create-theme.dto';
 import { UpdateThemeDto } from '@/features/themes/application/dto/update-theme.dto';
 import { AbstractThemeListByUuidUseCase } from '@/features/themes/domain/use-cases/abstract.theme-list-by-uuid.use-case';
+import { AbstractThemeListService } from '@/features/themes/domain/services/abstract.theme-list.service';
+import { AbstractThemeRemoveUseCase } from '@/features/themes/domain/use-cases/abstract.theme-remove.use-case';
 
 @UseGuards(AuthGuard)
-@Controller('themes')
+@Controller('admin/themes')
 export class ThemeController {
-  @Inject(AbstractThemeListUseCase)
-  private readonly themeListUseCase: AbstractThemeListUseCase;
+  @Inject(AbstractThemeListService)
+  private readonly themeListService: AbstractThemeListService;
 
   @Inject(AbstractThemeListByUuidUseCase)
   private readonly themeListByUuidUseCase: AbstractThemeListByUuidUseCase;
@@ -36,11 +40,14 @@ export class ThemeController {
   @Inject(AbstractThemeUpdateUseCase)
   private readonly themeUpdateUseCase: AbstractThemeUpdateUseCase;
 
+  @Inject(AbstractThemeRemoveUseCase)
+  private readonly themeRemoveUseCase: AbstractThemeRemoveUseCase;
+
   @Get()
   async index(
     @Query() themeSearchParamsDto: ThemeSearchParamsDto,
   ): Promise<ILengthAwarePaginator | Theme[]> {
-    return await this.themeListUseCase.execute(themeSearchParamsDto);
+    return await this.themeListService.handle(themeSearchParamsDto);
   }
 
   @Get(':uuid')
@@ -59,5 +66,13 @@ export class ThemeController {
     @Body() updateThemeDto: UpdateThemeDto,
   ): Promise<Theme> {
     return await this.themeUpdateUseCase.execute(uuid, updateThemeDto);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':uuid')
+  async delete(
+    @Param('uuid', new ParseUUIDPipe()) uuid: string,
+  ): Promise<void> {
+    await this.themeRemoveUseCase.execute(uuid);
   }
 }

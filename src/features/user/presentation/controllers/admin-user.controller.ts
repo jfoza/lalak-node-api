@@ -22,7 +22,7 @@ import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-
 import { UpdateAdminUserDto } from '@/features/user/application/dto/update-admin-user.dto';
 
 @UseGuards(AuthGuard)
-@Controller('admin-users')
+@Controller('admin/users')
 export class AdminUserController {
   @Inject('IAdminUserListUseCase')
   private readonly adminUserListUseCase: IAdminUserListUseCase;
