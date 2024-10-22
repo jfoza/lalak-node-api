@@ -11,6 +11,7 @@ export class ProductsDataBuilder {
       description: 'Theme 1',
       active: true,
       createdAt: new Date(),
+      categories: [],
     };
   }
 

@@ -5,7 +5,11 @@ import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { Theme } from '@/features/themes/domain/core/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { UUID } from '@/common/infra/utils/uuid';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 import { ThemeRemoveUseCase } from '@/features/themes/application/use-cases/theme-remove.use-case';
 
@@ -44,6 +48,20 @@ describe('ThemeRemoveUseCase Unit Tests', () => {
     );
     await expect(sut.execute(UUID.generate())).rejects.toThrow(
       ErrorMessagesEnum.THEME_NOT_FOUND,
+    );
+  });
+
+  it('Should return exception if the theme has categories', async () => {
+    const theme: Theme = ProductsDataBuilder.getTheme();
+    theme.categories = [ProductsDataBuilder.getCategory()];
+
+    vi.spyOn(themeRepository, 'findByUuid').mockResolvedValue(theme);
+
+    await expect(sut.execute(UUID.generate())).rejects.toThrow(
+      BadRequestException,
+    );
+    await expect(sut.execute(UUID.generate())).rejects.toThrow(
+      ErrorMessagesEnum.THEME_HAS_CATEGORIES_IN_DELETE,
     );
   });
 
