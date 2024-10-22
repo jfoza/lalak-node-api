@@ -3,7 +3,8 @@ import { ThemeRepository } from '@/features/themes/domain/repositories/theme.rep
 import { Application } from '@/common/application/use-cases/application';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { ThemeValidations } from '@/features/themes/application/validations/theme.validations';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 
 @Injectable()
 export class ThemeRemoveUseCase
@@ -21,6 +22,12 @@ export class ThemeRemoveUseCase
       uuid,
       this.themeRepository,
     );
+
+    if (theme.categories.length > 0) {
+      throw new BadRequestException(
+        ErrorMessagesEnum.THEME_HAS_CATEGORIES_IN_DELETE,
+      );
+    }
 
     await this.themeRepository.remove(theme.uuid);
   }

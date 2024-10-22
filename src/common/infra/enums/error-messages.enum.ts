@@ -22,4 +22,6 @@ export enum ErrorMessagesEnum {
   THEME_NAME_ALREADY_EXISTS = 'Já existe um tema cadastrado com o nome informado.',
   CATEGORY_NAME_ALREADY_EXISTS = 'Já existe uma categoria cadastrada com o nome informado.',
   PRODUCT_NAME_ALREADY_EXISTS = 'Já existe um produto cadastrado com o nome informado.',
+
+  THEME_HAS_CATEGORIES_IN_DELETE = 'Não é possível excluir um tema com categorias vinculadas a ele.',
 }

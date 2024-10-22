@@ -50,6 +50,7 @@ export class TypeormThemeRepository implements ThemeRepository {
   async findByUuid(uuid: string): Promise<Theme | null> {
     const result = await this.themeEntityRepository.findOne({
       where: { uuid },
+      relations: ['categories'],
     });
 
     return this.themeMapper.optional(result);

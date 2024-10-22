@@ -1,9 +1,11 @@
 import { Core } from '@/common/domain/core/core';
+import { Category } from '@/features/category/domain/core/category';
 
 export type ThemeProps = {
   description: string;
   active: boolean;
   createdAt?: Date;
+  categories?: Category[];
 };
 
 export class Theme extends Core<ThemeProps> {
@@ -27,12 +29,20 @@ export class Theme extends Core<ThemeProps> {
     return this.props.createdAt;
   }
 
+  get categories(): Category[] {
+    return this.props.categories;
+  }
+
   set description(description: string) {
     this.props.description = description;
   }
 
   set active(active: boolean) {
     this.props.active = active;
+  }
+
+  set categories(categories: Category[]) {
+    this.props.categories = categories;
   }
 
   static async create(props: ThemeProps, uuid?: string): Promise<Theme> {
