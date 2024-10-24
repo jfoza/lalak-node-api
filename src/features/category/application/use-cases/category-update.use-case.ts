@@ -1,9 +1,9 @@
 import { Application } from '@/common/application/use-cases/application';
 import { Category } from '@/features/category/domain/core/category';
-import { ThemeValidations } from '@/features/themes/application/validations/theme.validations';
+import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { Inject, Injectable } from '@nestjs/common';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
-import { ThemeRepository } from '@/features/themes/domain/repositories/theme.repository';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { CategoryValidations } from '@/features/category/application/validations/category.validations';
 import { AbstractCategoryUpdateUseCase } from '@/features/category/domain/use-cases/abstract.category-update.use-case';
 import { UpdateCategoryDto } from '@/features/category/application/dto/update-category.dto';

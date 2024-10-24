@@ -18,8 +18,11 @@ export enum ErrorMessagesEnum {
   CITY_NOT_FOUND = 'Cidade não encontrada.',
 
   THEME_NOT_FOUND = 'Tema não encontrado.',
+  EVENT_NOT_FOUND = 'Evento não encontrado.',
   CATEGORY_NOT_FOUND = 'Categoria não encontrada.',
+  PRODUCT_NOT_FOUND = 'Produto não encontrado.',
   THEME_NAME_ALREADY_EXISTS = 'Já existe um tema cadastrado com o nome informado.',
+  EVENT_NAME_ALREADY_EXISTS = 'Já existe um evento cadastrado com o nome informado.',
   CATEGORY_NAME_ALREADY_EXISTS = 'Já existe uma categoria cadastrada com o nome informado.',
   PRODUCT_NAME_ALREADY_EXISTS = 'Já existe um produto cadastrado com o nome informado.',
 

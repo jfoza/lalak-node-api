@@ -6,7 +6,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CategoryEntity } from '@/features/category/infra/database/typeorm/entities/category.entity';
-import { paginate } from '@/common/infra/database/typeorm/pagination';
+import { toPaginate } from '@/common/infra/database/typeorm/pagination';
 import { CategoryMapper } from '@/features/category/infra/database/typeorm/mappers/category.mapper';
 
 @Injectable()
@@ -25,10 +25,10 @@ export class TypeOrmCategoryRepository implements CategoryRepository {
     return this.categoryMapper.collection(results);
   }
 
-  async paginateResults(
+  async paginate(
     categorySearchParams: CategorySearchParams,
   ): Promise<ILengthAwarePaginator> {
-    const result = await paginate<CategoryEntity>(
+    const result = await toPaginate<CategoryEntity>(
       this.getBaseQuery(categorySearchParams),
       {
         page: categorySearchParams.page,

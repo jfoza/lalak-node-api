@@ -24,7 +24,7 @@ describe('Customer List UseCase', () => {
   };
 
   const customerRepository = {
-    paginateResults: vi.fn(async () => lengthAwarePaginator),
+    paginate: vi.fn(async () => lengthAwarePaginator),
   } as unknown as ICustomerRepository;
 
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('Customer List UseCase', () => {
 
     const result = await sut.execute(customerSearchParamsDto);
 
-    expect(customerRepository.paginateResults).toHaveBeenCalled();
+    expect(customerRepository.paginate).toHaveBeenCalled();
     expect(result.currentPage).toBe(lengthAwarePaginator.currentPage);
     expect(result.data).toBe(lengthAwarePaginator.data);
     expect(result.from).toBe(lengthAwarePaginator.from);

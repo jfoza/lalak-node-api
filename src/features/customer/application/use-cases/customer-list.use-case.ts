@@ -23,8 +23,6 @@ export class CustomerListUseCase
   ): Promise<ILengthAwarePaginator> {
     this.policy.can(AbilitiesEnum.CUSTOMERS_VIEW);
 
-    return await this.customerRepository.paginateResults(
-      customerSearchParamsDto,
-    );
+    return await this.customerRepository.paginate(customerSearchParamsDto);
   }
 }

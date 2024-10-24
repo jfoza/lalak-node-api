@@ -6,7 +6,7 @@ export abstract class CategoryRepository {
   abstract findAll(
     categorySearchParams: CategorySearchParams,
   ): Promise<Category[]>;
-  abstract paginateResults(
+  abstract paginate(
     categorySearchParams: CategorySearchParams,
   ): Promise<ILengthAwarePaginator>;
   abstract findByUuid(uuid: string): Promise<Category | null>;

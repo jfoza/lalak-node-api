@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ThemeEntity } from '@/features/themes/infra/database/typeorm/entities/theme.entity';
+import { ThemeEntity } from '@/features/theme/infra/database/typeorm/entities/theme.entity';
 
 @Entity({ schema: 'products_schema', name: 'categories' })
 export class CategoryEntity {

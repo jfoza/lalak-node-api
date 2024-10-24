@@ -12,8 +12,9 @@ import { CustomerModule } from '@/features/customer/infra/modules/customer.modul
 import { CityModule } from '@/features/city/infra/modules/city.module';
 import { MailModule } from '@/mail/infra/modules/mail.module';
 import { AmqpModule } from '@/amqp/infra/modules/amqp.module';
-import { ThemeModule } from '@/features/themes/infra/modules/theme.module';
+import { ThemeModule } from '@/features/theme/infra/modules/theme.module';
 import { CategoryModule } from '@/features/category/infra/modules/category.module';
+import { EventModule } from '@/features/event/infra/modules/event.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CategoryModule } from '@/features/category/infra/modules/category.modul
     CustomerModule,
     ThemeModule,
     CategoryModule,
+    EventModule,
   ],
   controllers: [AppController],
 })

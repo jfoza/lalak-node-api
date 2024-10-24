@@ -4,7 +4,7 @@ import { Customer } from '@/features/customer/domain/core/customer';
 import { User } from '@/features/user/domain/core/user';
 
 export interface ICustomerRepository {
-  paginateResults(
+  paginate(
     customerSearchParamsDto: CustomerSearchParamsDto,
   ): Promise<ILengthAwarePaginator>;
   findByUserUuid(userUuid: string): Promise<User>;

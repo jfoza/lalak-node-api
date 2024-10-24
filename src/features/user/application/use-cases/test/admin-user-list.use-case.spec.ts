@@ -23,7 +23,7 @@ describe('Admin User List UseCase', () => {
   };
 
   const adminUserRepository = {
-    paginateResults: vi.fn(async () => lengthAwarePaginator),
+    paginate: vi.fn(async () => lengthAwarePaginator),
   } as unknown as IAdminUserRepository;
 
   beforeEach(() => {
@@ -46,7 +46,7 @@ describe('Admin User List UseCase', () => {
 
     const result = await sut.execute(adminUserSearchParamsDto);
 
-    expect(adminUserRepository.paginateResults).toHaveBeenCalled();
+    expect(adminUserRepository.paginate).toHaveBeenCalled();
     expect(result).toBeInstanceOf(Object);
     expect(result.currentPage).toBe(lengthAwarePaginator.currentPage);
     expect(result.data).toBe(lengthAwarePaginator.data);

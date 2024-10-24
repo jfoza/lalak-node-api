@@ -41,9 +41,7 @@ export class CategoryListUseCase implements AbstractCategoryListUseCase {
       categorySearchParams.page = page;
       categorySearchParams.perPage = perPage;
 
-      return await this.categoryRepository.paginateResults(
-        categorySearchParams,
-      );
+      return await this.categoryRepository.paginate(categorySearchParams);
     }
 
     return await this.categoryRepository.findAll(categorySearchParams);

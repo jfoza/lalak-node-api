@@ -24,7 +24,7 @@ describe('CategoryListUseCase Unit Tests', () => {
   beforeEach(() => {
     categoryRepository = {
       findAll: vi.fn(),
-      paginateResults: vi.fn(async () => lengthAwarePaginator),
+      paginate: vi.fn(async () => lengthAwarePaginator),
     } as unknown as CategoryRepository;
 
     categorySearchParamsDto = new CategorySearchParamsDto();
@@ -42,7 +42,7 @@ describe('CategoryListUseCase Unit Tests', () => {
       throw new Error('Expected paginated result but received an array.');
     }
 
-    expect(categoryRepository.paginateResults).toHaveBeenCalled();
+    expect(categoryRepository.paginate).toHaveBeenCalled();
     expect(result.currentPage).toBe(lengthAwarePaginator.currentPage);
     expect(result.data).toBe(lengthAwarePaginator.data);
     expect(result.from).toBe(lengthAwarePaginator.from);

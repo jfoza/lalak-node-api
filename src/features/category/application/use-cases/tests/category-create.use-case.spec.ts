@@ -1,8 +1,8 @@
-import { ThemeRepository } from '@/features/themes/domain/repositories/theme.repository';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { beforeEach, vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
-import { Theme } from '@/features/themes/domain/core/theme';
+import { Theme } from '@/features/theme/domain/core/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import {
   ConflictException,

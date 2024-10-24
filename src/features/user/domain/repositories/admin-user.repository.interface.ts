@@ -4,7 +4,7 @@ import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-
 import { AdminUser } from '@/features/user/domain/core/admin-user';
 
 export interface IAdminUserRepository {
-  paginateResults(
+  paginate(
     adminUserSearchParamsDto: AdminUserSearchParamsDto,
   ): Promise<ILengthAwarePaginator>;
   findByUserUuid(userUuid: string): Promise<User>;

@@ -1,5 +1,6 @@
 import { Core } from '@/common/domain/core/core';
-import { Theme } from '@/features/themes/domain/core/theme';
+import { Theme } from '@/features/theme/domain/core/theme';
+import { Product } from '@/features/product/domain/core/product';
 
 export type CategoryProps = {
   themeUuid: string;
@@ -7,6 +8,7 @@ export type CategoryProps = {
   active?: boolean;
   createdAt?: Date;
   theme?: Theme;
+  products?: Product[];
 };
 
 export class Category extends Core<CategoryProps> {

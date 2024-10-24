@@ -5,7 +5,7 @@ import { CustomerSearchParamsDto } from '@/features/customer/application/dto/cus
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
-import { paginate } from '@/common/infra/database/typeorm/pagination';
+import { toPaginate } from '@/common/infra/database/typeorm/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from '@/features/customer/infra/database/typeorm/entities/customer.entity';
@@ -22,13 +22,13 @@ export class TypeormCustomerRepository implements ICustomerRepository {
   @Inject(UserMapper)
   private readonly userMapper: UserMapper;
 
-  async paginateResults(
+  async paginate(
     customerSearchParamsDto: CustomerSearchParamsDto,
   ): Promise<ILengthAwarePaginator> {
     const queryBuilder: SelectQueryBuilder<UserEntity> =
       this.getListBaseQueryFilters(customerSearchParamsDto);
 
-    const result = await paginate<UserEntity>(queryBuilder, {
+    const result = await toPaginate<UserEntity>(queryBuilder, {
       page: customerSearchParamsDto.page,
       perPage: customerSearchParamsDto.perPage,
     });

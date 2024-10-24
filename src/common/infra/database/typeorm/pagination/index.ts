@@ -6,7 +6,7 @@ type PaginationOptionsType = {
   perPage: number;
 };
 
-export async function paginate<T>(
+export async function toPaginate<T>(
   queryBuilder: SelectQueryBuilder<T>,
   options: PaginationOptionsType,
 ): Promise<ILengthAwarePaginator> {

@@ -44,7 +44,7 @@ export class AdminUserListUseCase
       ProfileUniqueNameEnum.EMPLOYEE,
     ];
 
-    return await this.adminUserRepository.paginateResults(
+    return await this.adminUserRepository.paginate(
       this.adminUserSearchParamsDto,
     );
   }
@@ -54,7 +54,7 @@ export class AdminUserListUseCase
       ProfileUniqueNameEnum.EMPLOYEE,
     ];
 
-    return await this.adminUserRepository.paginateResults(
+    return await this.adminUserRepository.paginate(
       this.adminUserSearchParamsDto,
     );
   }

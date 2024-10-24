@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ThemeEntity } from '@/features/themes/infra/database/typeorm/entities/theme.entity';
+import { ThemeEntity } from '@/features/theme/infra/database/typeorm/entities/theme.entity';
 import { CategoryEntity } from '@/features/category/infra/database/typeorm/entities/category.entity';
 import { TypeOrmCategoryRepository } from '@/features/category/infra/database/typeorm/repositories/typeorm.category-repository';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
@@ -18,7 +18,7 @@ import { CategoryUpdateUseCase } from '@/features/category/application/use-cases
 import { AbstractCategoryUpdateUseCase } from '@/features/category/domain/use-cases/abstract.category-update.use-case';
 import { CategoryRemoveUseCase } from '@/features/category/application/use-cases/category-remove.use-case';
 import { AbstractCategoryRemoveUseCase } from '@/features/category/domain/use-cases/abstract.category-remove.use-case';
-import { ThemeModule } from '@/features/themes/infra/modules/theme.module';
+import { ThemeModule } from '@/features/theme/infra/modules/theme.module';
 import { CategoryMapper } from '@/features/category/infra/database/typeorm/mappers/category.mapper';
 import { CategoryController } from '@/features/category/presentation/controllers/category.controller';
 

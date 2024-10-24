@@ -31,7 +31,7 @@ export class AdminUserSearchParamsDto extends FiltersDto {
   profilesUniqueName: string[];
 
   @IsOptional()
-  @IsIn(['name', 'email', 'created_at'], {
+  @IsIn(['name', 'email', 'createdAt'], {
     message: ErrorMessagesEnum.INVALID_COLUMN_NAME,
   })
   @Transform(({ value }) => (value === '' ? undefined : value))
