@@ -15,6 +15,7 @@ import { AmqpModule } from '@/amqp/infra/modules/amqp.module';
 import { ThemeModule } from '@/features/theme/infra/modules/theme.module';
 import { CategoryModule } from '@/features/category/infra/modules/category.module';
 import { EventModule } from '@/features/event/infra/modules/event.module';
+import { ProductModule } from '@/features/product/infra/modules/product.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { EventModule } from '@/features/event/infra/modules/event.module';
     ThemeModule,
     CategoryModule,
     EventModule,
+    ProductModule,
   ],
   controllers: [AppController],
 })

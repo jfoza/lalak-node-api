@@ -27,4 +27,6 @@ export enum ErrorMessagesEnum {
   PRODUCT_NAME_ALREADY_EXISTS = 'Já existe um produto cadastrado com o nome informado.',
 
   THEME_HAS_CATEGORIES_IN_DELETE = 'Não é possível excluir um tema com categorias vinculadas a ele.',
+  CATEGORY_HAS_PRODUCTS_IN_DELETE = 'Não é possível excluir uma categoria com produtos vinculados a ela.',
+  EVENT_HAS_PRODUCTS_IN_DELETE = 'Não é possível excluir um evento com produtos vinculados a ele.',
 }

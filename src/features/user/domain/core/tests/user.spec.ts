@@ -134,38 +134,38 @@ describe('User Domain Entity Unit Tests', () => {
     expect(sut.profile).toBeInstanceOf(Profile);
   });
 
-  it('createAndValidate method should to instance new User class', async () => {
+  it('createValidated method should to instance new User class', async () => {
     const uuid = UUID.generate();
     const userProps = await UserDataBuilder.getUserProps();
-    const userClass = await User.createAndValidate(userProps, uuid);
+    const userClass = await User.createValidated(userProps, uuid);
 
     expect(userClass).toBeInstanceOf(User);
     expect(userClass.uuid).toEqual(uuid);
   });
 
-  it('createAndValidate method should return exception if personUuid is invalid', async () => {
+  it('createValidated method should return exception if personUuid is invalid', async () => {
     const userProps = await UserDataBuilder.getUserProps();
     userProps.personUuid = 'invalid';
 
-    await expect(User.createAndValidate(userProps)).rejects.toThrow(
+    await expect(User.createValidated(userProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if profileUuid is invalid', async () => {
+  it('createValidated method should return exception if profileUuid is invalid', async () => {
     const userProps = await UserDataBuilder.getUserProps();
     userProps.profileUuid = 'invalid';
 
-    await expect(User.createAndValidate(userProps)).rejects.toThrow(
+    await expect(User.createValidated(userProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if email is invalid', async () => {
+  it('createValidated method should return exception if email is invalid', async () => {
     const userProps = await UserDataBuilder.getUserProps();
     userProps.email = 'invalid';
 
-    await expect(User.createAndValidate(userProps)).rejects.toThrow(
+    await expect(User.createValidated(userProps)).rejects.toThrow(
       BadRequestException,
     );
   });

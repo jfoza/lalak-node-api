@@ -40,7 +40,7 @@ export class Customer extends Core<CustomerProps> {
     return new this(props, uuid);
   }
 
-  static async createAndValidate(
+  static async createValidated(
     props: CustomerProps,
     uuid?: string,
   ): Promise<Customer> {

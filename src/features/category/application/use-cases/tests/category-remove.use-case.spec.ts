@@ -3,7 +3,11 @@ import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { UUID } from '@/common/infra/utils/uuid';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 import { CategoryRemoveUseCase } from '@/features/category/application/use-cases/category-remove.use-case';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
@@ -44,6 +48,20 @@ describe('CategoryRemoveUseCase Unit Tests', () => {
     );
     await expect(sut.execute(UUID.generate())).rejects.toThrow(
       ErrorMessagesEnum.CATEGORY_NOT_FOUND,
+    );
+  });
+
+  it('Should return exception if the category has products', async () => {
+    const category: Category = ProductsDataBuilder.getCategory();
+    category.products = [ProductsDataBuilder.getProduct()];
+
+    vi.spyOn(categoryRepository, 'findByUuid').mockResolvedValue(category);
+
+    await expect(sut.execute(UUID.generate())).rejects.toThrow(
+      BadRequestException,
+    );
+    await expect(sut.execute(UUID.generate())).rejects.toThrow(
+      ErrorMessagesEnum.CATEGORY_HAS_PRODUCTS_IN_DELETE,
     );
   });
 

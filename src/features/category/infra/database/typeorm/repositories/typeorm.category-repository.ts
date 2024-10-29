@@ -44,6 +44,7 @@ export class TypeOrmCategoryRepository implements CategoryRepository {
   async findByUuid(uuid: string): Promise<Category | null> {
     const result = await this.categoryEntityRepository.findOne({
       where: { uuid },
+      relations: ['products'],
     });
 
     return this.categoryMapper.optional(result);

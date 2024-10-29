@@ -97,7 +97,7 @@ export class AdminUserCreateUseCase
   }
 
   private async createAdminUser(): Promise<User> {
-    const person = await Person.createAndValidate({
+    const person = await Person.createValidated({
       name: this.createAdminUserDto.name,
       shortName: Helper.shortStringGenerate(this.createAdminUserDto.name),
       active: true,
@@ -105,7 +105,7 @@ export class AdminUserCreateUseCase
 
     const password = await Hash.createHash(this.createAdminUserDto.password);
 
-    const user = await User.createAndValidate({
+    const user = await User.createValidated({
       personUuid: person.uuid,
       profileUuid: this.profile.uuid,
       email: this.createAdminUserDto.email,
@@ -115,7 +115,7 @@ export class AdminUserCreateUseCase
       active: true,
     } as UserProps);
 
-    const adminUser = await AdminUser.createAndValidate({
+    const adminUser = await AdminUser.createValidated({
       userUuid: user.uuid,
     } as AdminUserProps);
 

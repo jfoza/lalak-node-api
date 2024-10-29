@@ -21,11 +21,13 @@ import { AbstractCategoryRemoveUseCase } from '@/features/category/domain/use-ca
 import { ThemeModule } from '@/features/theme/infra/modules/theme.module';
 import { CategoryMapper } from '@/features/category/infra/database/typeorm/mappers/category.mapper';
 import { CategoryController } from '@/features/category/presentation/controllers/category.controller';
+import { ProductModule } from '@/features/product/infra/modules/product.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ThemeEntity, CategoryEntity]),
     forwardRef(() => ThemeModule),
+    forwardRef(() => ProductModule),
   ],
   controllers: [CategoryController],
   providers: [
@@ -78,6 +80,6 @@ import { CategoryController } from '@/features/category/presentation/controllers
       useExisting: CategoryRemoveUseCase,
     },
   ],
-  exports: [],
+  exports: [CategoryRepository],
 })
 export class CategoryModule {}

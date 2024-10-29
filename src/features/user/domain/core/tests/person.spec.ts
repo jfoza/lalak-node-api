@@ -200,56 +200,56 @@ describe('Person Domain Entity Unit Tests', () => {
     expect(sut.props.city).toBeInstanceOf(City);
   });
 
-  it('createAndValidate method should to instance new Person class', async () => {
+  it('createValidated method should to instance new Person class', async () => {
     const uuid = UUID.generate();
     const personProps = UserDataBuilder.getPersonProps();
-    const personClass = await Person.createAndValidate(personProps, uuid);
+    const personClass = await Person.createValidated(personProps, uuid);
 
     expect(personClass).toBeInstanceOf(Person);
     expect(personClass.uuid).toEqual(uuid);
   });
 
-  it('createAndValidate method should return exception if birthDate field is invalid', async () => {
+  it('createValidated method should return exception if birthDate field is invalid', async () => {
     const personProps = UserDataBuilder.getPersonProps();
     personProps.birthDate = 'invalid';
 
-    await expect(Person.createAndValidate(personProps)).rejects.toThrow(
+    await expect(Person.createValidated(personProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if phone field is invalid', async () => {
+  it('createValidated method should return exception if phone field is invalid', async () => {
     const personProps = UserDataBuilder.getPersonProps();
     personProps.phone = '51999';
 
-    await expect(Person.createAndValidate(personProps)).rejects.toThrow(
+    await expect(Person.createValidated(personProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if zipCode field is invalid', async () => {
+  it('createValidated method should return exception if zipCode field is invalid', async () => {
     const personProps = UserDataBuilder.getPersonProps();
     personProps.zipCode = '0000';
 
-    await expect(Person.createAndValidate(personProps)).rejects.toThrow(
+    await expect(Person.createValidated(personProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if uf field is invalid', async () => {
+  it('createValidated method should return exception if uf field is invalid', async () => {
     const personProps = UserDataBuilder.getPersonProps();
     personProps.uf = 'abc';
 
-    await expect(Person.createAndValidate(personProps)).rejects.toThrow(
+    await expect(Person.createValidated(personProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if cityUuid field is invalid', async () => {
+  it('createValidated method should return exception if cityUuid field is invalid', async () => {
     const personProps = UserDataBuilder.getPersonProps();
     personProps.cityUuid = 'invalid';
 
-    await expect(Person.createAndValidate(personProps)).rejects.toThrow(
+    await expect(Person.createValidated(personProps)).rejects.toThrow(
       BadRequestException,
     );
   });

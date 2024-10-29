@@ -48,14 +48,14 @@ describe('Customer Domain Entity Unit Tests', () => {
     expect(typeof sut.props.verifiedEmail).toBe('boolean');
   });
 
-  it('createAndValidate method should to instance new AdminUser class', async () => {
+  it('createValidated method should to instance new AdminUser class', async () => {
     const customerUuid = UUID.generate();
     const customerProps = {
       userUuid: UUID.generate(),
       verifiedEmail: true,
     } as CustomerProps;
 
-    const customerClass = await Customer.createAndValidate(
+    const customerClass = await Customer.createValidated(
       customerProps,
       customerUuid,
     );
@@ -64,13 +64,13 @@ describe('Customer Domain Entity Unit Tests', () => {
     expect(customerClass.uuid).toEqual(customerUuid);
   });
 
-  it('createAndValidate method should return exception if userUuid is invalid', async () => {
+  it('createValidated method should return exception if userUuid is invalid', async () => {
     const customerProps = {
       userUuid: 'invalid',
       verifiedEmail: true,
     } as CustomerProps;
 
-    await expect(Customer.createAndValidate(customerProps)).rejects.toThrow(
+    await expect(Customer.createValidated(customerProps)).rejects.toThrow(
       BadRequestException,
     );
   });

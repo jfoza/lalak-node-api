@@ -22,7 +22,7 @@ export class ProductRemoveUseCase
   }
 
   async execute(uuid: string): Promise<void> {
-    this.policy.can(AbilitiesEnum.PRODUCTS_VIEW);
+    this.policy.can(AbilitiesEnum.PRODUCTS_DELETE);
 
     const product = await ProductValidations.productExists(
       uuid,

@@ -145,7 +145,7 @@ export class Person extends Core<PersonProps> {
     return new this(props, uuid);
   }
 
-  static async createAndValidate(
+  static async createValidated(
     props: PersonProps,
     uuid?: string,
   ): Promise<Person> {

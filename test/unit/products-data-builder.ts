@@ -27,6 +27,7 @@ export class ProductsDataBuilder {
       description: 'Theme 1',
       active: true,
       createdAt: new Date(),
+      products: [],
     };
   }
 
@@ -39,6 +40,7 @@ export class ProductsDataBuilder {
       description: 'test',
       active: true,
       createdAt: new Date(),
+      products: [],
     };
   }
 

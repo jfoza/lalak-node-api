@@ -50,9 +50,19 @@ export class TypeormEventRepository implements EventRepository {
   async findByUuid(uuid: string): Promise<Event | null> {
     const result = await this.eventEntityRepository.findOne({
       where: { uuid },
+      relations: ['products'],
     });
 
     return this.eventMapper.optional(result);
+  }
+
+  async findByUuids(uuids: string[]): Promise<Event[]> {
+    const result = await this.eventEntityRepository
+      .createQueryBuilder('event')
+      .where('event.uuid IN (:...uuids)', { uuids })
+      .getMany();
+
+    return this.eventMapper.collection(result);
   }
 
   async create(event: Event): Promise<Event> {

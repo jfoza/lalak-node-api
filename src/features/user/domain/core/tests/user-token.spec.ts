@@ -46,10 +46,10 @@ describe('UserToken Domain Entity Unit Tests', () => {
     expect(sut.createdAt).toBeInstanceOf(Date);
   });
 
-  it('createAndValidate method should to instance new UserToken class', async () => {
+  it('createValidated method should to instance new UserToken class', async () => {
     const uuid = UUID.generate();
     const userTokenProps = UserDataBuilder.getUserTokenProps();
-    const userTokenClass = await UserToken.createAndValidate(
+    const userTokenClass = await UserToken.createValidated(
       userTokenProps,
       uuid,
     );
@@ -58,29 +58,29 @@ describe('UserToken Domain Entity Unit Tests', () => {
     expect(userTokenClass.uuid).toEqual(uuid);
   });
 
-  it('createAndValidate method should return exception if userUuid field is invalid', async () => {
+  it('createValidated method should return exception if userUuid field is invalid', async () => {
     const userTokenProps = UserDataBuilder.getUserTokenProps();
     userTokenProps.userUuid = 'invalid';
 
-    await expect(UserToken.createAndValidate(userTokenProps)).rejects.toThrow(
+    await expect(UserToken.createValidated(userTokenProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if token field is invalid', async () => {
+  it('createValidated method should return exception if token field is invalid', async () => {
     const userTokenProps = UserDataBuilder.getUserTokenProps();
     userTokenProps.token = 'invalid';
 
-    await expect(UserToken.createAndValidate(userTokenProps)).rejects.toThrow(
+    await expect(UserToken.createValidated(userTokenProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if tokenType field is invalid', async () => {
+  it('createValidated method should return exception if tokenType field is invalid', async () => {
     const userTokenProps = UserDataBuilder.getUserTokenProps();
     userTokenProps.tokenType = 'invalid';
 
-    await expect(UserToken.createAndValidate(userTokenProps)).rejects.toThrow(
+    await expect(UserToken.createValidated(userTokenProps)).rejects.toThrow(
       BadRequestException,
     );
   });

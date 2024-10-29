@@ -100,10 +100,7 @@ export class User extends Core<UserProps> {
     return new this(props, uuid);
   }
 
-  static async createAndValidate(
-    props: UserProps,
-    uuid?: string,
-  ): Promise<User> {
+  static async createValidated(props: UserProps, uuid?: string): Promise<User> {
     await this.validate(props);
     return this.create(props, uuid);
   }

@@ -33,7 +33,7 @@ export class SendForgotPasswordEmailUseCase
       this.userRepository,
     );
 
-    const userToken = await UserToken.createAndValidate({
+    const userToken = await UserToken.createValidated({
       userUuid: user.uuid,
       token: UUID.generate(),
       tokenType: TokenTypesEnum.FORGOT_PASSWORD,

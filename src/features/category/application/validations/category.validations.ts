@@ -17,6 +17,26 @@ export class CategoryValidations {
     return category;
   }
 
+  static async categoriesExists(
+    categoriesUuid: string[],
+    categoryRepository: CategoryRepository,
+  ): Promise<Category[]> {
+    const categories: Category[] =
+      await categoryRepository.findByUuids(categoriesUuid);
+
+    const uuids: string[] = categories.map(
+      (category: Category) => category.uuid,
+    );
+
+    for (const categoryUuid of categoriesUuid) {
+      if (!uuids.includes(categoryUuid)) {
+        throw new NotFoundException(ErrorMessagesEnum.CATEGORY_NOT_FOUND);
+      }
+    }
+
+    return categories;
+  }
+
   static async categoryExistsByName(
     name: string,
     categoryRepository: CategoryRepository,

@@ -17,6 +17,23 @@ export class EventValidations {
     return event;
   }
 
+  static async eventsExists(
+    eventsUuid: string[],
+    eventRepository: EventRepository,
+  ): Promise<Event[]> {
+    const events: Event[] = await eventRepository.findByUuids(eventsUuid);
+
+    const uuids: string[] = events.map((category: Event) => category.uuid);
+
+    for (const eventUuid of eventsUuid) {
+      if (!uuids.includes(eventUuid)) {
+        throw new NotFoundException(ErrorMessagesEnum.EVENT_NOT_FOUND);
+      }
+    }
+
+    return events;
+  }
+
   static async eventExistsByName(
     name: string,
     eventRepository: EventRepository,

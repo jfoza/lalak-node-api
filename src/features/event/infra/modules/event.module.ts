@@ -17,11 +17,15 @@ import { EventUpdateUseCase } from '@/features/event/application/use-cases/event
 import { AbstractEventUpdateUseCase } from '@/features/event/domain/use-cases/abstract.event-update.use-case';
 import { EventRemoveUseCase } from '@/features/event/application/use-cases/event-remove.use-case';
 import { AbstractEventRemoveUseCase } from '@/features/event/domain/use-cases/abstract.event-remove.use-case';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { EventController } from '@/features/event/presentation/controllers/event.controller';
+import { ProductModule } from '@/features/product/infra/modules/product.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EventEntity])],
+  imports: [
+    TypeOrmModule.forFeature([EventEntity]),
+    forwardRef(() => ProductModule),
+  ],
   controllers: [EventController],
   providers: [
     EventMapper,

@@ -33,13 +33,13 @@ describe('AdminUser Domain Entity Unit Tests', () => {
     expect(sut.createdAt).toBeInstanceOf(Date);
   });
 
-  it('createAndValidate method should to instance new AdminUser class', async () => {
+  it('createValidated method should to instance new AdminUser class', async () => {
     const uuid = UUID.generate();
     const userUuid = UUID.generate();
     const adminUserProps = {
       userUuid,
     };
-    const adminUserClass = await AdminUser.createAndValidate(
+    const adminUserClass = await AdminUser.createValidated(
       adminUserProps,
       uuid,
     );
@@ -48,7 +48,7 @@ describe('AdminUser Domain Entity Unit Tests', () => {
     expect(adminUserClass.uuid).toEqual(uuid);
   });
 
-  it('createAndValidate method should return exception if personUuid is invalid', async () => {
+  it('createValidated method should return exception if personUuid is invalid', async () => {
     const userUuid = UUID.generate();
     const adminUserProps = {
       userUuid,
@@ -56,7 +56,7 @@ describe('AdminUser Domain Entity Unit Tests', () => {
 
     adminUserProps.userUuid = 'invalid';
 
-    await expect(AdminUser.createAndValidate(adminUserProps)).rejects.toThrow(
+    await expect(AdminUser.createValidated(adminUserProps)).rejects.toThrow(
       BadRequestException,
     );
   });

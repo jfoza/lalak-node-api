@@ -40,6 +40,10 @@ export class Category extends Core<CategoryProps> {
     return this.props.createdAt;
   }
 
+  get products(): Product[] {
+    return this.props.products ?? [];
+  }
+
   set themeUuid(themeUuid: string) {
     this.props.themeUuid = themeUuid;
   }
@@ -54,6 +58,10 @@ export class Category extends Core<CategoryProps> {
 
   set active(active: boolean) {
     this.props.active = active;
+  }
+
+  set products(products: Product[]) {
+    this.props.products = products;
   }
 
   static async create(props: CategoryProps, uuid?: string): Promise<Category> {

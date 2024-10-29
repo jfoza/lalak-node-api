@@ -1,6 +1,7 @@
 import { Core } from '@/common/domain/core/core';
 import { ProductValidatorFactory } from '@/features/category/domain/validators/product.validator';
 import { Category } from '@/features/category/domain/core/category';
+import { Event } from '@/features/event/domain/core/event';
 
 export type ProductProps = {
   description: string;
@@ -10,8 +11,9 @@ export type ProductProps = {
   quantity: number;
   balance: number;
   active: boolean;
-  createdAt: Date;
+  createdAt?: Date;
   categories?: Category[];
+  events?: Event[];
 };
 
 export class Product extends Core<ProductProps> {
@@ -51,8 +53,24 @@ export class Product extends Core<ProductProps> {
     return this.props.active;
   }
 
+  get categories(): Category[] {
+    return this.props.categories ?? [];
+  }
+
+  get events(): Event[] {
+    return this.props.events ?? [];
+  }
+
   get createdAt() {
     return this.props.createdAt;
+  }
+
+  get categoriesUuid(): string[] {
+    return this.categories.map((category: Category) => category.uuid);
+  }
+
+  get eventsUuid(): string[] {
+    return this.events.map((event: Event) => event.uuid);
   }
 
   set description(description: string) {
@@ -83,6 +101,14 @@ export class Product extends Core<ProductProps> {
     this.props.active = active;
   }
 
+  set categories(categories: Category[]) {
+    this.props.categories = categories;
+  }
+
+  set events(events: Event[]) {
+    this.props.events = events;
+  }
+
   static async validate(props: ProductProps): Promise<void> {
     const validator = ProductValidatorFactory.create();
     await validator.validate(props);
@@ -92,7 +118,7 @@ export class Product extends Core<ProductProps> {
     return new this(props, uuid);
   }
 
-  static async createAndValidate(
+  static async createValidated(
     props: ProductProps,
     uuid?: string,
   ): Promise<Product> {

@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ThemeEntity } from '@/features/theme/infra/database/typeorm/entities/theme.entity';
+import { ProductEntity } from '@/features/product/infra/database/typeorm/entities/product.entity';
 
 @Entity({ schema: 'products_schema', name: 'categories' })
 export class CategoryEntity {
@@ -32,4 +34,10 @@ export class CategoryEntity {
   @ManyToOne(() => ThemeEntity, (theme: ThemeEntity) => theme.categories)
   @JoinColumn({ name: 'theme_uuid' })
   theme: ThemeEntity;
+
+  @ManyToMany(
+    () => ProductEntity,
+    (product: ProductEntity) => product.categories,
+  )
+  products: ProductEntity[];
 }

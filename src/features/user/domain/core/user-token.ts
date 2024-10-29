@@ -45,7 +45,7 @@ export class UserToken extends Core<UserTokenProps> {
     return new this(props, uuid);
   }
 
-  static async createAndValidate(
+  static async createValidated(
     props: UserTokenProps,
     uuid?: string,
   ): Promise<UserToken> {

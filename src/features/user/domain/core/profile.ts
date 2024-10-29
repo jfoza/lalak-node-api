@@ -37,7 +37,7 @@ export class Profile extends Core<ProfileProps> {
     return new this(props, uuid);
   }
 
-  static async createAndValidate(
+  static async createValidated(
     props: ProfileProps,
     uuid?: string,
   ): Promise<Profile> {

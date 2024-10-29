@@ -47,7 +47,7 @@ describe('Ability Domain Entity Unit Tests', () => {
     expect(typeof sut.active).toBe('boolean');
   });
 
-  it('createAndValidate method should to instance new AdminUser class', async () => {
+  it('createValidated method should to instance new AdminUser class', async () => {
     const uuid = UUID.generate();
     const abilityProps = {
       description: 'TEST_VIEW',

@@ -2,12 +2,15 @@ import {
   IsArray,
   IsBoolean,
   IsIn,
+  IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
+  Min,
+  ValidateIf,
 } from 'class-validator';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { FiltersDto } from '@/common/application/dto/FiltersDto';
 
 export class ProductSearchParamsDto extends FiltersDto {
@@ -34,9 +37,11 @@ export class ProductSearchParamsDto extends FiltersDto {
   })
   events?: string[];
 
-  @IsOptional()
-  @IsBoolean()
-  active: boolean;
+  @ValidateIf((o) => o.page !== undefined)
+  @IsNotEmpty()
+  @Type(() => Number)
+  @Min(1)
+  page: number;
 
   @IsOptional()
   @IsIn(['description', 'value', 'active', 'createdAt'], {

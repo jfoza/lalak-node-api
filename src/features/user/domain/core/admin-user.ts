@@ -35,7 +35,7 @@ export class AdminUser extends Core<AdminUserProps> {
     return new this(props, uuid);
   }
 
-  static async createAndValidate(
+  static async createValidated(
     props: AdminUserProps,
     uuid?: string,
   ): Promise<AdminUser> {

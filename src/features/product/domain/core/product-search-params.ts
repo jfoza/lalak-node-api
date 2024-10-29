@@ -8,7 +8,7 @@ export type ProductSearchParamsProps = {
   userUuid?: string;
   categories?: string[];
   events?: string[];
-  active?: boolean;
+  active?: boolean | null;
 } & PaginationOrderProps;
 
 export class ProductSearchParams extends SearchParams<ProductSearchParamsProps> {
@@ -32,7 +32,7 @@ export class ProductSearchParams extends SearchParams<ProductSearchParamsProps> 
     return this.props.events ?? [];
   }
 
-  get active(): boolean {
+  get active(): boolean | null {
     return this.props.active;
   }
 

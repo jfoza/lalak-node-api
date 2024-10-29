@@ -8,6 +8,7 @@ export abstract class EventRepository {
     eventSearchParams: EventSearchParams,
   ): Promise<ILengthAwarePaginator>;
   abstract findByUuid(uuid: string): Promise<Event | null>;
+  abstract findByUuids(uuids: string[]): Promise<Event[]>;
   abstract findByName(description: string): Promise<Event | null>;
   abstract create(event: Event): Promise<Event>;
   abstract update(event: Event): Promise<Event>;

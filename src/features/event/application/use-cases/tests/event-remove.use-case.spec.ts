@@ -4,7 +4,11 @@ import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
 import { Event } from '@/features/event/domain/core/event';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { UUID } from '@/common/infra/utils/uuid';
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 import { EventRemoveUseCase } from '@/features/event/application/use-cases/event-remove.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
@@ -44,6 +48,20 @@ describe('EventRemoveUseCase Unit Tests', () => {
     );
     await expect(sut.execute(UUID.generate())).rejects.toThrow(
       ErrorMessagesEnum.EVENT_NOT_FOUND,
+    );
+  });
+
+  it('Should return exception if the category has products', async () => {
+    const event: Event = ProductsDataBuilder.getEvent();
+    event.products = [ProductsDataBuilder.getProduct()];
+
+    vi.spyOn(eventRepository, 'findByUuid').mockResolvedValue(event);
+
+    await expect(sut.execute(UUID.generate())).rejects.toThrow(
+      BadRequestException,
+    );
+    await expect(sut.execute(UUID.generate())).rejects.toThrow(
+      ErrorMessagesEnum.EVENT_HAS_PRODUCTS_IN_DELETE,
     );
   });
 

@@ -9,10 +9,6 @@ export class EventSearchParamsDto extends FiltersDto {
   description: string;
 
   @IsOptional()
-  @IsBoolean()
-  active: boolean;
-
-  @IsOptional()
   @IsIn(['description', 'created_at'], {
     message: ErrorMessagesEnum.INVALID_COLUMN_NAME,
   })

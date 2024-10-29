@@ -29,10 +29,10 @@ describe('Profile Domain Entity Unit Tests', () => {
     expect(typeof sut.uniqueName).toBe('string');
   });
 
-  it('createAndValidate method should to instance new Profile class', async () => {
+  it('createValidated method should to instance new Profile class', async () => {
     const uuid = UUID.generate();
     const profileProps = UserDataBuilder.getAdminMasterProfileProps();
-    const profileClass = await Profile.createAndValidate(profileProps, uuid);
+    const profileClass = await Profile.createValidated(profileProps, uuid);
 
     expect(profileClass).toBeInstanceOf(Profile);
     expect(profileClass.uuid).toEqual(uuid);

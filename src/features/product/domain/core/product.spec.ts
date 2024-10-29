@@ -114,7 +114,7 @@ describe('Product Domain Entity Unit Tests', () => {
     expect(typeof sut.props.active).toBe('boolean');
   });
 
-  it('createAndValidate method should to instance new Product class', async () => {
+  it('createValidated method should to instance new Product class', async () => {
     const uuid = UUID.generate();
     const productProps = ProductsDataBuilder.getProductProps();
 
@@ -124,39 +124,39 @@ describe('Product Domain Entity Unit Tests', () => {
     expect(productClass.uuid).toEqual(uuid);
   });
 
-  it('createAndValidate method should return exception if value is less than zero', async () => {
+  it('createValidated method should return exception if value is less than zero', async () => {
     const productProps = ProductsDataBuilder.getProductProps();
     productProps.value = -1;
 
-    await expect(Product.createAndValidate(productProps)).rejects.toThrow(
+    await expect(Product.createValidated(productProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if quantity is less than zero', async () => {
+  it('createValidated method should return exception if quantity is less than zero', async () => {
     const productProps = ProductsDataBuilder.getProductProps();
     productProps.quantity = -1;
 
-    await expect(Product.createAndValidate(productProps)).rejects.toThrow(
+    await expect(Product.createValidated(productProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if balance is less than zero', async () => {
+  it('createValidated method should return exception if balance is less than zero', async () => {
     const productProps = ProductsDataBuilder.getProductProps();
     productProps.balance = -1;
 
-    await expect(Product.createAndValidate(productProps)).rejects.toThrow(
+    await expect(Product.createValidated(productProps)).rejects.toThrow(
       BadRequestException,
     );
   });
 
-  it('createAndValidate method should return exception if balance is greater than quantity', async () => {
+  it('createValidated method should return exception if balance is greater than quantity', async () => {
     const productProps = ProductsDataBuilder.getProductProps();
     productProps.quantity = 10;
     productProps.balance = 20;
 
-    await expect(Product.createAndValidate(productProps)).rejects.toThrow(
+    await expect(Product.createValidated(productProps)).rejects.toThrow(
       BadRequestException,
     );
   });

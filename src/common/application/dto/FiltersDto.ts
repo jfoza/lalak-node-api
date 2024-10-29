@@ -1,4 +1,11 @@
-import { IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
 
@@ -16,11 +23,26 @@ export class FiltersDto {
   columnOrder: 'ASC' | 'DESC' = 'DESC';
 
   @IsOptional()
-  page: number | null = null;
-
   @Type(() => Number)
-  @IsOptional()
   @IsInt()
   @Min(1)
-  perPage: number | null = 20;
+  page: number | null = null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  perPage: number | null = 100;
+
+  @IsOptional()
+  @Transform(
+    ({ value }) => {
+      if (value === 'true' || value === '1') return true;
+      if (value === 'false' || value === '0') return false;
+      return undefined;
+    },
+    { toClassOnly: true },
+  )
+  @IsBoolean()
+  active?: boolean;
 }
