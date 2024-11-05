@@ -29,12 +29,14 @@ import { AbstractProductUpdateUseCase } from '@/features/product/domain/use-case
 import { ProductRemoveUseCase } from '@/features/product/application/use-cases/product-remove.use-case';
 import { AbstractProductRemoveUseCase } from '@/features/product/domain/use-cases/abstract.product-remove.use-case';
 import { ProductController } from '@/features/product/presentation/controllers/product.controller';
+import { UploadModule } from '@/upload/infra/modules/upload.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProductEntity, CategoryEntity, EventEntity]),
     forwardRef(() => CategoryModule),
     forwardRef(() => EventModule),
+    UploadModule,
   ],
   controllers: [ProductController],
   providers: [

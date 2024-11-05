@@ -1,6 +1,7 @@
 import { AbstractProductCreateUseCase } from '@/features/product/domain/use-cases/abstract.product-create.use-case';
 import { ProductCreateDto } from '@/features/product/application/dto/product-create.dto';
 import { Product, ProductProps } from '@/features/product/domain/core/product';
+import { File } from '@/upload/domain/core/file';
 import { Inject, Injectable } from '@nestjs/common';
 import { Application } from '@/common/application/use-cases/application';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
@@ -14,6 +15,8 @@ import { EventValidations } from '@/features/event/application/validations/event
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { Helper } from '@/common/infra/helpers';
 import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { FileDto } from '@/upload/application/dto/file.dto';
+import { AbstractUploadImageUseCase } from '@/upload/domain/services/abstract.upload-image.use-case';
 
 @Injectable()
 export class ProductCreateUseCase
@@ -32,11 +35,17 @@ export class ProductCreateUseCase
 
     @Inject(EventRepository)
     private readonly eventRepository: EventRepository,
+
+    @Inject(AbstractUploadImageUseCase)
+    private readonly uploadImageUseCase: AbstractUploadImageUseCase,
   ) {
     super();
   }
 
-  async execute(productCreateDto: ProductCreateDto): Promise<Product> {
+  async execute(
+    productCreateDto: ProductCreateDto,
+    image: FileDto,
+  ): Promise<Product> {
     this.policy.can(AbilitiesEnum.PRODUCTS_INSERT);
 
     await ProductValidations.productExistsByName(
@@ -73,9 +82,16 @@ export class ProductCreateUseCase
       events,
     } as ProductProps);
 
-    await this.productCommandRepository.create(product);
-    await this.productCommandRepository.saveCategories(product);
-    await this.productCommandRepository.saveEvents(product);
+    const file: File = await this.uploadImageUseCase.handle(
+      image,
+      'images/products',
+    );
+
+    debug(file);
+
+    // await this.productCommandRepository.create(product);
+    // await this.productCommandRepository.saveCategories(product);
+    // await this.productCommandRepository.saveEvents(product);
 
     return product;
   }

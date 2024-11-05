@@ -16,6 +16,7 @@ import { ThemeModule } from '@/features/theme/infra/modules/theme.module';
 import { CategoryModule } from '@/features/category/infra/modules/category.module';
 import { EventModule } from '@/features/event/infra/modules/event.module';
 import { ProductModule } from '@/features/product/infra/modules/product.module';
+import { UploadModule } from '@/upload/infra/modules/upload.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ProductModule } from '@/features/product/infra/modules/product.module';
     CategoryModule,
     EventModule,
     ProductModule,
+    UploadModule,
   ],
   controllers: [AppController],
 })

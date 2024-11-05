@@ -11,7 +11,9 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
@@ -24,6 +26,8 @@ import { ProductSearchParamsDto } from '@/features/product/application/dto/produ
 import { Product } from '@/features/product/domain/core/product';
 import { ProductCreateDto } from '@/features/product/application/dto/product-create.dto';
 import { ProductUpdateDto } from '@/features/product/application/dto/product-update.dto';
+import { FileDto } from '@/upload/application/dto/file.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AuthGuard)
 @Controller('admin/products')
@@ -58,8 +62,12 @@ export class ProductController {
   }
 
   @Post()
-  async insert(@Body() productCreateDto: ProductCreateDto): Promise<Product> {
-    return await this.productCreateUseCase.execute(productCreateDto);
+  @UseInterceptors(FileInterceptor('file'))
+  async insert(
+    @Body() productCreateDto: ProductCreateDto,
+    @UploadedFile() file: FileDto,
+  ): Promise<any> {
+    return await this.productCreateUseCase.execute(productCreateDto, file);
   }
 
   @Put(':uuid')
