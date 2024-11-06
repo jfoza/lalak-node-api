@@ -27,11 +27,7 @@ show_commands () {
     echo
 }
 
-devops_exists () {
-    if [ ! -d "$devops_dir" ]; then
-        git clone git@git.fiesc.com.br:desenvolvimento-interno/devops-docker-compose.git $devops_dir
-    fi
-}
+devops_exists () {}
 
 devops_start () {
     devops_exists
