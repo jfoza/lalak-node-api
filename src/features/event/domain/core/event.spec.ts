@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { ProductsDataBuilder } from '../../../../../test/unit/products-data-builder';
 import { Event, EventProps } from '@/features/event/domain/core/event';
 

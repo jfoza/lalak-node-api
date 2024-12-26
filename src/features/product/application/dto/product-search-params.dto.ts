@@ -9,7 +9,7 @@ import {
   Min,
   ValidateIf,
 } from 'class-validator';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Transform, Type } from 'class-transformer';
 import { FiltersDto } from '@/common/application/dto/FiltersDto';
 

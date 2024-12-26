@@ -1,10 +1,10 @@
-import { File, FileProps } from '@/upload/domain/core/file';
-import { AbstractUploadImageUseCase } from '@/upload/domain/services/abstract.upload-image.use-case';
-import { FileDto } from '@/upload/application/dto/file.dto';
+import { File, FileProps } from '@/upload/domain/entities/file';
+import { AbstractUploadImageUseCase } from '@/upload/domain/use-cases/abstract.upload-image.use-case';
 import { Inject, Injectable } from '@nestjs/common';
 import { UploadImageRepository } from '@/upload/domain/repositories/upload-image.repository';
 import path from 'path';
 import { uploadConfig } from '@/upload/application/config/upload.config';
+import { AbstractFileDto } from '@/upload/domain/dto/file.dto.interface';
 
 @Injectable()
 export class UploadImageUseCase implements AbstractUploadImageUseCase {
@@ -13,7 +13,7 @@ export class UploadImageUseCase implements AbstractUploadImageUseCase {
     private readonly storageImageRepository: UploadImageRepository,
   ) {}
 
-  async handle(fileDto: FileDto, directory: string): Promise<File> {
+  async execute(fileDto: AbstractFileDto, directory: string): Promise<File> {
     const filename: string = uploadConfig.storage(fileDto.originalname);
 
     const file: File = await File.create({

@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { CategoryMapper } from '@/features/category/infra/database/typeorm/mappers/category.mapper';
 import { CategoryEntity } from '@/features/category/infra/database/typeorm/entities/category.entity';
 import { Category } from '@/features/category/domain/core/category';

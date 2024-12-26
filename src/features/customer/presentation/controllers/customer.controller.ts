@@ -16,7 +16,7 @@ import { ICustomerListUseCase } from '@/features/customer/domain/interfaces/use-
 import { CustomerSearchParamsDto } from '@/features/customer/application/dto/customer-search-params.dto';
 import { CreateCustomerDto } from '@/features/customer/application/dto/create-customer.dto';
 import { ICustomerCreateUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-create.use-case.interface';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 import { ICustomerListByIdUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-list-by-id.use-case.interface';
 import { UpdateCustomerDto } from '@/features/customer/application/dto/update-customer.dto';
 import { ICustomerUpdateUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-update.use-case.interface';

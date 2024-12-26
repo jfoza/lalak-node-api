@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { ProductMapper } from '@/features/product/infra/database/typeorm/mappers/product.mapper';
 import { ProductEntity } from '@/features/product/infra/database/typeorm/entities/product.entity';
 import { Product } from '@/features/product/domain/core/product';

@@ -1,11 +1,11 @@
 import { vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Event } from '@/features/event/domain/core/event';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { EventListByUuidUseCase } from '@/features/event/application/use-cases/event-list-by-uuid.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 

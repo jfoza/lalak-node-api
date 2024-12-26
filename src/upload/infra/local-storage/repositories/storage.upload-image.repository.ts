@@ -1,6 +1,6 @@
 import { UploadImageRepository } from '@/upload/domain/repositories/upload-image.repository';
 import path from 'path';
-import { File } from '@/upload/domain/core/file';
+import { File } from '@/upload/domain/entities/file';
 import { writeFile, mkdir } from 'node:fs/promises';
 import fs from 'fs';
 import { Injectable } from '@nestjs/common';

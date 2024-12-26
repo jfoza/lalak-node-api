@@ -8,8 +8,8 @@ import {
 } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
-import { UserTokenProps } from '@/features/user/domain/core/user-token';
-import { TokenTypesEnum } from '@/common/infra/enums/token-types.enum';
+import { UserTokenProps } from '@/features/user/domain/entities/user-token';
+import { TokenTypesEnum } from '@/utils/enums/token-types.enum';
 
 export class UserTokenRules {
   @IsNotEmpty()

@@ -10,8 +10,8 @@ import {
 } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
-import { PersonProps } from '@/features/user/domain/core/person';
-import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
+import { PersonProps } from '@/features/user/domain/entities/person';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 
 export class PersonRules {
   @IsOptional()

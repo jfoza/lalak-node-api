@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 
 export class Core<Props> {
   public readonly _uuid: string;

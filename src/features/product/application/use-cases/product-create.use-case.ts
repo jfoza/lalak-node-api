@@ -1,9 +1,7 @@
 import { AbstractProductCreateUseCase } from '@/features/product/domain/use-cases/abstract.product-create.use-case';
 import { ProductCreateDto } from '@/features/product/application/dto/product-create.dto';
 import { Product, ProductProps } from '@/features/product/domain/core/product';
-import { File } from '@/upload/domain/core/file';
 import { Inject, Injectable } from '@nestjs/common';
-import { Application } from '@/common/application/use-cases/application';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
 import { ProductValidations } from '@/features/product/application/validations/product.validations';
@@ -13,16 +11,10 @@ import { Category } from '@/features/category/domain/core/category';
 import { Event } from '@/features/event/domain/core/event';
 import { EventValidations } from '@/features/event/application/validations/event.validations';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
-import { Helper } from '@/common/infra/helpers';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
-import { FileDto } from '@/upload/application/dto/file.dto';
-import { AbstractUploadImageUseCase } from '@/upload/domain/services/abstract.upload-image.use-case';
+import { Helper } from 'src/utils/helpers';
 
 @Injectable()
-export class ProductCreateUseCase
-  extends Application
-  implements AbstractProductCreateUseCase
-{
+export class ProductCreateUseCase implements AbstractProductCreateUseCase {
   constructor(
     @Inject(ProductQueryRepository)
     private readonly productQueryRepository: ProductQueryRepository,
@@ -35,19 +27,9 @@ export class ProductCreateUseCase
 
     @Inject(EventRepository)
     private readonly eventRepository: EventRepository,
+  ) {}
 
-    @Inject(AbstractUploadImageUseCase)
-    private readonly uploadImageUseCase: AbstractUploadImageUseCase,
-  ) {
-    super();
-  }
-
-  async execute(
-    productCreateDto: ProductCreateDto,
-    image: FileDto,
-  ): Promise<Product> {
-    this.policy.can(AbilitiesEnum.PRODUCTS_INSERT);
-
+  async execute(productCreateDto: ProductCreateDto): Promise<Product> {
     await ProductValidations.productExistsByName(
       productCreateDto.description,
       this.productQueryRepository,
@@ -82,16 +64,9 @@ export class ProductCreateUseCase
       events,
     } as ProductProps);
 
-    const file: File = await this.uploadImageUseCase.handle(
-      image,
-      'images/products',
-    );
-
-    debug(file);
-
-    // await this.productCommandRepository.create(product);
-    // await this.productCommandRepository.saveCategories(product);
-    // await this.productCommandRepository.saveEvents(product);
+    await this.productCommandRepository.create(product);
+    await this.productCommandRepository.saveCategories(product);
+    await this.productCommandRepository.saveEvents(product);
 
     return product;
   }

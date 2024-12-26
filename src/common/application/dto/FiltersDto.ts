@@ -7,7 +7,7 @@ import {
   Min,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 export class FiltersDto {
   @IsOptional()

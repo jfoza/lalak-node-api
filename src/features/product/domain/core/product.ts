@@ -1,7 +1,8 @@
 import { Core } from '@/common/domain/core/core';
-import { ProductValidatorFactory } from '@/features/category/domain/validators/product.validator';
+import { ProductValidatorFactory } from '@/features/product/domain/validators/product.validator';
 import { Category } from '@/features/category/domain/core/category';
 import { Event } from '@/features/event/domain/core/event';
+import { Image } from '@/features/image/domain/core/image';
 
 export type ProductProps = {
   description: string;
@@ -13,6 +14,7 @@ export type ProductProps = {
   active: boolean;
   createdAt?: Date;
   categories?: Category[];
+  images: Image[];
   events?: Event[];
 };
 
@@ -61,6 +63,10 @@ export class Product extends Core<ProductProps> {
     return this.props.events ?? [];
   }
 
+  get images(): Image[] {
+    return this.props.images ?? [];
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -71,6 +77,10 @@ export class Product extends Core<ProductProps> {
 
   get eventsUuid(): string[] {
     return this.events.map((event: Event) => event.uuid);
+  }
+
+  get imagesUuid(): string[] {
+    return this.images.map((image: Image) => image.uuid);
   }
 
   set description(description: string) {
@@ -107,6 +117,10 @@ export class Product extends Core<ProductProps> {
 
   set events(events: Event[]) {
     this.props.events = events;
+  }
+
+  set images(images: Image[]) {
+    this.props.images = images;
   }
 
   static async validate(props: ProductProps): Promise<void> {

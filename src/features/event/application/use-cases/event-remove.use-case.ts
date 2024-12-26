@@ -1,11 +1,11 @@
-import { Application } from '@/common/application/use-cases/application';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Application } from '@/common/application/application';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { AbstractEventRemoveUseCase } from '@/features/event/domain/use-cases/abstract.event-remove.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventValidations } from '@/features/event/application/validations/event.validations';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Event } from '@/features/event/domain/core/event';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 @Injectable()
 export class EventRemoveUseCase

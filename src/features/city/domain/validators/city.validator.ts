@@ -10,7 +10,7 @@ import {
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
 import { CityProps } from '@/features/city/domain/core/city';
-import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 
 export class CityRules {
   @IsNotEmpty()

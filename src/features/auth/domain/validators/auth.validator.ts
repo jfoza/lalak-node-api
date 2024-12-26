@@ -11,8 +11,8 @@ import {
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
 import { AuthProps } from '@/features/auth/domain/core/auth';
-import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
-import { AuthTypesEnum } from '@/common/infra/enums/auth-types.enum';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
+import { AuthTypesEnum } from '@/utils/enums/auth-types.enum';
 
 export class AuthRules {
   @IsNotEmpty()

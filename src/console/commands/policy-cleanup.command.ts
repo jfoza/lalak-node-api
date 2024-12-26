@@ -1,13 +1,13 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { CacheEnum } from '@/common/infra/enums/cache.enum';
+import { CacheEnum } from '@/utils/enums/cache.enum';
 import { Inject } from '@nestjs/common';
-import { IRedisService } from '@/redis/domain/interfaces/redis.service.interface';
+import { IRedisRepository } from '@/redis/domain/repositories/redis.repository.interface';
 
 @Command({ name: 'policy:cleanup', description: 'Policy cleanup' })
 export class PolicyCleanupCommand extends CommandRunner {
   constructor(
-    @Inject('IRedisService')
-    private readonly redisService: IRedisService,
+    @Inject(IRedisRepository)
+    private readonly redisService: IRedisRepository,
   ) {
     super();
   }

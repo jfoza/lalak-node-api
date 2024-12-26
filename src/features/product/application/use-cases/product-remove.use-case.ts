@@ -1,8 +1,8 @@
 import { AbstractProductRemoveUseCase } from '@/features/product/domain/use-cases/abstract.product-remove.use-case';
 import { Inject, Injectable } from '@nestjs/common';
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ProductValidations } from '@/features/product/application/validations/product.validations';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
 

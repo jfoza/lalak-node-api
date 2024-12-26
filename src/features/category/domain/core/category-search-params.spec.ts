@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import {
   CategorySearchParams,
   CategorySearchParamsProps,

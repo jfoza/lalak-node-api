@@ -1,10 +1,10 @@
 import { beforeEach, vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Event } from '@/features/event/domain/core/event';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { ConflictException, ForbiddenException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { EventCreateUseCase } from '@/features/event/application/use-cases/event-create.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventCreateDto } from '@/features/event/application/dto/event-create.dto';

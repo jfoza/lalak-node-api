@@ -2,8 +2,8 @@ import { AbstractThemeCreateUseCase } from '@/features/theme/domain/use-cases/ab
 import { CreateThemeDto } from '@/features/theme/application/dto/create-theme.dto';
 import { Theme, ThemeProps } from '@/features/theme/domain/core/theme';
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
-import { Application } from '@/common/application/use-cases/application';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Application } from '@/common/application/application';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { Injectable } from '@nestjs/common';
 

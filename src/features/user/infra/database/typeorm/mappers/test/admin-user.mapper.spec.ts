@@ -1,7 +1,7 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { AdminUserMapper } from '@/features/user/infra/database/typeorm/mappers/admin-user.mapper';
 import { AdminUserEntity } from '@/features/user/infra/database/typeorm/entities/admin-user.entity';
-import { AdminUser } from '@/features/user/domain/core/admin-user';
+import { AdminUser } from '@/features/user/domain/entities/admin-user';
 
 describe('AdminUserMapper Unit Tests', () => {
   let sut: AdminUserMapper;

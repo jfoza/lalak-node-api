@@ -3,17 +3,17 @@ import { IUserRepository } from '@/features/user/domain/repositories/user-reposi
 import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { isAfter, addHours } from 'date-fns';
-import { Hash } from '@/common/infra/utils/hash';
+import { Hash } from '@/utils/hash';
 import { IResetPasswordUseCase } from '@/features/user/domain/use-cases/reset-password.use-case.interface';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 @Injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
-    @Inject('IUserRepository')
+    @Inject(IUserRepository)
     private readonly userRepository: IUserRepository,
 
-    @Inject('IUserTokenRepository')
+    @Inject(IUserTokenRepository)
     private readonly userTokenRepository: IUserTokenRepository,
   ) {}
 

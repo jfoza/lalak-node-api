@@ -1,7 +1,7 @@
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { Event } from '@/features/event/domain/core/event';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Injectable } from '@nestjs/common';
 import { AbstractEventListService } from '@/features/event/domain/services/abstract.event-list.service';
 import { AbstractEventListUseCase } from '@/features/event/domain/use-cases/abstract.event-list.use-case';

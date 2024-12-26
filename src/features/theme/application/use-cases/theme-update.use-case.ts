@@ -2,9 +2,9 @@ import { AbstractThemeUpdateUseCase } from '@/features/theme/domain/use-cases/ab
 import { UpdateThemeDto } from '@/features/theme/application/dto/update-theme.dto';
 import { Theme } from '@/features/theme/domain/core/theme';
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { Injectable } from '@nestjs/common';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 
 @Injectable()

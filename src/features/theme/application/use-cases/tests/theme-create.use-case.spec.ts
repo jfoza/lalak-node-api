@@ -2,11 +2,11 @@ import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repo
 import { beforeEach, vi } from 'vitest';
 import { ThemeCreateUseCase } from '@/features/theme/application/use-cases/theme-create.use-case';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Theme } from '@/features/theme/domain/core/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { ConflictException, ForbiddenException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { CreateThemeDto } from '@/features/theme/application/dto/create-theme.dto';
 
 describe('ThemeCreateUseCase Unit Tests', () => {

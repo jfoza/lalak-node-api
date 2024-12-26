@@ -1,7 +1,7 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
 import { PersonMapper } from '@/features/user/infra/database/typeorm/mappers/person.mapper';
-import { Person } from '@/features/user/domain/core/person';
+import { Person } from '@/features/user/domain/entities/person';
 import { CityEntity } from '@/features/city/infra/database/typeorm/entities/city.entity';
 
 describe('PersonMapper Unit Tests', () => {

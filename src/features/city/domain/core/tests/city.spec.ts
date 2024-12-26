@@ -1,6 +1,6 @@
 import { City, CityProps } from '@/features/city/domain/core/city';
-import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
-import { UUID } from '@/common/infra/utils/uuid';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
+import { UUID } from '@/utils/uuid';
 
 describe('City Domain Entity Unit Tests', () => {
   let sut: City;

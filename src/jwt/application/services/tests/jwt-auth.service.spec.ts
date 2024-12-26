@@ -1,6 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { JwtAuthService } from '../jwt-auth.service';
-import { JwtService } from '@nestjs/jwt';
 import { IJwtToken } from '@/jwt/domain/interfaces/jwt-token.interface';
 
 vi.mock('node:process', () => ({
@@ -8,26 +7,18 @@ vi.mock('node:process', () => ({
 }));
 
 describe('JwtAuthService', () => {
-  let jwtAuthService: JwtAuthService;
-  let jwtService: JwtService;
-
-  beforeEach(() => {
-    jwtService = { sign: vi.fn() } as unknown as JwtService;
-    jwtAuthService = new JwtAuthService();
-
-    Reflect.set(jwtAuthService, 'jwtService', jwtService);
-  });
+  let sut: JwtAuthService;
 
   describe('authenticate', () => {
     it('should return a valid IJwtToken object', () => {
       const payload = { userId: '123' };
       const fakeToken = 'fake.jwt.token';
 
-      vi.spyOn(jwtService, 'sign').mockReturnValue(fakeToken);
+      vi.spyOn(sut, 'sign').mockReturnValue(fakeToken);
 
-      const result: IJwtToken = jwtAuthService.authenticate(payload);
+      const result: IJwtToken = sut.authenticate(payload);
 
-      expect(jwtService.sign).toHaveBeenCalledWith(payload);
+      expect(sut.sign).toHaveBeenCalledWith(payload);
       expect(result).toEqual({
         token: fakeToken,
         type: 'JWT',
@@ -39,11 +30,11 @@ describe('JwtAuthService', () => {
       const bufferPayload = Buffer.from('test payload');
       const fakeToken = 'buffer.jwt.token';
 
-      vi.spyOn(jwtService, 'sign').mockReturnValue(fakeToken);
+      vi.spyOn(sut, 'sign').mockReturnValue(fakeToken);
 
-      const result: IJwtToken = jwtAuthService.authenticate(bufferPayload);
+      const result: IJwtToken = sut.authenticate(bufferPayload);
 
-      expect(jwtService.sign).toHaveBeenCalledWith(bufferPayload);
+      expect(sut.sign).toHaveBeenCalledWith(bufferPayload);
       expect(result.token).toBe(fakeToken);
     });
   });

@@ -15,7 +15,7 @@ import { IAdminUserListUseCase } from '@/features/user/domain/use-cases/admin-us
 import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { IAdminUserListById } from '@/features/user/domain/use-cases/admin-user-list-by-id.use-case.interface';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 import { CreateAdminUserDto } from '@/features/user/application/dto/create-admin-user.dto';
 import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-user-create.use-case.interface';
 import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-user-update.use-case.interface';
@@ -24,16 +24,16 @@ import { UpdateAdminUserDto } from '@/features/user/application/dto/update-admin
 @UseGuards(AuthGuard)
 @Controller('admin/users')
 export class AdminUserController {
-  @Inject('IAdminUserListUseCase')
+  @Inject(IAdminUserListUseCase)
   private readonly adminUserListUseCase: IAdminUserListUseCase;
 
-  @Inject('IAdminUserListById')
+  @Inject(IAdminUserListById)
   private readonly adminUserListById: IAdminUserListById;
 
-  @Inject('IAdminUserCreateUseCase')
+  @Inject(IAdminUserCreateUseCase)
   private readonly adminUserCreateUseCase: IAdminUserCreateUseCase;
 
-  @Inject('IAdminUserUpdateUseCase')
+  @Inject(IAdminUserUpdateUseCase)
   private readonly adminUserUpdateUseCase: IAdminUserUpdateUseCase;
 
   @Get()

@@ -1,6 +1,6 @@
 import { beforeEach, vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Event } from '@/features/event/domain/core/event';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import {
@@ -8,8 +8,8 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
-import { UUID } from '@/common/infra/utils/uuid';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { UUID } from '@/utils/uuid';
 import { EventUpdateUseCase } from '@/features/event/application/use-cases/event-update.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventUpdateDto } from '@/features/event/application/dto/event-update.dto';

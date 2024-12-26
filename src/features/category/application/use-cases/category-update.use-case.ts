@@ -1,4 +1,4 @@
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { Category } from '@/features/category/domain/core/category';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { Inject, Injectable } from '@nestjs/common';
@@ -7,7 +7,7 @@ import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repo
 import { CategoryValidations } from '@/features/category/application/validations/category.validations';
 import { AbstractCategoryUpdateUseCase } from '@/features/category/domain/use-cases/abstract.category-update.use-case';
 import { UpdateCategoryDto } from '@/features/category/application/dto/update-category.dto';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 
 @Injectable()
 export class CategoryUpdateUseCase

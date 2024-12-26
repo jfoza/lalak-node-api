@@ -1,8 +1,8 @@
 import { AbstractProductListByUuidService } from '@/features/product/domain/services/abstract.product-list-by-uuid.service';
 import { Product } from '@/features/product/domain/core/product';
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { Inject, Injectable } from '@nestjs/common';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { AbstractProductListByUuidUseCase } from '@/features/product/domain/use-cases/abstract.product-list-by-uuid.use-case';
 
 @Injectable()

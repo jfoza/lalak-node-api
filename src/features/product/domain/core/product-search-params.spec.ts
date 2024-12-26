@@ -2,7 +2,7 @@ import {
   ProductSearchParams,
   ProductSearchParamsProps,
 } from '@/features/product/domain/core/product-search-params';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 
 describe('ProductSearchParams Unit Tests', () => {
   let sut: ProductSearchParams;

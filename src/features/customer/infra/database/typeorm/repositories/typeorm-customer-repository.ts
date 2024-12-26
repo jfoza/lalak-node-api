@@ -1,6 +1,6 @@
 import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
 import { Customer } from '@/features/customer/domain/core/customer';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 import { CustomerSearchParamsDto } from '@/features/customer/application/dto/customer-search-params.dto';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Repository, SelectQueryBuilder } from 'typeorm';

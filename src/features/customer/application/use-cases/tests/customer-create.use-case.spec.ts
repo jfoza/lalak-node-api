@@ -2,22 +2,22 @@ import { vi } from 'vitest';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
-import { User } from '@/features/user/domain/core/user';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { User } from '@/features/user/domain/entities/user';
 import {
   ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Policy } from '@/acl/domain/core/policy';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
 import { CustomerCreateUseCase } from '@/features/customer/application/use-cases/customer-create.use-case';
 import { CreateCustomerDto } from '@/features/customer/application/dto/create-customer.dto';
-import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 import { City, CityProps } from '@/features/city/domain/core/city';
 
 describe('Admin User Create UseCase', () => {

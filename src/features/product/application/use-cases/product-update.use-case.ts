@@ -2,7 +2,7 @@ import { AbstractProductUpdateUseCase } from '@/features/product/domain/use-case
 import { ProductUpdateDto } from '@/features/product/application/dto/product-update.dto';
 import { Product } from '@/features/product/domain/core/product';
 import { Inject, Injectable } from '@nestjs/common';
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
@@ -12,8 +12,8 @@ import { Category } from '@/features/category/domain/core/category';
 import { CategoryValidations } from '@/features/category/application/validations/category.validations';
 import { Event } from '@/features/event/domain/core/event';
 import { EventValidations } from '@/features/event/application/validations/event.validations';
-import { Helper } from '@/common/infra/helpers';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Helper } from 'src/utils/helpers';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 
 @Injectable()
 export class ProductUpdateUseCase

@@ -1,18 +1,18 @@
 import { beforeEach, vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import {
   ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { Product } from '@/features/product/domain/core/product';
 import { Category } from '@/features/category/domain/core/category';
 import { Event } from '@/features/event/domain/core/event';

@@ -3,20 +3,20 @@ import { IPersonRepository } from '@/features/user/domain/repositories/person-re
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
-import { Profile } from '@/features/user/domain/core/profile';
-import { User } from '@/features/user/domain/core/user';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { Profile } from '@/features/user/domain/entities/profile';
+import { User } from '@/features/user/domain/entities/user';
 import {
   ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Policy } from '@/acl/domain/core/policy';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 import { AdminUserUpdateUseCase } from '@/features/user/application/use-cases/admin-user-update.use-case';
 import { UpdateAdminUserDto } from '@/features/user/application/dto/update-admin-user.dto';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 
 describe('Admin User Update UseCase', () => {

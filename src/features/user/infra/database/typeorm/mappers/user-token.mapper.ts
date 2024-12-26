@@ -2,7 +2,7 @@ import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import {
   UserToken,
   UserTokenProps,
-} from '@/features/user/domain/core/user-token';
+} from '@/features/user/domain/entities/user-token';
 import { UserTokenEntity } from '@/features/user/infra/database/typeorm/entities/user-token.entity';
 import { Injectable } from '@nestjs/common';
 

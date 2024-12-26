@@ -1,6 +1,6 @@
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 export class AdminUserValidations {
   static async adminUserExistsByUserUuid(

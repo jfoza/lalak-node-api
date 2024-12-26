@@ -1,7 +1,7 @@
 import { IsDate, IsOptional, validate } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
-import { ProfileProps } from '@/features/user/domain/core/profile';
+import { ProfileProps } from '@/features/user/domain/entities/profile';
 
 export class ProfileRules {
   @IsDate()

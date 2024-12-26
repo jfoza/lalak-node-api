@@ -1,21 +1,21 @@
 import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-user-update.use-case.interface';
 import { UpdateAdminUserDto } from '@/features/user/application/dto/update-admin-user.dto';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { Application } from '@/common/application/use-cases/application';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Application } from '@/common/application/application';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
 import { AdminUserValidations } from '@/features/user/application/validations/admin-user.validations';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
-import { Profile } from '@/features/user/domain/core/profile';
-import { Helper } from 'src/common/infra/helpers';
-import { Hash } from '@/common/infra/utils/hash';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { Profile } from '@/features/user/domain/entities/profile';
+import { Helper } from 'src/utils/helpers';
+import { Hash } from '@/utils/hash';
 
 @Injectable()
 export class AdminUserUpdateUseCase
@@ -28,16 +28,16 @@ export class AdminUserUpdateUseCase
   private updateAdminUserDto: UpdateAdminUserDto;
 
   constructor(
-    @Inject('IPersonRepository')
+    @Inject(IPersonRepository)
     private readonly personRepository: IPersonRepository,
 
-    @Inject('IUserRepository')
+    @Inject(IUserRepository)
     private readonly userRepository: IUserRepository,
 
-    @Inject('IAdminUserRepository')
+    @Inject(IAdminUserRepository)
     private readonly adminUserRepository: IAdminUserRepository,
 
-    @Inject('IProfileRepository')
+    @Inject(IProfileRepository)
     private readonly profileRepository: IProfileRepository,
   ) {
     super();
@@ -51,14 +51,14 @@ export class AdminUserUpdateUseCase
     this.updateAdminUserDto = updateAdminUserDto;
 
     switch (true) {
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE):
+      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE):
         return await this.updateByAdminMaster();
 
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE):
+      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE):
         return await this.updateByEmployee();
 
       default:
-        this.policy.policyException();
+        this.policy.forbiddenException();
     }
   }
 

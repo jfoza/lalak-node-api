@@ -1,6 +1,6 @@
 import { Event, EventProps } from '@/features/event/domain/core/event';
-import { Application } from '@/common/application/use-cases/application';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Application } from '@/common/application/application';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Injectable } from '@nestjs/common';
 import { AbstractEventCreateUseCase } from '@/features/event/domain/use-cases/abstract.event-create.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';

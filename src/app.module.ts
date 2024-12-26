@@ -17,6 +17,7 @@ import { CategoryModule } from '@/features/category/infra/modules/category.modul
 import { EventModule } from '@/features/event/infra/modules/event.module';
 import { ProductModule } from '@/features/product/infra/modules/product.module';
 import { UploadModule } from '@/upload/infra/modules/upload.module';
+import { ImageModule } from '@/features/image/infra/modules/image.module';
 
 @Module({
   imports: [
@@ -30,12 +31,13 @@ import { UploadModule } from '@/upload/infra/modules/upload.module';
     AuthModule,
     CityModule,
     UserModule,
-    CustomerModule,
-    ThemeModule,
-    CategoryModule,
-    EventModule,
-    ProductModule,
-    UploadModule,
+    // CustomerModule,
+    // ThemeModule,
+    // CategoryModule,
+    // EventModule,
+    // ProductModule,
+    // UploadModule,
+    // ImageModule,
   ],
   controllers: [AppController],
 })

@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
-import { AdminUserProps } from '@/features/user/domain/core/admin-user';
+import { AdminUserProps } from '@/features/user/domain/entities/admin-user';
 
 export class AdminUserRules {
   @IsNotEmpty()

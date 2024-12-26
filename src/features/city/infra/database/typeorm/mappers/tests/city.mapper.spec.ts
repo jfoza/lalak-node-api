@@ -1,8 +1,8 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { CityMapper } from '@/features/city/infra/database/typeorm/mappers/city.mapper';
 import { CityEntity } from '@/features/city/infra/database/typeorm/entities/city.entity';
 import { City } from '@/features/city/domain/core/city';
-import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 
 describe('CityMapper Unit Tests', () => {
   let sut: CityMapper;

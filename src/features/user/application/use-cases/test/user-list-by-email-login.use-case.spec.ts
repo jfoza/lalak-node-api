@@ -1,10 +1,10 @@
 import { vi } from 'vitest';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 import { UserListByEmailLoginUseCase } from '@/features/user/application/use-cases/user-list-by-email-login.use-case';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { LoginUserTypesEnum } from '@/common/infra/enums/login-user-types.enum';
+import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
 import { UnauthorizedException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 
 describe('Admin User List By Id UseCase', () => {

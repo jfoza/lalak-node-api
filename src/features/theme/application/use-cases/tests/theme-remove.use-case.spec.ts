@@ -1,16 +1,16 @@
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Theme } from '@/features/theme/domain/core/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import {
   BadRequestException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ThemeRemoveUseCase } from '@/features/theme/application/use-cases/theme-remove.use-case';
 
 describe('ThemeRemoveUseCase Unit Tests', () => {

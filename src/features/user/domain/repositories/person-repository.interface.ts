@@ -1,6 +1,8 @@
-import { Person } from '@/features/user/domain/core/person';
+import { Person } from '@/features/user/domain/entities/person';
 
 export interface IPersonRepository {
   create(person: Person): Promise<Person>;
   update(person: Person): Promise<Person>;
 }
+
+export const IPersonRepository = Symbol('IPersonRepository');

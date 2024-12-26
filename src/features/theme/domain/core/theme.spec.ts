@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { Theme, ThemeProps } from '@/features/theme/domain/core/theme';
 import { ProductsDataBuilder } from '../../../../../test/unit/products-data-builder';
 

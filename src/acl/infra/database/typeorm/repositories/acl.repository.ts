@@ -1,23 +1,28 @@
-import { IAclRepository } from '@/acl/domain/interfaces/acl.repository.interface';
-import { Ability } from '@/acl/domain/core/ability';
-import { GetUserAbilitiesRoutine } from '@/acl/infra/database/typeorm/routines/get-user-abilities.routine';
-import { Injectable } from '@nestjs/common';
+import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
+import { Inject, Injectable } from '@nestjs/common';
+import { Ability } from '@/acl/domain/entities/ability';
+import { IUserAbilities } from '@/acl/domain/repositories/user-abilities.routine.interface';
+import { IRedisRepository } from '@/redis/domain/repositories/redis.repository.interface';
+import { CacheEnum } from '@/utils/enums/cache.enum';
 
 @Injectable()
 export class AclRepository implements IAclRepository {
   constructor(
-    private readonly getUserAbilitiesRoutine: GetUserAbilitiesRoutine,
+    @Inject(IUserAbilities)
+    private readonly userAbilitiesRoutine: IUserAbilities,
+
+    @Inject(IRedisRepository)
+    private readonly redisRepository: IRedisRepository,
   ) {}
 
-  async findAllByUserId(userUuid: string): Promise<Ability[]> {
-    return await this.getUserAbilitiesRoutine.setUserUuid(userUuid).run();
-  }
+  async findAllByUserUuid(userUuid: string): Promise<Ability[]> {
+    const redisKey: string = CacheEnum.ABILITY_USER(userUuid);
 
-  async getUserAbilityDescriptions(userUuid: string): Promise<string[]> {
-    const results = await this.getUserAbilitiesRoutine
-      .setUserUuid(userUuid)
-      .run();
-
-    return results.map((result: { description: string }) => result.description);
+    return await this.redisRepository.remember(
+      redisKey,
+      async (): Promise<Ability[]> =>
+        await this.userAbilitiesRoutine.find(userUuid),
+      604800,
+    );
   }
 }

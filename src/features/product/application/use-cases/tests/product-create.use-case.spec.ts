@@ -1,20 +1,16 @@
 import { beforeEach, vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
-import {
-  ConflictException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ProductCreateUseCase } from '@/features/product/application/use-cases/product-create.use-case';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { ProductCreateDto } from '@/features/product/application/dto/product-create.dto';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { Product } from '@/features/product/domain/core/product';
 import { Category } from '@/features/category/domain/core/category';
 import { Event } from '@/features/event/domain/core/event';
@@ -63,9 +59,6 @@ describe('ProductCreateUseCase Unit Tests', () => {
     productCreateDto.quantity = 59.9;
     productCreateDto.categories = [categoryUuid];
     productCreateDto.events = [eventUuid];
-
-    sut.policy = new Policy();
-    sut.policy.abilities = [AbilitiesEnum.PRODUCTS_INSERT];
   });
 
   it('Should create a product', async () => {
@@ -147,17 +140,6 @@ describe('ProductCreateUseCase Unit Tests', () => {
     );
     await expect(sut.execute(productCreateDto)).rejects.toThrow(
       ErrorMessagesEnum.EVENT_NOT_FOUND,
-    );
-  });
-
-  it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
-
-    await expect(sut.execute(productCreateDto)).rejects.toThrow(
-      ForbiddenException,
-    );
-    await expect(sut.execute(productCreateDto)).rejects.toThrow(
-      ErrorMessagesEnum.NOT_AUTHORIZED,
     );
   });
 });

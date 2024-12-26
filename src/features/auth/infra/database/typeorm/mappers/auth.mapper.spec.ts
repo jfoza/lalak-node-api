@@ -1,7 +1,7 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { AuthMapper } from '@/features/auth/infra/database/typeorm/mappers/auth.mapper';
 import { AuthEntity } from '@/features/auth/infra/database/typeorm/entities/auth.entity';
-import { AuthTypesEnum } from '@/common/infra/enums/auth-types.enum';
+import { AuthTypesEnum } from '@/utils/enums/auth-types.enum';
 import { Auth } from '@/features/auth/domain/core/auth';
 
 describe('AuthMapper Unit Tests', () => {

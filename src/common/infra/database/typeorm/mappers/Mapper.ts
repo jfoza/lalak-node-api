@@ -1,4 +1,4 @@
-import { mapKeysToCamelCase } from '@/common/infra/utils/to-camel-case';
+import { mapKeysToCamelCase } from '@/utils/to-camel-case';
 
 export abstract class Mapper<TOrmEntity, TDomainEntity, TProps> {
   protected abstract snakeCaseMapper: boolean;

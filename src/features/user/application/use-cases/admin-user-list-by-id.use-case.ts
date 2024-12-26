@@ -1,11 +1,11 @@
 import { IAdminUserListById } from '@/features/user/domain/use-cases/admin-user-list-by-id.use-case.interface';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { Application } from '@/common/application/use-cases/application';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Application } from '@/common/application/application';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { AdminUserValidations } from '@/features/user/application/validations/admin-user.validations';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 
 @Injectable()
 export class AdminUserListByIdUseCase
@@ -15,7 +15,7 @@ export class AdminUserListByIdUseCase
   private userUuid: string;
 
   constructor(
-    @Inject('IAdminUserRepository')
+    @Inject(IAdminUserRepository)
     private readonly adminUserRepository: IAdminUserRepository,
   ) {
     super();
@@ -25,14 +25,14 @@ export class AdminUserListByIdUseCase
     this.userUuid = userUuid;
 
     switch (true) {
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
+      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
         return this.findByAdminMaster();
 
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
+      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
         return this.findByEmployee();
 
       default:
-        this.policy.policyException();
+        this.policy.forbiddenException();
     }
   }
 

@@ -3,7 +3,7 @@ import {
   Category,
   CategoryProps,
 } from '@/features/category/domain/core/category';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { Product, ProductProps } from '@/features/product/domain/core/product';
 import { EventProps, Event } from '@/features/event/domain/core/event';
 

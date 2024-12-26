@@ -1,10 +1,10 @@
 import { AbstractThemeRemoveUseCase } from '@/features/theme/domain/use-cases/abstract.theme-remove.use-case';
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
-import { Application } from '@/common/application/use-cases/application';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Application } from '@/common/application/application';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 @Injectable()
 export class ThemeRemoveUseCase

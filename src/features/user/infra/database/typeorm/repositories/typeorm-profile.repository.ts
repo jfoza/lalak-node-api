@@ -2,7 +2,7 @@ import { IProfileRepository } from '@/features/user/domain/repositories/profile-
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/profile.entity';
-import { Profile } from '@/features/user/domain/core/profile';
+import { Profile } from '@/features/user/domain/entities/profile';
 import { ProfileMapper } from '@/features/user/infra/database/typeorm/mappers/profile.mapper';
 import { Inject } from '@nestjs/common';
 

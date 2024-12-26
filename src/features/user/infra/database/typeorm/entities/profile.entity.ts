@@ -2,14 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
-import { AbilityEntity } from '@/acl/infra/database/typeorm/entities/ability.entity';
 
 @Entity({ schema: 'user_schema', name: 'profiles' })
 export class ProfileEntity {
@@ -33,25 +30,4 @@ export class ProfileEntity {
 
   @OneToMany(() => UserEntity, (user) => user.profile)
   users: UserEntity[];
-
-  @JoinTable({
-    schema: 'user_schema',
-    name: 'profiles_abilities',
-    joinColumn: {
-      name: 'profile_uuid',
-      referencedColumnName: 'uuid',
-    },
-    inverseJoinColumn: {
-      name: 'ability_uuid',
-      referencedColumnName: 'uuid',
-    },
-  })
-  @ManyToMany(
-    () => AbilityEntity,
-    (ability: AbilityEntity) => ability.profiles,
-    {
-      cascade: true,
-    },
-  )
-  abilities: AbilityEntity[];
 }

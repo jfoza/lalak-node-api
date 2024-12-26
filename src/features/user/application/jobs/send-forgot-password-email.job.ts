@@ -2,7 +2,7 @@ import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
 import { Inject } from '@nestjs/common';
 import { IMailService } from '@/mail/domain/interfaces/mail.service.interface';
-import { Helper } from 'src/common/infra/helpers';
+import { Helper } from 'src/utils/helpers';
 import { IMailContact } from '@/mail/domain/interfaces/mail-contact.interface';
 
 @Processor('email')

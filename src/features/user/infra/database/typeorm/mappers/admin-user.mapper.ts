@@ -3,7 +3,7 @@ import { AdminUserEntity } from '@/features/user/infra/database/typeorm/entities
 import {
   AdminUser,
   AdminUserProps,
-} from '@/features/user/domain/core/admin-user';
+} from '@/features/user/domain/entities/admin-user';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

@@ -2,7 +2,7 @@ import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repo
 import { UpdateThemeDto } from '@/features/theme/application/dto/update-theme.dto';
 import { beforeEach, vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Theme } from '@/features/theme/domain/core/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import {
@@ -10,9 +10,9 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ThemeUpdateUseCase } from '@/features/theme/application/use-cases/theme-update.use-case';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 
 describe('ThemeUpdateUseCase Unit Tests', () => {
   let sut: ThemeUpdateUseCase;

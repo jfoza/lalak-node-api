@@ -1,9 +1,9 @@
 import { AclService } from '@/acl/application/services/acl.service';
 import { JwtInfoService } from '@/jwt/application/services/jwt-info.service';
 import { vi } from 'vitest';
-import { IAclRepository } from '@/acl/domain/interfaces/acl.repository.interface';
-import { IRedisService } from '@/redis/domain/interfaces/redis.service.interface';
-import { CacheEnum } from '@/common/infra/enums/cache.enum';
+import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
+import { IRedisService } from '@/redis/domain/repositories/redis.service.interface';
+import { CacheEnum } from '@/utils/enums/cache.enum';
 
 describe('AclService Unit tests', () => {
   let sut: AclService;

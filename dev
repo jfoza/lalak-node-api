@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 export USERID="$(id -u)"
 
-PNPM="docker-compose exec app-dev pnpm"
-NEST="docker-compose exec app-dev pnpm run nest"
-NPX="docker-compose exec app-dev pnpm run npx"
+NPM="docker-compose exec app-dev npm"
+NEST="docker-compose exec app-dev npm run nest"
+NPX="docker-compose exec app-dev npm run npx"
 ENV_FILE=".env"
 ENV_FILE_EXAMPLE=".env.example"
 ICON="🤖"
@@ -21,20 +21,13 @@ show_commands () {
     echo "sh dev status            - Exibe o status dos containers"
     echo "sh dev stop              - Desliga os containers"
     echo "sh dev logs NOME         - Exibe e acompanha os logs do container"
-    echo "sh dev pnpm COMANDO      - Executa os comandos do PNPM"
+    echo "sh dev npm COMANDO       - Executa os comandos do NPM"
     echo "sh dev nest COMANDO      - Executa comandos do Nest CLI"
     echo "sh dev npx COMANDO       - Executa comandos do NPX"
     echo
 }
 
-devops_exists () {
-    if [ ! -d "$devops_dir" ]; then
-        git clone git@git.fiesc.com.br:desenvolvimento-interno/devops-docker-compose.git $devops_dir
-    fi
-}
-
 devops_start () {
-    devops_exists
     cd $devops_dir
     if ! docker ps | grep -F -q "devops_traefik"; then
         sh dev start traefik
@@ -67,7 +60,7 @@ compose_up_dev () {
     check_env_exists
     docker-compose up -d app-dev
     docker-compose up -d bull-board
-    execute_pnpm_install
+    execute_npm_install
 }
 
 compose_up_prod () {
@@ -78,11 +71,15 @@ compose_up_prod () {
     docker-compose up -d --build app-prod
 }
 
-execute_pnpm_install () {
+execute_npm_install () {
+    echo
+    echo "$ICON Ajustando permissões no contêiner..."
+    echo
+    docker-compose exec app-dev chmod -R 775 /var/www/html/node_modules || true
     echo
     echo "$ICON Instalando dependências Js (node_modules)..."
     echo
-    $PNPM install
+    $NPM install
 }
 
 compose_status () {
@@ -124,13 +121,13 @@ check_app_is_up () {
     fi
 }
 
-execute_pnpm () {
+execute_npm () {
     check_app_is_up
     echo
-    echo "$ICON Executando PNPM..."
+    echo "$ICON Executando NPM..."
     echo
     shift 1
-    $PNPM $@
+    $NPM $@
 }
 
 execute_nest () {
@@ -158,8 +155,8 @@ start_dev () {
     echo
     echo "$ICON Iniciando aplicação em modo Dev"
     echo
-    $PNPM run start:dev
-    $PNPM start redis:cleanup
+    $NPM run start:dev
+    $NPM start redis:cleanup
 }
 
 start_prod () {
@@ -188,7 +185,7 @@ if [ $# -gt 0 ]; then
     "status") compose_status ;;
     "stop") compose_down ;;
     "logs") compose_logs $@ ;;
-    "pnpm") execute_pnpm $@ ;;
+    "npm") execute_npm $@ ;;
     "nest") execute_nest $@ ;;
     "npx") execute_npx $@ ;;
     *) show_commands ;;

@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { CategoryListService } from '@/features/category/application/services/category-list.service';
 import { AbstractCategoryListUseCase } from '@/features/category/domain/use-cases/abstract.category-list.use-case';
 import { CategorySearchParamsDto } from '@/features/category/application/dto/category-search-params.dto';
 import { ForbiddenException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 describe('CategoryListService Unit Tests', () => {
   let sut: CategoryListService;

@@ -1,6 +1,6 @@
 import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
-import { Person, PersonProps } from '@/features/user/domain/core/person';
+import { Person, PersonProps } from '@/features/user/domain/entities/person';
 import { Injectable } from '@nestjs/common';
 import { City } from '@/features/city/domain/core/city';
 

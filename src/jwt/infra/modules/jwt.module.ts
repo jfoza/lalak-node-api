@@ -3,10 +3,14 @@ import { JwtInfoService } from '@/jwt/application/services/jwt-info.service';
 import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule as NestJwtModule } from '@nestjs/jwt';
+import { UserModule } from '@/features/user/infra/modules/user.module';
+import { JwtAuth } from '@/jwt/domain/entities/jwt-auth';
 
 @Global()
 @Module({
   imports: [
+    UserModule,
+
     NestJwtModule.registerAsync({
       global: true,
       imports: [],
@@ -19,7 +23,7 @@ import { JwtModule as NestJwtModule } from '@nestjs/jwt';
       inject: [ConfigService],
     }),
   ],
-  providers: [JwtInfoService, JwtAuthService],
-  exports: [JwtInfoService, JwtAuthService],
+  providers: [JwtInfoService, JwtAuthService, JwtAuth],
+  exports: [JwtInfoService, JwtAuthService, JwtAuth],
 })
 export class JwtModule {}

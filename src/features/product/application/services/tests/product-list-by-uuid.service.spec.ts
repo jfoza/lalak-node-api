@@ -2,10 +2,10 @@ import { ProductListByUuidService } from '@/features/product/application/service
 import { AbstractProductListByUuidUseCase } from '@/features/product/domain/use-cases/abstract.product-list-by-uuid.use-case';
 import { vi } from 'vitest';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { Product } from '@/features/product/domain/core/product';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 
 describe('ProductListByUuidService', () => {
   let sut: ProductListByUuidService;

@@ -19,7 +19,6 @@ import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { AbstractProductListService } from '@/features/product/domain/services/abstract.product-list.service';
 import { AbstractProductListByUuidService } from '@/features/product/domain/services/abstract.product-list-by-uuid.service';
-import { AbstractProductCreateUseCase } from '@/features/product/domain/use-cases/abstract.product-create.use-case';
 import { AbstractProductUpdateUseCase } from '@/features/product/domain/use-cases/abstract.product-update.use-case';
 import { AbstractProductRemoveUseCase } from '@/features/product/domain/use-cases/abstract.product-remove.use-case';
 import { ProductSearchParamsDto } from '@/features/product/application/dto/product-search-params.dto';
@@ -28,6 +27,7 @@ import { ProductCreateDto } from '@/features/product/application/dto/product-cre
 import { ProductUpdateDto } from '@/features/product/application/dto/product-update.dto';
 import { FileDto } from '@/upload/application/dto/file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AbstractProductCreateService } from '@/features/product/domain/services/abstract.product-create.service';
 
 @UseGuards(AuthGuard)
 @Controller('admin/products')
@@ -38,8 +38,8 @@ export class ProductController {
   @Inject(AbstractProductListByUuidService)
   private readonly productListByUuidService: AbstractProductListByUuidService;
 
-  @Inject(AbstractProductCreateUseCase)
-  private readonly productCreateUseCase: AbstractProductCreateUseCase;
+  @Inject(AbstractProductCreateService)
+  private readonly productCreateService: AbstractProductCreateService;
 
   @Inject(AbstractProductUpdateUseCase)
   private readonly productUpdateUseCase: AbstractProductUpdateUseCase;
@@ -65,9 +65,12 @@ export class ProductController {
   @UseInterceptors(FileInterceptor('file'))
   async insert(
     @Body() productCreateDto: ProductCreateDto,
-    @UploadedFile() file: FileDto,
+    @UploadedFile() file?: FileDto,
   ): Promise<any> {
-    return await this.productCreateUseCase.execute(productCreateDto, file);
+    return await this.productCreateService.handle(
+      productCreateDto,
+      file || null,
+    );
   }
 
   @Put(':uuid')

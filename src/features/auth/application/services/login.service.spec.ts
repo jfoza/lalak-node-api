@@ -2,17 +2,17 @@ import { LoginService } from '@/features/auth/application/services/login.service
 import { AuthDto } from '@/features/auth/application/dto/auth.dto';
 import { beforeEach, expect, vi } from 'vitest';
 import { IUserListByEmailLoginUseCase } from '@/features/user/domain/use-cases/user-list-by-email-login.use-case.interface';
-import { IAclRepository } from '@/acl/domain/interfaces/acl.repository.interface';
+import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
 import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
 import { IJwtToken } from '@/jwt/domain/interfaces/jwt-token.interface';
 import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.repository.interface';
 import { UserDataBuilder } from '../../../../../test/unit/user-data-builder';
-import { UUID } from '@/common/infra/utils/uuid';
-import { Hash } from '@/common/infra/utils/hash';
-import { User } from '@/features/user/domain/core/user';
-import { LoginUserTypesEnum } from '@/common/infra/enums/login-user-types.enum';
+import { UUID } from '@/utils/uuid';
+import { Hash } from '@/utils/hash';
+import { User } from '@/features/user/domain/entities/user';
+import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
 import { UnauthorizedException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 describe('LoginService Unit Tests', () => {
   let sut: LoginService;

@@ -1,7 +1,7 @@
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { beforeEach, vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Theme } from '@/features/theme/domain/core/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import {
@@ -9,11 +9,11 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { CategoryCreateUseCase } from '@/features/category/application/use-cases/category-create.use-case';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
 import { CreateCategoryDto } from '@/features/category/application/dto/create-category.dto';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { Category } from '@/features/category/domain/core/category';
 
 describe('CategoryCreateUseCase Unit Tests', () => {

@@ -6,11 +6,11 @@ import { UserValidations } from '@/features/user/application/validations/user.va
 import {
   UserToken,
   UserTokenProps,
-} from '@/features/user/domain/core/user-token';
+} from '@/features/user/domain/entities/user-token';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
-import { TokenTypesEnum } from '@/common/infra/enums/token-types.enum';
-import { UUID } from '@/common/infra/utils/uuid';
+import { TokenTypesEnum } from '@/utils/enums/token-types.enum';
+import { UUID } from '@/utils/uuid';
 
 @Injectable()
 export class SendForgotPasswordEmailUseCase
@@ -20,10 +20,10 @@ export class SendForgotPasswordEmailUseCase
     @InjectQueue('email')
     private readonly emailQueue: Queue,
 
-    @Inject('IUserRepository')
+    @Inject(IUserRepository)
     private readonly userRepository: IUserRepository,
 
-    @Inject('IUserTokenRepository')
+    @Inject(IUserTokenRepository)
     private readonly userTokenRepository: IUserTokenRepository,
   ) {}
 

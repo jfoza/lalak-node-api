@@ -1,8 +1,8 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { UserTokenMapper } from '@/features/user/infra/database/typeorm/mappers/user-token.mapper';
-import { UserToken } from '@/features/user/domain/core/user-token';
+import { UserToken } from '@/features/user/domain/entities/user-token';
 import { UserTokenEntity } from '@/features/user/infra/database/typeorm/entities/user-token.entity';
-import { TokenTypesEnum } from '@/common/infra/enums/token-types.enum';
+import { TokenTypesEnum } from '@/utils/enums/token-types.enum';
 
 describe('UserTokenMapper Unit Tests', () => {
   let sut: UserTokenMapper;

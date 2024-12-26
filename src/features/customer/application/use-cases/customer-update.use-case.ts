@@ -1,8 +1,8 @@
 import { ICustomerUpdateUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-update.use-case.interface';
 import { UpdateCustomerDto } from '@/features/customer/application/dto/update-customer.dto';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { CustomerValidations } from '@/features/customer/application/validations/customer.validations';
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
@@ -10,8 +10,8 @@ import { IUserRepository } from '@/features/user/domain/repositories/user-reposi
 import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { CityValidations } from '@/features/city/application/validations/city.validations';
-import { Helper } from 'src/common/infra/helpers';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Helper } from 'src/utils/helpers';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 
 @Injectable()
 export class CustomerUpdateUseCase

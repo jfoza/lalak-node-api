@@ -1,15 +1,19 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { JwtInfoService } from '@/jwt/application/services/jwt-info.service';
-import { JwtService } from '@nestjs/jwt';
+import { JwtAuth } from '@/jwt/domain/entities/jwt-auth';
+import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
   constructor(
-    private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly jwtInfoService: JwtInfoService,
+
+    @Inject(JwtAuthService)
+    private readonly jwtAuthService: JwtAuthService,
+
+    @Inject(JwtAuth)
+    private readonly jwtAuth: JwtAuth,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
@@ -18,12 +22,12 @@ export class JwtMiddleware implements NestMiddleware {
 
       if (token) {
         try {
-          const payload = await this.jwtService.verifyAsync(token, {
+          const payload = await this.jwtAuthService.verifyAsync(token, {
             secret: this.configService.get<string>('JWT_SECRET'),
           });
 
           if (payload) {
-            this.jwtInfoService.user = payload.user;
+            await this.jwtAuth.create(payload.user);
           }
         } catch {}
       }

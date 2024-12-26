@@ -1,9 +1,9 @@
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Theme } from '@/features/theme/domain/core/theme';
 import { ThemeSearchParamsDto } from '@/features/theme/application/dto/theme-search-params.dto';
 import { AbstractThemeListUseCase } from '@/features/theme/domain/use-cases/abstract.theme-list.use-case';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { AbstractThemeListService } from '@/features/theme/domain/services/abstract.theme-list.service';
 import { Injectable } from '@nestjs/common';
 

@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { EventMapper } from '@/features/event/infra/database/typeorm/mappers/event.mapper';
 import { EventEntity } from '@/features/event/infra/database/typeorm/entities/event.entity';
 import { Event } from '@/features/event/domain/core/event';

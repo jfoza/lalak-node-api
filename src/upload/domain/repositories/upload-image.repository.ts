@@ -1,4 +1,4 @@
-import { File } from '@/upload/domain/core/file';
+import { File } from '@/upload/domain/entities/file';
 
 export abstract class UploadImageRepository {
   abstract save(file: File): Promise<File>;

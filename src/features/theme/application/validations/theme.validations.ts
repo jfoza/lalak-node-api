@@ -1,6 +1,6 @@
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Theme } from '@/features/theme/domain/core/theme';
 
 export class ThemeValidations {

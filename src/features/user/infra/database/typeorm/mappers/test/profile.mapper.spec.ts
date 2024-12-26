@@ -1,8 +1,8 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { ProfileMapper } from '@/features/user/infra/database/typeorm/mappers/profile.mapper';
 import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/profile.entity';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
-import { Profile } from '@/features/user/domain/core/profile';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { Profile } from '@/features/user/domain/entities/profile';
 
 describe('ProfileMapper Unit Tests', () => {
   let sut: ProfileMapper;

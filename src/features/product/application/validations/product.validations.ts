@@ -1,6 +1,6 @@
 import { Product } from '@/features/product/domain/core/product';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
 
 export class ProductValidations {

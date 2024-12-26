@@ -1,9 +1,9 @@
 import { beforeEach, vi } from 'vitest';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ForbiddenException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ProductListService } from '@/features/product/application/services/product-list.service';
 import { AbstractProductListUseCase } from '@/features/product/domain/use-cases/abstract.product-list.use-case';
 import { ProductSearchParamsDto } from '@/features/product/application/dto/product-search-params.dto';

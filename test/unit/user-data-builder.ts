@@ -1,20 +1,20 @@
-import { User, UserProps } from '@/features/user/domain/core/user';
-import { Profile, ProfileProps } from '@/features/user/domain/core/profile';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
-import { Person, PersonProps } from '@/features/user/domain/core/person';
-import { Hash } from '@/common/infra/utils/hash';
+import { User, UserProps } from '@/features/user/domain/entities/user';
+import { Profile, ProfileProps } from '@/features/user/domain/entities/profile';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { Person, PersonProps } from '@/features/user/domain/entities/person';
+import { Hash } from '@/utils/hash';
 import {
   AdminUser,
   AdminUserProps,
-} from '@/features/user/domain/core/admin-user';
+} from '@/features/user/domain/entities/admin-user';
 import {
   Customer,
   CustomerProps,
 } from '@/features/customer/domain/core/customer';
 import { City, CityProps } from '@/features/city/domain/core/city';
-import { UUID } from '@/common/infra/utils/uuid';
-import { UserTokenProps } from '@/features/user/domain/core/user-token';
-import { TokenTypesEnum } from '@/common/infra/enums/token-types.enum';
+import { UUID } from '@/utils/uuid';
+import { UserTokenProps } from '@/features/user/domain/entities/user-token';
+import { TokenTypesEnum } from '@/utils/enums/token-types.enum';
 
 export class UserDataBuilder {
   static getUserTokenProps(): UserTokenProps {
@@ -88,6 +88,10 @@ export class UserDataBuilder {
       profile: profileAux,
       person,
     };
+  }
+
+  static async getUser(): Promise<User> {
+    return new User(await this.getUserProps());
   }
 
   static getAdminUser(): AdminUser {

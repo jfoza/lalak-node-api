@@ -30,6 +30,11 @@ import { ProductRemoveUseCase } from '@/features/product/application/use-cases/p
 import { AbstractProductRemoveUseCase } from '@/features/product/domain/use-cases/abstract.product-remove.use-case';
 import { ProductController } from '@/features/product/presentation/controllers/product.controller';
 import { UploadModule } from '@/upload/infra/modules/upload.module';
+import { ProductCreateService } from '@/features/product/application/services/product-create.service';
+import { AbstractProductCreateService } from '@/features/product/domain/services/abstract.product-create.service';
+import { AbstractProductCreateImageUseCase } from '@/features/product/domain/use-cases/abstract.product-create-image.use-case';
+import { ProductCreateImageUseCase } from '@/features/product/application/use-cases/product-create-image.use-case';
+import { ImageModule } from '@/features/image/infra/modules/image.module';
 
 @Module({
   imports: [
@@ -37,6 +42,7 @@ import { UploadModule } from '@/upload/infra/modules/upload.module';
     forwardRef(() => CategoryModule),
     forwardRef(() => EventModule),
     UploadModule,
+    ImageModule,
   ],
   controllers: [ProductController],
   providers: [
@@ -72,6 +78,11 @@ import { UploadModule } from '@/upload/infra/modules/upload.module';
       provide: AbstractPublicProductListByUuidService,
       useExisting: PublicProductListByUuidService,
     },
+    ProductCreateService,
+    {
+      provide: AbstractProductCreateService,
+      useExisting: ProductCreateService,
+    },
 
     ProductListUseCase,
     {
@@ -87,6 +98,11 @@ import { UploadModule } from '@/upload/infra/modules/upload.module';
     {
       provide: AbstractProductCreateUseCase,
       useExisting: ProductCreateUseCase,
+    },
+    ProductCreateImageUseCase,
+    {
+      provide: AbstractProductCreateImageUseCase,
+      useExisting: ProductCreateImageUseCase,
     },
     ProductUpdateUseCase,
     {

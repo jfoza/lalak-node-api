@@ -3,18 +3,18 @@ import moment from 'moment';
 import { ILoginService } from '@/features/auth/domain/interfaces/login.service.interface';
 import { AuthDto } from '@/features/auth/application/dto/auth.dto';
 import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.repository.interface';
-import { IAclRepository } from '@/acl/domain/interfaces/acl.repository.interface';
+import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
 import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
 import { IJwtToken } from '@/jwt/domain/interfaces/jwt-token.interface';
-import { Ability } from '@/acl/domain/core/ability';
-import { Hash } from '@/common/infra/utils/hash';
-import { AuthTypesEnum } from '@/common/infra/enums/auth-types.enum';
+import { Hash } from '@/utils/hash';
+import { AuthTypesEnum } from '@/utils/enums/auth-types.enum';
 import { Auth, AuthProps } from '@/features/auth/domain/core/auth';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
-import { LoginUserTypesEnum } from '@/common/infra/enums/login-user-types.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
 import { IAuthResponse } from '@/features/auth/application/outputs/auth.response.interface';
 import { IUserListByEmailLoginUseCase } from '@/features/user/domain/use-cases/user-list-by-email-login.use-case.interface';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
+import { Ability } from '@/acl/domain/entities/ability';
 
 @Injectable()
 export class LoginService implements ILoginService {
@@ -23,13 +23,13 @@ export class LoginService implements ILoginService {
   private user: User;
 
   constructor(
-    @Inject('IUserListByEmailLoginUseCase')
+    @Inject(IUserListByEmailLoginUseCase)
     private readonly userListByEmailLoginUseCase: IUserListByEmailLoginUseCase,
 
-    @Inject('IAuthRepository')
+    @Inject(IAuthRepository)
     private readonly authRepository: IAuthRepository,
 
-    @Inject('IAclRepository')
+    @Inject(IAclRepository)
     private readonly abilityRepository: IAclRepository,
 
     @Inject(JwtAuthService)
@@ -76,7 +76,7 @@ export class LoginService implements ILoginService {
 
     const authenticate: IJwtToken = this.jwtAuthService.authenticate(payload);
 
-    const ability: Ability[] = await this.abilityRepository.findAllByUserId(
+    const ability: Ability[] = await this.abilityRepository.findAllByUserUuid(
       this.user.uuid,
     );
 

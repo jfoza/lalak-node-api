@@ -1,6 +1,6 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { Auth, AuthProps } from '@/features/auth/domain/core/auth';
-import { AuthTypesEnum } from '@/common/infra/enums/auth-types.enum';
+import { AuthTypesEnum } from '@/utils/enums/auth-types.enum';
 import { BadRequestException } from '@nestjs/common';
 
 describe('User Domain Entity Unit Tests', () => {

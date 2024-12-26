@@ -1,4 +1,4 @@
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { AbstractCategoryCreateUseCase } from '@/features/category/domain/use-cases/abstract.category-create.use-case';
 import { CreateCategoryDto } from '@/features/category/application/dto/create-category.dto';
 import {
@@ -10,7 +10,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { CategoryValidations } from '@/features/category/application/validations/category.validations';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 
 @Injectable()
 export class CategoryCreateUseCase

@@ -1,24 +1,24 @@
 import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-user-create.use-case.interface';
 import { CreateAdminUserDto } from '@/features/user/application/dto/create-admin-user.dto';
-import { User, UserProps } from '@/features/user/domain/core/user';
+import { User, UserProps } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { Application } from '@/common/application/use-cases/application';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { Application } from '@/common/application/application';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { Person, PersonProps } from '@/features/user/domain/core/person';
-import { Helper } from 'src/common/infra/helpers';
+import { Person, PersonProps } from '@/features/user/domain/entities/person';
+import { Helper } from 'src/utils/helpers';
 import {
   AdminUser,
   AdminUserProps,
-} from '@/features/user/domain/core/admin-user';
-import { Hash } from '@/common/infra/utils/hash';
+} from '@/features/user/domain/entities/admin-user';
+import { Hash } from '@/utils/hash';
 import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
-import { Profile } from '@/features/user/domain/core/profile';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { Profile } from '@/features/user/domain/entities/profile';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 
 @Injectable()
@@ -30,16 +30,16 @@ export class AdminUserCreateUseCase
   private profile: Profile;
 
   constructor(
-    @Inject('IPersonRepository')
+    @Inject(IPersonRepository)
     private readonly personRepository: IPersonRepository,
 
-    @Inject('IUserRepository')
+    @Inject(IUserRepository)
     private readonly userRepository: IUserRepository,
 
-    @Inject('IAdminUserRepository')
+    @Inject(IAdminUserRepository)
     private readonly adminUserRepository: IAdminUserRepository,
 
-    @Inject('IProfileRepository')
+    @Inject(IProfileRepository)
     private readonly profileRepository: IProfileRepository,
   ) {
     super();
@@ -49,14 +49,14 @@ export class AdminUserCreateUseCase
     this.createAdminUserDto = createAdminUserDto;
 
     switch (true) {
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT):
+      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT):
         return this.createByAdminMaster();
 
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT):
+      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT):
         return this.createByEmployee();
 
       default:
-        this.policy.policyException();
+        this.policy.forbiddenException();
     }
   }
 

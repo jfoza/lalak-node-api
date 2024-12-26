@@ -1,56 +1,57 @@
 import { Readable } from 'stream';
-
 import {
   IsString,
-  IsNotEmpty,
   IsNumber,
   IsPositive,
   IsOptional,
   IsEnum,
   Max,
 } from 'class-validator';
+import { FileTypeEnum } from '@/utils/enums/file-type.enum';
+import { AbstractFileDto } from '@/upload/domain/dto/file.dto.interface';
 
-export enum FileType {
-  IMAGE = 'image',
-  AVATAR = 'avatar',
-}
-
-export class FileDto {
+export class FileDto implements AbstractFileDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  fieldname: string;
+  fieldname?: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  originalname: string;
+  originalname?: string;
 
+  @IsOptional()
   @IsString()
-  encoding: string;
+  encoding?: string;
 
+  @IsOptional()
   @IsString()
-  mimetype: string;
+  mimetype?: string;
 
+  @IsOptional()
   @IsNumber()
   @IsPositive()
   @Max(5 * 1024 * 1024)
-  size: number;
+  size?: number;
 
   @IsOptional()
-  stream: Readable;
-
-  @IsString()
-  destination: string;
-
-  @IsString()
-  filename: string;
-
-  @IsString()
-  path: string;
+  stream?: Readable;
 
   @IsOptional()
-  buffer: Buffer;
+  @IsString()
+  destination?: string;
 
-  @IsEnum(FileType)
   @IsOptional()
-  type: FileType;
+  @IsString()
+  filename?: string;
+
+  @IsOptional()
+  @IsString()
+  path?: string;
+
+  @IsOptional()
+  buffer?: Buffer;
+
+  @IsOptional()
+  @IsEnum(FileTypeEnum)
+  type?: FileTypeEnum;
 }

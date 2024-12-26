@@ -1,10 +1,10 @@
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
-import { User, UserProps } from '@/features/user/domain/core/user';
+import { User, UserProps } from '@/features/user/domain/entities/user';
 import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
 import { Injectable } from '@nestjs/common';
-import { Profile } from '@/features/user/domain/core/profile';
-import { Person } from '@/features/user/domain/core/person';
-import { AdminUser } from '@/features/user/domain/core/admin-user';
+import { Profile } from '@/features/user/domain/entities/profile';
+import { Person } from '@/features/user/domain/entities/person';
+import { AdminUser } from '@/features/user/domain/entities/admin-user';
 import { Customer } from '@/features/customer/domain/core/customer';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { AbstractProductListByUuidUseCase } from '@/features/product/domain/use-cases/abstract.product-list-by-uuid.use-case';
 import { vi } from 'vitest';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { Product } from '@/features/product/domain/core/product';
 import { PublicProductListByUuidService } from '@/features/product/application/services/public.product-list-by-uuid.service';
 

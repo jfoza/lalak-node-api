@@ -1,4 +1,4 @@
-import { Ability } from '@/acl/domain/core/ability';
+import { Ability } from '@/acl/domain/entities/ability';
 
 interface IAuthUser {
   uuid: string;

@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { AbilityMapper } from '@/acl/infra/database/typeorm/mappers/ability.mapper';
 import { AbilityEntity } from '@/acl/infra/database/typeorm/entities/ability.entity';
 import { Ability } from '@/acl/domain/core/ability';

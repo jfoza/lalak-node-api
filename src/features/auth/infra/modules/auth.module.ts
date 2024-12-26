@@ -9,11 +9,15 @@ import { UserModule } from '@/features/user/infra/modules/user.module';
 import { AuthRepository } from '@/features/auth/infra/database/typeorm/repositories/auth.repository';
 import { LoginService } from '@/features/auth/application/services/login.service';
 import { AuthMapper } from '@/features/auth/infra/database/typeorm/mappers/auth.mapper';
+import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.repository.interface';
+import { ILoginService } from '@/features/auth/domain/interfaces/login.service.interface';
+import { AclModule } from '@/acl/infra/modules/acl.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AuthEntity, UserEntity]),
     UserModule,
+    AclModule,
     JwtModule.registerAsync({
       global: true,
       imports: [],
@@ -29,10 +33,10 @@ import { AuthMapper } from '@/features/auth/infra/database/typeorm/mappers/auth.
   providers: [
     AuthMapper,
     AuthRepository,
-    { provide: 'IAuthRepository', useExisting: AuthRepository },
+    { provide: IAuthRepository, useExisting: AuthRepository },
 
     LoginService,
-    { provide: 'ILoginService', useExisting: LoginService },
+    { provide: ILoginService, useExisting: LoginService },
   ],
   controllers: [AuthController],
 })

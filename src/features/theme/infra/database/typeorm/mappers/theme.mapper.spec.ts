@@ -1,4 +1,4 @@
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { ThemeMapper } from '@/features/theme/infra/database/typeorm/mappers/theme.mapper';
 import { ThemeEntity } from '@/features/theme/infra/database/typeorm/entities/theme.entity';
 import { Theme } from '@/features/theme/domain/core/theme';

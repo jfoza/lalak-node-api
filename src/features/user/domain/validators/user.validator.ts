@@ -9,7 +9,7 @@ import {
   MaxLength,
   validate,
 } from 'class-validator';
-import { UserProps } from '@/features/user/domain/core/user';
+import { UserProps } from '@/features/user/domain/entities/user';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
 

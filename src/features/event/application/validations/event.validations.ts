@@ -1,5 +1,5 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Event } from '@/features/event/domain/core/event';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 

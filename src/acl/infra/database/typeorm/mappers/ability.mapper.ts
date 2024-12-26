@@ -1,11 +1,16 @@
 import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
-import { AbilityEntity } from '@/acl/infra/database/typeorm/entities/ability.entity';
-import { Ability, AbilityProps } from '@/acl/domain/core/ability';
 import { Injectable } from '@nestjs/common';
+import { Ability, AbilityProps } from '@/acl/domain/entities/ability';
+
+type TAbilityEntity = {
+  description: string;
+  subject: string;
+  action: string;
+};
 
 @Injectable()
 export class AbilityMapper extends Mapper<
-  AbilityEntity,
+  TAbilityEntity,
   Ability,
   AbilityProps
 > {

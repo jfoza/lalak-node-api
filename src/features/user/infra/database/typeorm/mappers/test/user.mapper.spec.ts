@@ -1,11 +1,11 @@
 import { UserMapper } from '@/features/user/infra/database/typeorm/mappers/user.mapper';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
-import { UUID } from '@/common/infra/utils/uuid';
-import { User } from '@/features/user/domain/core/user';
+import { UUID } from '@/utils/uuid';
+import { User } from '@/features/user/domain/entities/user';
 import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/profile.entity';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
 import { AdminUserEntity } from '@/features/user/infra/database/typeorm/entities/admin-user.entity';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 
 describe('UserMapper Unit Tests', () => {
   let sut: UserMapper;

@@ -5,11 +5,11 @@ import { vi } from 'vitest';
 import {
   UserToken,
   UserTokenProps,
-} from '@/features/user/domain/core/user-token';
+} from '@/features/user/domain/entities/user-token';
 import { Queue } from 'bull';
 import { NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
-import { UUID } from '@/common/infra/utils/uuid';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 
 describe('Send Forgot Password Email UseCase', () => {

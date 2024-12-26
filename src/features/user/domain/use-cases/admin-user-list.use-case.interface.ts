@@ -6,3 +6,5 @@ export interface IAdminUserListUseCase {
     adminUserSearchParamsDto: AdminUserSearchParamsDto,
   ): Promise<ILengthAwarePaginator>;
 }
+
+export const IAdminUserListUseCase = Symbol('IAdminUserListUseCase');

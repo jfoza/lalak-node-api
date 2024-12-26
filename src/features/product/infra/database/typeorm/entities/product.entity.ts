@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { CategoryEntity } from '@/features/category/infra/database/typeorm/entities/category.entity';
 import { EventEntity } from '@/features/event/infra/database/typeorm/entities/event.entity';
+import { ImageEntity } from '@/features/image/infra/database/typeorm/entities/image.entity';
 
 @Entity({ schema: 'products_schema', name: 'products' })
 export class ProductEntity {
@@ -74,4 +75,19 @@ export class ProductEntity {
   })
   @ManyToMany(() => EventEntity, (event: EventEntity) => event.products)
   events: EventEntity[];
+
+  @JoinTable({
+    schema: 'products_schema',
+    name: 'products_images',
+    joinColumn: {
+      name: 'product_uuid',
+      referencedColumnName: 'uuid',
+    },
+    inverseJoinColumn: {
+      name: 'image_uuid',
+      referencedColumnName: 'uuid',
+    },
+  })
+  @ManyToMany(() => ImageEntity, (image: ImageEntity) => image.products)
+  images: ImageEntity[];
 }

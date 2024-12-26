@@ -1,7 +1,7 @@
 import { Event } from '@/features/event/domain/core/event';
-import { Application } from '@/common/application/use-cases/application';
+import { Application } from '@/common/application/application';
 import { Injectable } from '@nestjs/common';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { AbstractEventUpdateUseCase } from '@/features/event/domain/use-cases/abstract.event-update.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventUpdateDto } from '@/features/event/application/dto/event-update.dto';

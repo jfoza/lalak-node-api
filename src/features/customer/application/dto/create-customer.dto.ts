@@ -8,9 +8,9 @@ import {
   Matches,
   IsEnum,
 } from 'class-validator';
-import { BrazilianStates } from '@/common/infra/enums/brazilian-states.enum';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 import { Transform } from 'class-transformer';
-import { Helper } from 'src/common/infra/helpers';
+import { Helper } from 'src/utils/helpers';
 
 export class CreateCustomerDto {
   @IsNotEmpty()

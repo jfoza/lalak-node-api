@@ -1,10 +1,10 @@
 import { vi } from 'vitest';
 import { Policy } from '@/acl/domain/core/policy';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ProductRemoveUseCase } from '@/features/product/application/use-cases/product-remove.use-case';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';

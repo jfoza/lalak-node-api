@@ -19,10 +19,10 @@ import {
 
 @Controller('password')
 export class ForgotPasswordController {
-  @Inject('ISendForgotPasswordEmailUseCase')
+  @Inject(ISendForgotPasswordEmailUseCase)
   private readonly sendForgotPasswordEmailUseCase: ISendForgotPasswordEmailUseCase;
 
-  @Inject('IResetPasswordUseCase')
+  @Inject(IResetPasswordUseCase)
   private readonly resetPasswordUseCase: IResetPasswordUseCase;
 
   @HttpCode(HttpStatus.NO_CONTENT)

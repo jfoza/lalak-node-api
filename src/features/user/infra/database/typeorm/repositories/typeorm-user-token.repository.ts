@@ -1,5 +1,5 @@
 import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
-import { UserToken } from '@/features/user/domain/core/user-token';
+import { UserToken } from '@/features/user/domain/entities/user-token';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserTokenEntity } from '@/features/user/infra/database/typeorm/entities/user-token.entity';
 import { Repository } from 'typeorm';

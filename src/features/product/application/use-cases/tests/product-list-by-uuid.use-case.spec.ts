@@ -1,8 +1,8 @@
 import { vi } from 'vitest';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
-import { UUID } from '@/common/infra/utils/uuid';
+import { UUID } from '@/utils/uuid';
 import { NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ProductListByUuidUseCase } from '@/features/product/application/use-cases/product-list-by-uuid.use-case';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
 import { Product } from '@/features/product/domain/core/product';

@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { AbilitiesEnum } from '@/common/infra/enums/abilities.enum';
+import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Policy } from '@/acl/domain/core/policy';
 import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
@@ -7,7 +7,7 @@ import { CustomerListUseCase } from '@/features/customer/application/use-cases/c
 import { CustomerSearchParamsDto } from '@/features/customer/application/dto/customer-search-params.dto';
 import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
 import { ForbiddenException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 describe('Customer List UseCase', () => {
   let sut: CustomerListUseCase;

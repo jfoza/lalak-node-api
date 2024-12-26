@@ -1,49 +1,40 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { JwtInfoService } from '@/jwt/application/services/jwt-info.service';
-import { CacheEnum } from '@/common/infra/enums/cache.enum';
-import { IAclRepository } from '@/acl/domain/interfaces/acl.repository.interface';
-import { IRedisService } from '@/redis/domain/interfaces/redis.service.interface';
+import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
+import { IAclService } from '@/acl/domain/services/acl.service.interface';
+import { User } from '@/features/user/domain/entities/user';
+import { Ability } from '@/acl/domain/entities/ability';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 
 @Injectable()
-export class AclService {
+export class AclService implements IAclService {
+  protected abilities: Ability[];
+
   constructor(
-    @Inject('IAclRepository')
+    @Inject(IAclRepository)
     private readonly aclRepository: IAclRepository,
 
     @Inject(JwtInfoService)
     private readonly jwtInfoService: JwtInfoService,
-
-    @Inject('IRedisService')
-    private readonly redisService: IRedisService,
   ) {}
 
-  async handle(): Promise<string[]> {
-    if (!this.jwtInfoService.user) {
-      return [];
+  async can(value: string): Promise<void> {
+    if (!(await this.has(value))) {
+      this.forbiddenException();
     }
-
-    const userUuid = this.jwtInfoService.user.uuid;
-
-    let abilities: string[];
-
-    if (userUuid) {
-      const redisKey: string = CacheEnum.ABILITY_USER(userUuid);
-
-      abilities = await this.redisService.remember(
-        redisKey,
-        () => this.aclRepository.getUserAbilityDescriptions(userUuid),
-        604800,
-      );
-    }
-
-    return abilities;
   }
 
-  async invalidate(userId: string): Promise<void> {
-    await this.redisService.invalidate(CacheEnum.ABILITY_USER(userId));
+  async has(value: string): Promise<boolean> {
+    const user: User = await this.jwtInfoService.user();
+
+    this.abilities = await this.aclRepository.findAllByUserUuid(user.uuid);
+
+    return this.abilities.some(
+      (ability: Ability): boolean => ability.description === value,
+    );
   }
 
-  async invalidateAll(): Promise<void> {
-    await this.redisService.invalidateByPattern(CacheEnum.ABILITY_USER('*'));
+  forbiddenException(): void {
+    throw new ForbiddenException(ErrorMessagesEnum.NOT_AUTHORIZED);
   }
 }

@@ -1,9 +1,9 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
-import { LoginUserTypesEnum } from '@/common/infra/enums/login-user-types.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
 import { IUserListByEmailLoginUseCase } from '@/features/user/domain/use-cases/user-list-by-email-login.use-case.interface';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 
 @Injectable()
 export class UserListByEmailLoginUseCase
@@ -12,7 +12,7 @@ export class UserListByEmailLoginUseCase
   private user: User;
 
   constructor(
-    @Inject('IUserRepository')
+    @Inject(IUserRepository)
     private readonly userRepository: IUserRepository,
   ) {}
 

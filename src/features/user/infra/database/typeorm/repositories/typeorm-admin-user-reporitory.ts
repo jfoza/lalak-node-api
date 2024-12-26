@@ -1,4 +1,4 @@
-import { User } from '@/features/user/domain/core/user';
+import { User } from '@/features/user/domain/entities/user';
 import { AdminUserEntity } from '@/features/user/infra/database/typeorm/entities/admin-user.entity';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
@@ -7,7 +7,7 @@ import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-p
 import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
 import { toPaginate } from '@/common/infra/database/typeorm/pagination';
 import { Inject, Injectable } from '@nestjs/common';
-import { AdminUser } from '@/features/user/domain/core/admin-user';
+import { AdminUser } from '@/features/user/domain/entities/admin-user';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { UserMapper } from '@/features/user/infra/database/typeorm/mappers/user.mapper';
 

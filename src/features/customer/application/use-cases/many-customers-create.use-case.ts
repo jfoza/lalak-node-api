@@ -1,12 +1,12 @@
-import { User, UserProps } from '@/features/user/domain/core/user';
+import { User, UserProps } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
 import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
-import { Person, PersonProps } from '@/features/user/domain/core/person';
-import { Helper } from 'src/common/infra/helpers';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { Person, PersonProps } from '@/features/user/domain/entities/person';
+import { Helper } from 'src/utils/helpers';
 import {
   Customer,
   CustomerProps,

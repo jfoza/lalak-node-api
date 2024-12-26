@@ -62,6 +62,10 @@ export class TypeormProductCommandRepository
   }
 
   async saveImages(product: Product): Promise<void> {
-    return Promise.resolve(undefined);
+    await this.productEntityRepository
+      .createQueryBuilder()
+      .relation(ProductEntity, 'images')
+      .of(product.uuid)
+      .add(product.imagesUuid);
   }
 }

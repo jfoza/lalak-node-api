@@ -1,5 +1,5 @@
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
-import { Person } from '@/features/user/domain/core/person';
+import { Person } from '@/features/user/domain/entities/person';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';

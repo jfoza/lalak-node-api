@@ -4,16 +4,16 @@ import { vi } from 'vitest';
 import {
   UserToken,
   UserTokenProps,
-} from '@/features/user/domain/core/user-token';
-import { User, UserProps } from '@/features/user/domain/core/user';
+} from '@/features/user/domain/entities/user-token';
+import { User, UserProps } from '@/features/user/domain/entities/user';
 import { ResetPasswordUseCase } from '@/features/user/application/use-cases/reset-password.use-case';
 import { addHours, subHours } from 'date-fns';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
-import { UUID } from '@/common/infra/utils/uuid';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
-import { Profile } from '@/features/user/domain/core/profile';
-import { ProfileUniqueNameEnum } from '@/common/infra/enums/profile-unique-name.enum';
+import { Profile } from '@/features/user/domain/entities/profile';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 
 describe('Send Forgot Password Email UseCase', () => {
   let sut: ResetPasswordUseCase;

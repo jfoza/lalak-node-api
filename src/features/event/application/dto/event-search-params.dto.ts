@@ -1,6 +1,6 @@
 import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
 import { FiltersDto } from '@/common/application/dto/FiltersDto';
-import { ErrorMessagesEnum } from '@/common/infra/enums/error-messages.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Transform } from 'class-transformer';
 
 export class EventSearchParamsDto extends FiltersDto {
