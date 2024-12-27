@@ -1,10 +1,9 @@
 import { Global, Module } from '@nestjs/common';
-import { JwtInfoService } from '@/jwt/application/services/jwt-info.service';
 import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule as NestJwtModule } from '@nestjs/jwt';
 import { UserModule } from '@/features/user/infra/modules/user.module';
-import { JwtAuth } from '@/jwt/domain/entities/jwt-auth';
+import { IJwtAuthService } from '@/jwt/domain/services/jwt-auth.service.interface';
 
 @Global()
 @Module({
@@ -23,7 +22,13 @@ import { JwtAuth } from '@/jwt/domain/entities/jwt-auth';
       inject: [ConfigService],
     }),
   ],
-  providers: [JwtInfoService, JwtAuthService, JwtAuth],
-  exports: [JwtInfoService, JwtAuthService, JwtAuth],
+  providers: [
+    JwtAuthService,
+    {
+      provide: IJwtAuthService,
+      useClass: JwtAuthService,
+    },
+  ],
+  exports: [IJwtAuthService],
 })
 export class JwtModule {}

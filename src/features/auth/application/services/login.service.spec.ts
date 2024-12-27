@@ -3,9 +3,11 @@ import { AuthDto } from '@/features/auth/application/dto/auth.dto';
 import { beforeEach, expect, vi } from 'vitest';
 import { IUserListByEmailLoginUseCase } from '@/features/user/domain/use-cases/user-list-by-email-login.use-case.interface';
 import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
-import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
-import { IJwtToken } from '@/jwt/domain/interfaces/jwt-token.interface';
-import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.repository.interface';
+import {
+  IJwtToken,
+  JwtAuthService,
+} from '@/jwt/application/services/jwt-auth.service';
+import { IAuthRepository } from '@/features/auth/domain/repositories/auth.repository.interface';
 import { UserDataBuilder } from '../../../../../test/unit/user-data-builder';
 import { UUID } from '@/utils/uuid';
 import { Hash } from '@/utils/hash';
@@ -33,11 +35,11 @@ describe('LoginService Unit Tests', () => {
     } as unknown as IAuthRepository;
 
     abilityRepository = {
-      findAllByUserId: vi.fn(() => []),
+      findAllByUserUuid: vi.fn(() => []),
     } as unknown as IAclRepository;
 
     jwtAuthService = {
-      authenticate: vi.fn(
+      sign: vi.fn(
         () =>
           ({
             token: UUID.generate(),
@@ -78,7 +80,7 @@ describe('LoginService Unit Tests', () => {
 
     const result = await sut.handle(authDto, LoginUserTypesEnum.ADMIN);
 
-    expect(jwtAuthService.authenticate).toHaveBeenCalledWith({
+    expect(jwtAuthService.sign).toHaveBeenCalledWith({
       sub: user.uuid,
       user: {
         uuid: user.uuid,

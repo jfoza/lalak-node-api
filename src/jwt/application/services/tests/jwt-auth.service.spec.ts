@@ -1,41 +1,110 @@
 import { describe, it, expect, vi } from 'vitest';
-import { JwtAuthService } from '../jwt-auth.service';
-import { IJwtToken } from '@/jwt/domain/interfaces/jwt-token.interface';
+import { IJwtToken, JwtAuthService } from '../jwt-auth.service';
+import { JwtService as NestJwtService } from '@nestjs/jwt';
+import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
+import { User } from '@/features/user/domain/entities/user';
+import { UserDataBuilder } from '../../../../../test/unit/user-data-builder';
 
 vi.mock('node:process', () => ({
   env: { JWT_EXPIRATION: '3600' },
 }));
 
-describe('JwtAuthService', () => {
+describe('JwtAuthService', async () => {
   let sut: JwtAuthService;
 
-  describe('authenticate', () => {
-    it('should return a valid IJwtToken object', () => {
-      const payload = { userId: '123' };
-      const fakeToken = 'fake.jwt.token';
+  const mockJwtService = {
+    sign: vi.fn(),
+    verifyAsync: vi.fn(),
+  } as unknown as NestJwtService;
 
-      vi.spyOn(sut, 'sign').mockReturnValue(fakeToken);
+  const mockUserRepository = {
+    findByUserLoggedByUuid: vi.fn(),
+  } as unknown as IUserRepository;
 
-      const result: IJwtToken = sut.authenticate(payload);
+  const mockUser = await UserDataBuilder.getUser();
 
-      expect(sut.sign).toHaveBeenCalledWith(payload);
+  beforeEach(() => {
+    sut = new JwtAuthService(mockJwtService, mockUserRepository);
+  });
+
+  describe('sign', () => {
+    it('should return a signed token with expiration and type', () => {
+      const payload = { sub: 'test' };
+      const mockToken = 'mock.jwt.token';
+      process.env.JWT_EXPIRATION = '3600';
+
+      vi.spyOn(mockJwtService, 'sign').mockReturnValue(mockToken);
+
+      const result: IJwtToken = sut.sign(payload);
+
+      expect(mockJwtService.sign).toHaveBeenCalledWith(payload);
       expect(result).toEqual({
-        token: fakeToken,
+        token: mockToken,
         type: 'JWT',
         expiration: 3600,
       });
     });
+  });
 
-    it('should correctly handle a Buffer payload', () => {
-      const bufferPayload = Buffer.from('test payload');
-      const fakeToken = 'buffer.jwt.token';
+  describe('verifyAsync', () => {
+    it('should verify the token and return the decoded payload', async () => {
+      const token = 'mock.jwt.token';
+      const decodedPayload = { sub: 'test' };
 
-      vi.spyOn(sut, 'sign').mockReturnValue(fakeToken);
+      vi.spyOn(mockJwtService, 'verifyAsync').mockResolvedValue(decodedPayload);
 
-      const result: IJwtToken = sut.authenticate(bufferPayload);
+      const result = await sut.verifyAsync(token);
 
-      expect(sut.sign).toHaveBeenCalledWith(bufferPayload);
-      expect(result.token).toBe(fakeToken);
+      expect(mockJwtService.verifyAsync).toHaveBeenCalledWith(token, undefined);
+      expect(result).toEqual(decodedPayload);
+    });
+  });
+
+  describe('setAuthUser', () => {
+    it('should set the authenticated user', async () => {
+      const userProps = await UserDataBuilder.getUserProps();
+      const uuid = 'user-uuid';
+
+      vi.spyOn(User, 'create').mockResolvedValue(mockUser);
+
+      await sut.setAuthUser(userProps, uuid);
+
+      expect(User.create).toHaveBeenCalledWith(userProps, uuid);
+      expect(sut['authUser']).toEqual(mockUser);
+    });
+  });
+
+  describe('user', () => {
+    it('should return null if no authenticated user is set', async () => {
+      const result = await sut.user();
+      expect(result).toBeNull();
+    });
+
+    it('should return the authenticated user if no relation is provided', async () => {
+      sut['authUser'] = mockUser;
+
+      const result = await sut.user();
+      expect(result).toEqual(mockUser);
+    });
+
+    it('should return the user with relations if a relation is provided', async () => {
+      sut['authUser'] = mockUser;
+      const relation = 'person';
+      const userWithRelations = await UserDataBuilder.getUser();
+
+      userWithRelations.person = UserDataBuilder.getPerson();
+
+      vi.spyOn(mockUserRepository, 'findByUserLoggedByUuid').mockResolvedValue(
+        userWithRelations,
+      );
+
+      const result = await sut.user(relation);
+
+      expect(mockUserRepository.findByUserLoggedByUuid).toHaveBeenCalledWith(
+        mockUser.uuid,
+        relation,
+      );
+      expect(result).toEqual(userWithRelations);
     });
   });
 });

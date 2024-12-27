@@ -31,7 +31,7 @@ import { ImageModule } from '@/features/image/infra/modules/image.module';
     AuthModule,
     CityModule,
     UserModule,
-    // CustomerModule,
+    CustomerModule,
     // ThemeModule,
     // CategoryModule,
     // EventModule,

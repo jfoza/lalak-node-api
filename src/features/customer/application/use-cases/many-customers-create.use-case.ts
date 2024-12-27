@@ -1,6 +1,6 @@
 import { User, UserProps } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
+import { ICustomerRepository } from '@/features/customer/domain/repositories/customer-repository.interface';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
@@ -10,26 +10,26 @@ import { Helper } from 'src/utils/helpers';
 import {
   Customer,
   CustomerProps,
-} from '@/features/customer/domain/core/customer';
+} from '@/features/customer/domain/entities/customer';
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
-import { IManyCustomersCreateUseCase } from '@/features/customer/domain/interfaces/use-cases/many-customers-create.use-case.interface';
+import { IManyCustomersCreateUseCase } from '@/features/customer/domain/use-cases/many-customers-create.use-case.interface';
 import { customers } from '@/database/infra/typeorm/seeders/data/customers';
 
 @Injectable()
 export class ManyCustomersCreateUseCase implements IManyCustomersCreateUseCase {
-  @Inject('IProfileRepository')
+  @Inject(IProfileRepository)
   private readonly profileRepository: IProfileRepository;
 
-  @Inject('ICityRepository')
+  @Inject(ICityRepository)
   private readonly cityRepository: ICityRepository;
 
-  @Inject('IPersonRepository')
+  @Inject(IPersonRepository)
   private readonly personRepository: IPersonRepository;
 
-  @Inject('IUserRepository')
+  @Inject(IUserRepository)
   private readonly userRepository: IUserRepository;
 
-  @Inject('ICustomerRepository')
+  @Inject(ICustomerRepository)
   private readonly customerRepository: ICustomerRepository;
 
   async execute(): Promise<void> {

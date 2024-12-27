@@ -1,24 +1,27 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import moment from 'moment';
-import { ILoginService } from '@/features/auth/domain/interfaces/login.service.interface';
-import { AuthDto } from '@/features/auth/application/dto/auth.dto';
-import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.repository.interface';
+import { ILoginService } from '@/features/auth/domain/services/login.service.interface';
+import { IAuthRepository } from '@/features/auth/domain/repositories/auth.repository.interface';
 import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
-import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
-import { IJwtToken } from '@/jwt/domain/interfaces/jwt-token.interface';
+import {
+  IJwtToken,
+  JwtAuthService,
+} from '@/jwt/application/services/jwt-auth.service';
 import { Hash } from '@/utils/hash';
 import { AuthTypesEnum } from '@/utils/enums/auth-types.enum';
-import { Auth, AuthProps } from '@/features/auth/domain/core/auth';
+import { Auth, AuthProps } from '@/features/auth/domain/entities/auth';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
-import { IAuthResponse } from '@/features/auth/application/outputs/auth.response.interface';
+import { IAuthResponse } from '@/features/auth/domain/dto/auth.response.dto.interface';
 import { IUserListByEmailLoginUseCase } from '@/features/user/domain/use-cases/user-list-by-email-login.use-case.interface';
 import { User } from '@/features/user/domain/entities/user';
 import { Ability } from '@/acl/domain/entities/ability';
+import { IAuthDto } from '@/features/auth/domain/dto/auth.dto.interface';
+import { IJwtAuthService } from '@/jwt/domain/services/jwt-auth.service.interface';
 
 @Injectable()
 export class LoginService implements ILoginService {
-  private authDto: AuthDto;
+  private authDto: IAuthDto;
   private loginType: LoginUserTypesEnum;
   private user: User;
 
@@ -32,12 +35,12 @@ export class LoginService implements ILoginService {
     @Inject(IAclRepository)
     private readonly abilityRepository: IAclRepository,
 
-    @Inject(JwtAuthService)
-    private readonly jwtAuthService: JwtAuthService,
+    @Inject(IJwtAuthService)
+    private readonly jwtAuthService: IJwtAuthService,
   ) {}
 
   async handle(
-    authDto: AuthDto,
+    authDto: IAuthDto,
     loginType: LoginUserTypesEnum,
   ): Promise<IAuthResponse> {
     this.authDto = authDto;
@@ -74,7 +77,7 @@ export class LoginService implements ILoginService {
       },
     };
 
-    const authenticate: IJwtToken = this.jwtAuthService.authenticate(payload);
+    const authenticate: IJwtToken = this.jwtAuthService.sign(payload);
 
     const ability: Ability[] = await this.abilityRepository.findAllByUserUuid(
       this.user.uuid,

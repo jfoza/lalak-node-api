@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 
 export type AbilityProps = {
   description: string;
@@ -6,7 +6,7 @@ export type AbilityProps = {
   action: string;
 };
 
-export class Ability extends Core<AbilityProps> {
+export class Ability extends Entity<AbilityProps> {
   private constructor(
     public readonly props: AbilityProps,
     uuid?: string,

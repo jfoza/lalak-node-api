@@ -1,18 +1,19 @@
 import { IAdminUserListUseCase } from '@/features/user/domain/use-cases/admin-user-list.use-case.interface';
-import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Inject, Injectable } from '@nestjs/common';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { Application } from '@/common/application/application';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { IAdminUserSearchParamsDto } from '@/features/user/domain/dto/admin-user-search-params.dto.interface';
+import { AclForbiddenException } from '@/common/domain/exceptions/acl.forbbiden.exception';
 
 @Injectable()
 export class AdminUserListUseCase
   extends Application
   implements IAdminUserListUseCase
 {
-  private adminUserSearchParamsDto: AdminUserSearchParamsDto;
+  private adminUserSearchParamsDto: IAdminUserSearchParamsDto;
 
   constructor(
     @Inject(IAdminUserRepository)
@@ -22,19 +23,19 @@ export class AdminUserListUseCase
   }
 
   async execute(
-    adminUserSearchParamsDto: AdminUserSearchParamsDto,
+    adminUserSearchParamsDto: IAdminUserSearchParamsDto,
   ): Promise<ILengthAwarePaginator> {
     this.adminUserSearchParamsDto = adminUserSearchParamsDto;
 
     switch (true) {
-      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
         return this.findAllByAdminMaster();
 
-      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
         return this.findAllByEmployee();
 
       default:
-        this.policy.forbiddenException();
+        throw new AclForbiddenException();
     }
   }
 

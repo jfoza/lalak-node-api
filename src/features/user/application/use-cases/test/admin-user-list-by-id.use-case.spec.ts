@@ -1,7 +1,6 @@
 import { vi } from 'vitest';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Policy } from '@/acl/domain/core/policy';
 import { AdminUserListByIdUseCase } from '@/features/user/application/use-cases/admin-user-list-by-id.use-case';
 import { User } from '@/features/user/domain/entities/user';
 import { Profile } from '@/features/user/domain/entities/profile';
@@ -10,6 +9,7 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { Policy } from '@/acl/domain/entities/policy';
 
 describe('Admin User List By Id UseCase', () => {
   let sut: AdminUserListByIdUseCase;
@@ -21,8 +21,6 @@ describe('Admin User List By Id UseCase', () => {
 
   beforeEach(() => {
     sut = new AdminUserListByIdUseCase(adminUserRepository);
-
-    (sut as any).policy = new Policy();
   });
 
   it.each([
@@ -43,7 +41,7 @@ describe('Admin User List By Id UseCase', () => {
   ])(
     'should to list admin user id by ability',
     async ({ ability, profile }) => {
-      sut.policy.abilities = [ability];
+      sut.policy = new Policy([ability]);
 
       const user = await UserDataBuilder.getUserAdminType();
       user.profile = new Profile({
@@ -78,7 +76,7 @@ describe('Admin User List By Id UseCase', () => {
   ])(
     'should return exception if user is not reachable because of disallowed profile',
     async ({ ability, profile }) => {
-      sut.policy.abilities = [ability];
+      sut.policy = new Policy([ability]);
 
       const user = await UserDataBuilder.getUserAdminType();
       user.profile = new Profile({
@@ -105,7 +103,7 @@ describe('Admin User List By Id UseCase', () => {
   ])(
     'should return exception if admin user not exists',
     async ({ ability }) => {
-      sut.policy.abilities = [ability];
+      sut.policy = new Policy([ability]);
 
       adminUserRepository.findByUserUuid = vi.fn(async () => null);
 
@@ -117,7 +115,7 @@ describe('Admin User List By Id UseCase', () => {
   );
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new Policy(['A']);
 
     await expect(sut.execute(uuid)).rejects.toThrow(ForbiddenException);
     await expect(sut.execute(uuid)).rejects.toThrow(

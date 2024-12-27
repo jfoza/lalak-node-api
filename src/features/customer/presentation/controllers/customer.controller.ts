@@ -12,32 +12,32 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { ICustomerListUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-list.use-case.interface';
+import { ICustomerListUseCase } from '@/features/customer/domain/use-cases/customer-list.use-case.interface';
 import { CustomerSearchParamsDto } from '@/features/customer/application/dto/customer-search-params.dto';
 import { CreateCustomerDto } from '@/features/customer/application/dto/create-customer.dto';
-import { ICustomerCreateUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-create.use-case.interface';
+import { ICustomerCreateUseCase } from '@/features/customer/domain/use-cases/customer-create.use-case.interface';
 import { User } from '@/features/user/domain/entities/user';
-import { ICustomerListByIdUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-list-by-id.use-case.interface';
+import { ICustomerListByIdUseCase } from '@/features/customer/domain/use-cases/customer-list-by-id.use-case.interface';
 import { UpdateCustomerDto } from '@/features/customer/application/dto/update-customer.dto';
-import { ICustomerUpdateUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-update.use-case.interface';
-import { IManyCustomersCreateUseCase } from '@/features/customer/domain/interfaces/use-cases/many-customers-create.use-case.interface';
+import { ICustomerUpdateUseCase } from '@/features/customer/domain/use-cases/customer-update.use-case.interface';
+import { IManyCustomersCreateUseCase } from '@/features/customer/domain/use-cases/many-customers-create.use-case.interface';
 
 @UseGuards(AuthGuard)
 @Controller('admin/customers')
 export class CustomerController {
-  @Inject('ICustomerListUseCase')
+  @Inject(ICustomerListUseCase)
   private readonly customerListUseCase: ICustomerListUseCase;
 
-  @Inject('ICustomerListByIdUseCase')
+  @Inject(ICustomerListByIdUseCase)
   private readonly customerListByIdUseCase: ICustomerListByIdUseCase;
 
-  @Inject('ICustomerCreateUseCase')
+  @Inject(ICustomerCreateUseCase)
   private readonly customerCreateUseCase: ICustomerCreateUseCase;
 
-  @Inject('IManyCustomersCreateUseCase')
+  @Inject(IManyCustomersCreateUseCase)
   private readonly manyCustomersCreateUseCase: IManyCustomersCreateUseCase;
 
-  @Inject('ICustomerUpdateUseCase')
+  @Inject(ICustomerUpdateUseCase)
   private readonly customerUpdateUseCase: ICustomerUpdateUseCase;
 
   @Get()

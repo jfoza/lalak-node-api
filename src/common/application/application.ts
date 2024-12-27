@@ -1,17 +1,17 @@
 import { ForbiddenException, Inject } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { IAclService } from '@/acl/domain/services/acl.service.interface';
+import { Policy } from '@/acl/domain/entities/policy';
 
 export abstract class Application {
-  @Inject(IAclService)
-  private _aclService: IAclService;
+  @Inject(Policy)
+  private _policy: Policy;
 
-  get policy(): IAclService {
-    return this._aclService;
+  get policy(): Policy {
+    return this._policy;
   }
 
-  set policy(aclService: IAclService) {
-    this._aclService = aclService;
+  set policy(policy: Policy) {
+    this._policy = policy;
   }
 
   protected profileHierarchyValidation(

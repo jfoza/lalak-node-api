@@ -1,8 +1,8 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { Profile } from '@/features/user/domain/entities/profile';
 import { Person } from '@/features/user/domain/entities/person';
 import { AdminUser } from '@/features/user/domain/entities/admin-user';
-import { Customer } from '@/features/customer/domain/core/customer';
+import { Customer } from '@/features/customer/domain/entities/customer';
 import { UserValidatorFactory } from '@/features/user/domain/validators/user.validator';
 
 export type UserProps = {
@@ -18,7 +18,7 @@ export type UserProps = {
   customer?: Customer;
 };
 
-export class User extends Core<UserProps> {
+export class User extends Entity<UserProps> {
   constructor(
     public readonly props: UserProps,
     uuid?: string,

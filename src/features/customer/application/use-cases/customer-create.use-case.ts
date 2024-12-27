@@ -1,8 +1,7 @@
-import { ICustomerCreateUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-create.use-case.interface';
-import { CreateCustomerDto } from '@/features/customer/application/dto/create-customer.dto';
+import { ICustomerCreateUseCase } from '@/features/customer/domain/use-cases/customer-create.use-case.interface';
 import { User, UserProps } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
+import { ICustomerRepository } from '@/features/customer/domain/repositories/customer-repository.interface';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
@@ -16,9 +15,10 @@ import { Hash } from '@/utils/hash';
 import {
   Customer,
   CustomerProps,
-} from '@/features/customer/domain/core/customer';
+} from '@/features/customer/domain/entities/customer';
 import { CityValidations } from '@/features/city/application/validations/city.validations';
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
+import { ICreateCustomerDto } from '@/features/customer/domain/dto/create-customer.dto.interface';
 
 @Injectable()
 export class CustomerCreateUseCase
@@ -26,25 +26,25 @@ export class CustomerCreateUseCase
   implements ICustomerCreateUseCase
 {
   constructor(
-    @Inject('IProfileRepository')
+    @Inject(IProfileRepository)
     private readonly profileRepository: IProfileRepository,
 
-    @Inject('ICityRepository')
+    @Inject(ICityRepository)
     private readonly cityRepository: ICityRepository,
 
-    @Inject('IPersonRepository')
+    @Inject(IPersonRepository)
     private readonly personRepository: IPersonRepository,
 
-    @Inject('IUserRepository')
+    @Inject(IUserRepository)
     private readonly userRepository: IUserRepository,
 
-    @Inject('ICustomerRepository')
+    @Inject(ICustomerRepository)
     private readonly customerRepository: ICustomerRepository,
   ) {
     super();
   }
 
-  async execute(createCustomerDto: CreateCustomerDto): Promise<User> {
+  async execute(createCustomerDto: ICreateCustomerDto): Promise<User> {
     this.policy.can(AbilitiesEnum.CUSTOMERS_INSERT);
 
     await UserValidations.userAlreadyExistsByEmail(
@@ -64,7 +64,7 @@ export class CustomerCreateUseCase
     const person = await Person.create({
       name: createCustomerDto.name,
       shortName: Helper.shortStringGenerate(createCustomerDto.name),
-      birthDate: createCustomerDto.birthDate,
+      birthDate: new Date(createCustomerDto.birthDate),
       phone: createCustomerDto.phone,
       zipCode: createCustomerDto.zipCode,
       address: createCustomerDto.address,

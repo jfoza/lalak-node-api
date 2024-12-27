@@ -1,5 +1,4 @@
 import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-user-create.use-case.interface';
-import { CreateAdminUserDto } from '@/features/user/application/dto/create-admin-user.dto';
 import { User, UserProps } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
 import { Application } from '@/common/application/application';
@@ -20,13 +19,15 @@ import { Profile } from '@/features/user/domain/entities/profile';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
+import { ICreateAdminUserDto } from '@/features/user/domain/dto/create-admin-user.dto.interface';
+import { AclForbiddenException } from '@/common/domain/exceptions/acl.forbbiden.exception';
 
 @Injectable()
 export class AdminUserCreateUseCase
   extends Application
   implements IAdminUserCreateUseCase
 {
-  private createAdminUserDto: CreateAdminUserDto;
+  private createAdminUserDto: ICreateAdminUserDto;
   private profile: Profile;
 
   constructor(
@@ -45,18 +46,18 @@ export class AdminUserCreateUseCase
     super();
   }
 
-  async execute(createAdminUserDto: CreateAdminUserDto): Promise<User> {
+  async execute(createAdminUserDto: ICreateAdminUserDto): Promise<User> {
     this.createAdminUserDto = createAdminUserDto;
 
     switch (true) {
-      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT):
         return this.createByAdminMaster();
 
-      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT):
         return this.createByEmployee();
 
       default:
-        this.policy.forbiddenException();
+        throw new AclForbiddenException();
     }
   }
 

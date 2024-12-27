@@ -1,10 +1,10 @@
 import { User } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
-import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
+import { ICustomerRepository } from '@/features/customer/domain/repositories/customer-repository.interface';
 import { CustomerValidations } from '@/features/customer/application/validations/customer.validations';
 import { Application } from '@/common/application/application';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { ICustomerListByIdUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-list-by-id.use-case.interface';
+import { ICustomerListByIdUseCase } from '@/features/customer/domain/use-cases/customer-list-by-id.use-case.interface';
 
 @Injectable()
 export class CustomerListByIdUseCase
@@ -12,7 +12,7 @@ export class CustomerListByIdUseCase
   implements ICustomerListByIdUseCase
 {
   constructor(
-    @Inject('ICustomerRepository')
+    @Inject(ICustomerRepository)
     private readonly customerRepository: ICustomerRepository,
   ) {
     super();

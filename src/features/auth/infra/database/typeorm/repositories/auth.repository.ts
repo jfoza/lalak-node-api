@@ -1,9 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.repository.interface';
+import { IAuthRepository } from '@/features/auth/domain/repositories/auth.repository.interface';
 import { AuthEntity } from '@/features/auth/infra/database/typeorm/entities/auth.entity';
-import { Auth } from '@/features/auth/domain/core/auth';
+import { Auth } from '@/features/auth/domain/entities/auth';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {

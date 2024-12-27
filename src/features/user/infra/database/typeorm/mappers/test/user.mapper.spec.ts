@@ -6,12 +6,22 @@ import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/p
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
 import { AdminUserEntity } from '@/features/user/infra/database/typeorm/entities/admin-user.entity';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { ProfileMapper } from '@/features/user/infra/database/typeorm/mappers/profile.mapper';
+import { PersonMapper } from '@/features/user/infra/database/typeorm/mappers/person.mapper';
+import { AdminUserMapper } from '@/features/user/infra/database/typeorm/mappers/admin-user.mapper';
+import { CustomerMapper } from '@/features/customer/infra/database/typeorm/mappers/customer.mapper';
+import { CityMapper } from '@/features/city/infra/database/typeorm/mappers/city.mapper';
 
 describe('UserMapper Unit Tests', () => {
   let sut: UserMapper;
 
   beforeEach(async () => {
-    sut = new UserMapper();
+    sut = new UserMapper(
+      new ProfileMapper(),
+      new PersonMapper(new CityMapper()),
+      new AdminUserMapper(),
+      new CustomerMapper(),
+    );
   });
 
   it('toDomainEntity should return User class instance', async () => {

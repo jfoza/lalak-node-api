@@ -9,11 +9,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Policy } from '@/acl/domain/core/policy';
+import { Policy } from '@/acl/domain/entities/policy';
 import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
-import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
+import { ICustomerRepository } from '@/features/customer/domain/repositories/customer-repository.interface';
 import { CustomerUpdateUseCase } from '@/features/customer/application/use-cases/customer-update.use-case';
 import { UpdateCustomerDto } from '@/features/customer/application/dto/update-customer.dto';
 import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
@@ -51,9 +51,7 @@ describe('Admin User Update UseCase', () => {
       customerRepository,
     );
 
-    (sut as any).policy = new Policy();
-
-    sut.policy.abilities = [AbilitiesEnum.CUSTOMERS_UPDATE];
+    sut.policy = new Policy([AbilitiesEnum.CUSTOMERS_UPDATE]);
 
     updateCustomerDto = {
       name: 'John Doe',
@@ -141,7 +139,7 @@ describe('Admin User Update UseCase', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new Policy(['ABC']);
 
     await expect(
       sut.execute(UUID.generate(), updateCustomerDto),

@@ -1,8 +1,8 @@
-import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
+import { OldMapper } from '@/common/infra/database/typeorm/mappers/OldMapper';
 import { ProductEntity } from '@/features/product/infra/database/typeorm/entities/product.entity';
 import { Product, ProductProps } from '@/features/product/domain/core/product';
 
-export class ProductMapper extends Mapper<
+export class ProductMapper extends OldMapper<
   ProductEntity,
   Product,
   ProductProps

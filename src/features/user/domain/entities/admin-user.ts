@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { AdminUserValidatorFactory } from '@/features/user/domain/validators/admin-user.validator';
 
 export type AdminUserProps = {
@@ -6,7 +6,7 @@ export type AdminUserProps = {
   createdAt?: Date;
 };
 
-export class AdminUser extends Core<AdminUserProps> {
+export class AdminUser extends Entity<AdminUserProps> {
   constructor(
     public readonly props: AdminUserProps,
     uuid?: string,

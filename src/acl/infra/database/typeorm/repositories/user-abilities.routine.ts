@@ -2,10 +2,10 @@ import { DataSource } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { AbilityMapper } from '@/acl/infra/database/typeorm/mappers/ability.mapper';
 import { Ability } from '@/acl/domain/entities/ability';
-import { IUserAbilities } from '@/acl/domain/repositories/user-abilities.routine.interface';
+import { IUserAbilitiesRoutine } from '@/acl/domain/repositories/user-abilities.routine.interface';
 
 @Injectable()
-export class UserAbilitiesRoutine implements IUserAbilities {
+export class UserAbilitiesRoutine implements IUserAbilitiesRoutine {
   constructor(
     private readonly dataSource: DataSource,
 

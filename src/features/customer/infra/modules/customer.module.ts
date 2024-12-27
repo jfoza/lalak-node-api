@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerEntity } from '@/features/customer/infra/database/typeorm/entities/customer.entity';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
@@ -12,6 +12,14 @@ import { CustomerListByIdUseCase } from '@/features/customer/application/use-cas
 import { CustomerCreateUseCase } from '@/features/customer/application/use-cases/customer-create.use-case';
 import { ManyCustomersCreateUseCase } from '@/features/customer/application/use-cases/many-customers-create.use-case';
 import { CustomerUpdateUseCase } from '@/features/customer/application/use-cases/customer-update.use-case';
+import { CustomerMapper } from '@/features/customer/infra/database/typeorm/mappers/customer.mapper';
+import { ICustomerRepository } from '@/features/customer/domain/repositories/customer-repository.interface';
+import { ICustomerListUseCase } from '@/features/customer/domain/use-cases/customer-list.use-case.interface';
+import { ICustomerListByIdUseCase } from '@/features/customer/domain/use-cases/customer-list-by-id.use-case.interface';
+import { ICustomerCreateUseCase } from '@/features/customer/domain/use-cases/customer-create.use-case.interface';
+import { IManyCustomersCreateUseCase } from '@/features/customer/domain/use-cases/many-customers-create.use-case.interface';
+import { ICustomerUpdateUseCase } from '@/features/customer/domain/use-cases/customer-update.use-case.interface';
+import { UserModule } from '@/features/user/infra/modules/user.module';
 
 @Module({
   imports: [
@@ -21,46 +29,48 @@ import { CustomerUpdateUseCase } from '@/features/customer/application/use-cases
       ProfileEntity,
       UserEntity,
     ]),
+    forwardRef(() => UserModule),
     CityModule,
   ],
   controllers: [CustomerController],
   providers: [
+    CustomerMapper,
     TypeormCustomerRepository,
     {
-      provide: 'ICustomerRepository',
+      provide: ICustomerRepository,
       useExisting: TypeormCustomerRepository,
     },
 
     CustomerListUseCase,
     {
-      provide: 'ICustomerListUseCase',
+      provide: ICustomerListUseCase,
       useClass: CustomerListUseCase,
     },
 
     CustomerListByIdUseCase,
     {
-      provide: 'ICustomerListByIdUseCase',
+      provide: ICustomerListByIdUseCase,
       useClass: CustomerListByIdUseCase,
     },
 
     CustomerCreateUseCase,
     {
-      provide: 'ICustomerCreateUseCase',
+      provide: ICustomerCreateUseCase,
       useClass: CustomerCreateUseCase,
     },
 
     ManyCustomersCreateUseCase,
     {
-      provide: 'IManyCustomersCreateUseCase',
+      provide: IManyCustomersCreateUseCase,
       useClass: ManyCustomersCreateUseCase,
     },
 
     CustomerUpdateUseCase,
     {
-      provide: 'ICustomerUpdateUseCase',
+      provide: ICustomerUpdateUseCase,
       useClass: CustomerUpdateUseCase,
     },
   ],
-  exports: [],
+  exports: [CustomerMapper],
 })
 export class CustomerModule {}

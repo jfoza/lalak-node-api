@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { CityValidatorFactory } from '@/features/city/domain/validators/city.validator';
 
 export type CityProps = {
@@ -8,7 +8,7 @@ export type CityProps = {
   createdAt?: Date;
 };
 
-export class City extends Core<CityProps> {
+export class City extends Entity<CityProps> {
   constructor(
     public readonly props: CityProps,
     uuid?: string,

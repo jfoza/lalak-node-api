@@ -10,7 +10,7 @@ import {
 import {
   Customer,
   CustomerProps,
-} from '@/features/customer/domain/core/customer';
+} from '@/features/customer/domain/entities/customer';
 import { City, CityProps } from '@/features/city/domain/core/city';
 import { UUID } from '@/utils/uuid';
 import { UserTokenProps } from '@/features/user/domain/entities/user-token';

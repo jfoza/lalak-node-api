@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { Theme } from '@/features/theme/domain/core/theme';
 import { Product } from '@/features/product/domain/core/product';
 
@@ -11,7 +11,7 @@ export type CategoryProps = {
   products?: Product[];
 };
 
-export class Category extends Core<CategoryProps> {
+export class Category extends Entity<CategoryProps> {
   constructor(
     public readonly props: CategoryProps,
     uuid?: string,

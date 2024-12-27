@@ -1,7 +1,7 @@
 import { Ability } from '@/acl/domain/entities/ability';
 
-export interface IUserAbilities {
+export interface IUserAbilitiesRoutine {
   find(userUuid: string): Promise<Ability[]>;
 }
 
-export const IUserAbilities = Symbol('IUserAbilities');
+export const IUserAbilitiesRoutine = Symbol('IUserAbilitiesRoutine');

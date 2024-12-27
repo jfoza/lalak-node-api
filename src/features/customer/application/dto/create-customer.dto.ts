@@ -11,8 +11,9 @@ import {
 import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 import { Transform } from 'class-transformer';
 import { Helper } from 'src/utils/helpers';
+import { ICreateCustomerDto } from '@/features/customer/domain/dto/create-customer.dto.interface';
 
-export class CreateCustomerDto {
+export class CreateCustomerDto implements ICreateCustomerDto {
   @IsNotEmpty()
   @IsString()
   name: string;

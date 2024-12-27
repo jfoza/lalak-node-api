@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { UserTokenValidatorFactory } from '@/features/user/domain/validators/user-token.validator';
 
 export type UserTokenProps = {
@@ -8,7 +8,7 @@ export type UserTokenProps = {
   createdAt?: Date;
 };
 
-export class UserToken extends Core<UserTokenProps> {
+export class UserToken extends Entity<UserTokenProps> {
   constructor(
     public readonly props: UserTokenProps,
     uuid?: string,

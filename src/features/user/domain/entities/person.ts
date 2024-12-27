@@ -1,11 +1,11 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { City } from '@/features/city/domain/core/city';
 import { PersonValidatorFactory } from '@/features/user/domain/validators/person.validator';
 
 export type PersonProps = {
   name: string;
   shortName: string;
-  birthDate?: string;
+  birthDate?: Date;
   phone?: string;
   zipCode?: string;
   address?: string;
@@ -19,7 +19,7 @@ export type PersonProps = {
   city?: City;
 };
 
-export class Person extends Core<PersonProps> {
+export class Person extends Entity<PersonProps> {
   constructor(
     public readonly props: PersonProps,
     uuid?: string,
@@ -36,7 +36,7 @@ export class Person extends Core<PersonProps> {
     return this.props.shortName;
   }
 
-  get birthDate(): string {
+  get birthDate(): Date {
     return this.props.birthDate;
   }
 
@@ -92,7 +92,7 @@ export class Person extends Core<PersonProps> {
     this.props.shortName = shortName;
   }
 
-  set birthDate(birthDate: string) {
+  set birthDate(birthDate: Date) {
     this.props.birthDate = birthDate;
   }
 

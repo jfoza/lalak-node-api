@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Policy } from '@/acl/domain/core/policy';
 import { AdminUserListUseCase } from '@/features/user/application/use-cases/admin-user-list.use-case';
 import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { ForbiddenException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { Policy } from '@/acl/domain/entities/policy';
 
 describe('Admin User List UseCase', () => {
   let sut: AdminUserListUseCase;
@@ -29,8 +29,6 @@ describe('Admin User List UseCase', () => {
   beforeEach(() => {
     sut = new AdminUserListUseCase(adminUserRepository);
 
-    (sut as any).policy = new Policy();
-
     adminUserSearchParamsDto = new AdminUserSearchParamsDto();
   });
 
@@ -42,7 +40,7 @@ describe('Admin User List UseCase', () => {
       ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
     },
   ])('should to list admin users by ability', async ({ ability }) => {
-    sut.policy.abilities = [ability];
+    sut.policy = new Policy([ability]);
 
     const result = await sut.execute(adminUserSearchParamsDto);
 
@@ -58,7 +56,7 @@ describe('Admin User List UseCase', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new Policy(['ABC']);
 
     await expect(sut.execute(adminUserSearchParamsDto)).rejects.toThrow(
       ForbiddenException,

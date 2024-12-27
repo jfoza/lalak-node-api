@@ -8,10 +8,10 @@ import {
   Req,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { ILoginService } from '@/features/auth/domain/interfaces/login.service.interface';
+import { ILoginService } from '@/features/auth/domain/services/login.service.interface';
 import { AuthDto } from '@/features/auth/application/dto/auth.dto';
 import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
-import { IAuthResponse } from '@/features/auth/application/outputs/auth.response.interface';
+import { IAuthResponse } from '@/features/auth/domain/dto/auth.response.dto.interface';
 
 @Controller('auth')
 export class AuthController {

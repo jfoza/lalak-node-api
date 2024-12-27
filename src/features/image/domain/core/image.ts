@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 
 export type ImageProps = {
   path: string;
@@ -6,7 +6,7 @@ export type ImageProps = {
   createdAt?: Date;
 };
 
-export class Image extends Core<ImageProps> {
+export class Image extends Entity<ImageProps> {
   constructor(
     public readonly props: ImageProps,
     uuid?: string,

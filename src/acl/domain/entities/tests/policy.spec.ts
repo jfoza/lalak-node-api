@@ -1,7 +1,8 @@
-import { Policy } from '@/acl/domain/core/policy';
 import { expect } from 'vitest';
 import { ForbiddenException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { Policy } from '@/acl/domain/entities/policy';
+import { AclForbiddenException } from '@/common/domain/exceptions/acl.forbbiden.exception';
 
 describe('Policy Unit Tests', () => {
   let sut: Policy;
@@ -50,10 +51,10 @@ describe('Policy Unit Tests', () => {
 
   describe('policyException', () => {
     it('should throw ForbiddenException with the correct error message', () => {
-      expect(() => sut.policyException()).toThrow(ForbiddenException);
-      expect(() => sut.policyException()).toThrow(
-        ErrorMessagesEnum.NOT_AUTHORIZED,
-      );
+      sut.abilities = [];
+
+      expect(() => sut.can('ABC')).toThrow(AclForbiddenException);
+      expect(() => sut.can('ABC')).toThrow(ErrorMessagesEnum.NOT_AUTHORIZED);
     });
   });
 });

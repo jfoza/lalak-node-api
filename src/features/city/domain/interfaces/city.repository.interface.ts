@@ -5,3 +5,5 @@ export interface ICityRepository {
   findByDescription(description: string): Promise<City | null>;
   findByUf(uf: string): Promise<City[]>;
 }
+
+export const ICityRepository = Symbol('ICityRepository');

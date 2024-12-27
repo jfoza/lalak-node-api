@@ -22,6 +22,9 @@ export class PersonEntity {
   @Column()
   short_name: string;
 
+  @Column()
+  phone: string;
+
   @CreateDateColumn({ type: 'date' })
   birth_date: Date;
 

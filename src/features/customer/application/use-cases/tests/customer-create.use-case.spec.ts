@@ -10,15 +10,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Policy } from '@/acl/domain/core/policy';
 import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
-import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
+import { ICustomerRepository } from '@/features/customer/domain/repositories/customer-repository.interface';
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
 import { CustomerCreateUseCase } from '@/features/customer/application/use-cases/customer-create.use-case';
 import { CreateCustomerDto } from '@/features/customer/application/dto/create-customer.dto';
 import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 import { City, CityProps } from '@/features/city/domain/core/city';
+import { Policy } from '@/acl/domain/entities/policy';
 
 describe('Admin User Create UseCase', () => {
   let sut: CustomerCreateUseCase;
@@ -58,9 +58,7 @@ describe('Admin User Create UseCase', () => {
       customerRepository,
     );
 
-    (sut as any).policy = new Policy();
-
-    sut.policy.abilities = [AbilitiesEnum.CUSTOMERS_INSERT];
+    sut.policy = new Policy([AbilitiesEnum.CUSTOMERS_INSERT]);
 
     createCustomerDto = {
       name: 'John Doe',
@@ -120,7 +118,7 @@ describe('Admin User Create UseCase', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new Policy(['ABC']);
 
     await expect(sut.execute(createCustomerDto)).rejects.toThrow(
       ForbiddenException,

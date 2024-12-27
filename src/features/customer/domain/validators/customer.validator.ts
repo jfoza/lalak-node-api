@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
-import { CustomerProps } from '@/features/customer/domain/core/customer';
+import { CustomerProps } from '@/features/customer/domain/entities/customer';
 
 export class CustomerRules {
   @IsNotEmpty()

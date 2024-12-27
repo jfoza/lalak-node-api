@@ -6,6 +6,7 @@ import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { AdminUserValidations } from '@/features/user/application/validations/admin-user.validations';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { AclForbiddenException } from '@/common/domain/exceptions/acl.forbbiden.exception';
 
 @Injectable()
 export class AdminUserListByIdUseCase
@@ -25,14 +26,14 @@ export class AdminUserListByIdUseCase
     this.userUuid = userUuid;
 
     switch (true) {
-      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW):
         return this.findByAdminMaster();
 
-      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW):
         return this.findByEmployee();
 
       default:
-        this.policy.forbiddenException();
+        throw new AclForbiddenException();
     }
   }
 

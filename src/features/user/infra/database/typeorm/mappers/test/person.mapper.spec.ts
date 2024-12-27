@@ -3,12 +3,13 @@ import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/pe
 import { PersonMapper } from '@/features/user/infra/database/typeorm/mappers/person.mapper';
 import { Person } from '@/features/user/domain/entities/person';
 import { CityEntity } from '@/features/city/infra/database/typeorm/entities/city.entity';
+import { CityMapper } from '@/features/city/infra/database/typeorm/mappers/city.mapper';
 
 describe('PersonMapper Unit Tests', () => {
   let sut: PersonMapper;
 
   beforeEach(async () => {
-    sut = new PersonMapper();
+    sut = new PersonMapper(new CityMapper());
   });
 
   it('toDomainEntity should return Person class instance', async () => {
@@ -28,7 +29,7 @@ describe('PersonMapper Unit Tests', () => {
       created_at: new Date(),
     } as PersonEntity);
 
-    const result = await sut.from(person);
+    const result: Person = await sut.from(person);
 
     expect(result).toBeInstanceOf(Person);
   });
@@ -58,7 +59,7 @@ describe('PersonMapper Unit Tests', () => {
       city,
     } as PersonEntity);
 
-    const result = await sut.from(person);
+    const result: Person = await sut.from(person);
 
     expect(result).toBeInstanceOf(Person);
   });

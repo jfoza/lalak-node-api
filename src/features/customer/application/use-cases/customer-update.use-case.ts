@@ -1,5 +1,4 @@
-import { ICustomerUpdateUseCase } from '@/features/customer/domain/interfaces/use-cases/customer-update.use-case.interface';
-import { UpdateCustomerDto } from '@/features/customer/application/dto/update-customer.dto';
+import { ICustomerUpdateUseCase } from '@/features/customer/domain/use-cases/customer-update.use-case.interface';
 import { User } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
 import { Application } from '@/common/application/application';
@@ -7,11 +6,12 @@ import { CustomerValidations } from '@/features/customer/application/validations
 import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
 import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { ICustomerRepository } from '@/features/customer/domain/interfaces/repositories/customer-repository.interface';
+import { ICustomerRepository } from '@/features/customer/domain/repositories/customer-repository.interface';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { CityValidations } from '@/features/city/application/validations/city.validations';
 import { Helper } from 'src/utils/helpers';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { IUpdateCustomerDto } from '@/features/customer/domain/dto/update-customer.dto.interface';
 
 @Injectable()
 export class CustomerUpdateUseCase
@@ -19,16 +19,16 @@ export class CustomerUpdateUseCase
   implements ICustomerUpdateUseCase
 {
   constructor(
-    @Inject('ICityRepository')
+    @Inject(ICityRepository)
     private readonly cityRepository: ICityRepository,
 
-    @Inject('IPersonRepository')
+    @Inject(IPersonRepository)
     private readonly personRepository: IPersonRepository,
 
-    @Inject('IUserRepository')
+    @Inject(IUserRepository)
     private readonly userRepository: IUserRepository,
 
-    @Inject('ICustomerRepository')
+    @Inject(ICustomerRepository)
     private readonly customerRepository: ICustomerRepository,
   ) {
     super();
@@ -36,7 +36,7 @@ export class CustomerUpdateUseCase
 
   async execute(
     uuid: string,
-    updateCustomerDto: UpdateCustomerDto,
+    updateCustomerDto: IUpdateCustomerDto,
   ): Promise<User> {
     this.policy.can(AbilitiesEnum.CUSTOMERS_UPDATE);
 
@@ -58,7 +58,7 @@ export class CustomerUpdateUseCase
 
     user.person.name = updateCustomerDto.name;
     user.person.shortName = Helper.shortStringGenerate(updateCustomerDto.name);
-    user.person.birthDate = updateCustomerDto.birthDate;
+    user.person.birthDate = new Date(updateCustomerDto.birthDate);
     user.person.phone = updateCustomerDto.phone;
     user.person.zipCode = updateCustomerDto.zipCode;
     user.person.address = updateCustomerDto.address;

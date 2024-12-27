@@ -11,7 +11,7 @@ import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-
 import { ISendForgotPasswordEmailUseCase } from '@/features/user/domain/use-cases/send-forgot-password-email.use-case.interface';
 import { IResetPasswordUseCase } from '@/features/user/domain/use-cases/reset-password.use-case.interface';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
 import { UserTokenEntity } from '@/features/user/infra/database/typeorm/entities/user-token.entity';
@@ -39,6 +39,8 @@ import { AdminUserCreateUseCase } from '@/features/user/application/use-cases/ad
 import { AdminUserUpdateUseCase } from '@/features/user/application/use-cases/admin-user-update.use-case';
 import { SendForgotPasswordEmailUseCase } from '@/features/user/application/use-cases/send-forgot-password-email.use-case';
 import { ResetPasswordUseCase } from '@/features/user/application/use-cases/reset-password.use-case';
+import { CustomerModule } from '@/features/customer/infra/modules/customer.module';
+import { CityModule } from '@/features/city/infra/modules/city.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { ResetPasswordUseCase } from '@/features/user/application/use-cases/rese
     ]),
     AmqpModule,
     MailModule,
+    CityModule,
+    forwardRef(() => CustomerModule),
   ],
   controllers: [AdminUserController, ForgotPasswordController],
   providers: [

@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { Product } from '@/features/product/domain/core/product';
 
 export type EventProps = {
@@ -8,7 +8,7 @@ export type EventProps = {
   products?: Product[];
 };
 
-export class Event extends Core<EventProps> {
+export class Event extends Entity<EventProps> {
   constructor(
     public readonly props: EventProps,
     uuid?: string,

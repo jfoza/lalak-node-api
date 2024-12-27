@@ -1,4 +1,4 @@
-import { Mapper } from '@/common/infra/database/typeorm/mappers/Mapper';
+import { OldMapper } from '@/common/infra/database/typeorm/mappers/OldMapper';
 import { Injectable } from '@nestjs/common';
 import { CategoryEntity } from '@/features/category/infra/database/typeorm/entities/category.entity';
 import {
@@ -7,7 +7,7 @@ import {
 } from '@/features/category/domain/core/category';
 
 @Injectable()
-export class CategoryMapper extends Mapper<
+export class CategoryMapper extends OldMapper<
   CategoryEntity,
   Category,
   CategoryProps

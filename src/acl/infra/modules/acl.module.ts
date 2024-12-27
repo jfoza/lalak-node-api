@@ -4,18 +4,26 @@ import { AclRepository } from '@/acl/infra/database/typeorm/repositories/acl.rep
 import { AclService } from '@/acl/application/services/acl.service';
 import { AbilityMapper } from '@/acl/infra/database/typeorm/mappers/ability.mapper';
 import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
-import { IAclService } from '@/acl/domain/services/acl.service.interface';
 import { UserModule } from '@/features/user/infra/modules/user.module';
-import { IUserAbilities } from '@/acl/domain/repositories/user-abilities.routine.interface';
+import { IUserAbilitiesRoutine } from '@/acl/domain/repositories/user-abilities.routine.interface';
+import { Policy } from '@/acl/domain/entities/policy';
+import { IAclService } from '@/acl/domain/services/acl.service.interface';
 
 @Global()
 @Module({
   imports: [UserModule],
   providers: [
     AbilityMapper,
+
+    AclService,
+    {
+      provide: IAclService,
+      useClass: AclService,
+    },
+
     UserAbilitiesRoutine,
     {
-      provide: IUserAbilities,
+      provide: IUserAbilitiesRoutine,
       useClass: UserAbilitiesRoutine,
     },
 
@@ -25,12 +33,17 @@ import { IUserAbilities } from '@/acl/domain/repositories/user-abilities.routine
       useExisting: AclRepository,
     },
 
-    AclService,
+    Policy,
     {
-      provide: IAclService,
-      useClass: AclService,
+      provide: Policy,
+      useFactory: async (aclService: IAclService): Promise<Policy> => {
+        const abilities: string[] = await aclService.execute();
+
+        return new Policy(abilities);
+      },
+      inject: [IAclService],
     },
   ],
-  exports: [IAclService, IAclRepository],
+  exports: [Policy, IAclRepository],
 })
 export class AclModule {}

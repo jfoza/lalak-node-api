@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
-import { AuthProps } from '@/features/auth/domain/core/auth';
+import { AuthProps } from '@/features/auth/domain/entities/auth';
 import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 import { AuthTypesEnum } from '@/utils/enums/auth-types.enum';
 

@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { Readable } from 'stream';
 
 export type FileProps = {
@@ -15,7 +15,7 @@ export type FileProps = {
   buffer: Buffer;
 };
 
-export class File extends Core<FileProps> {
+export class File extends Entity<FileProps> {
   constructor(
     public readonly props: FileProps,
     uuid?: string,

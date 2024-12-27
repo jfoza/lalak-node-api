@@ -1,4 +1,4 @@
-import { Core } from '@/common/domain/core/core';
+import { Entity } from '@/common/domain/entities/entity';
 import { ProfileValidatorFactory } from '@/features/user/domain/validators/profile.validator';
 
 export type ProfileProps = {
@@ -7,7 +7,7 @@ export type ProfileProps = {
   createdAt?: Date;
 };
 
-export class Profile extends Core<ProfileProps> {
+export class Profile extends Entity<ProfileProps> {
   constructor(
     public readonly props: ProfileProps,
     uuid?: string,

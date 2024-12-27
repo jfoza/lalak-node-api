@@ -5,7 +5,7 @@ import { AdminUser } from '@/features/user/domain/entities/admin-user';
 import {
   Customer,
   CustomerProps,
-} from '@/features/customer/domain/core/customer';
+} from '@/features/customer/domain/entities/customer';
 import { UUID } from '@/utils/uuid';
 import { BadRequestException } from '@nestjs/common';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';

@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IAuthDto } from '@/features/auth/domain/dto/auth.dto.interface';
 
-export class AuthDto {
+export class AuthDto implements IAuthDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;

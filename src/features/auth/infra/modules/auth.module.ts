@@ -9,9 +9,10 @@ import { UserModule } from '@/features/user/infra/modules/user.module';
 import { AuthRepository } from '@/features/auth/infra/database/typeorm/repositories/auth.repository';
 import { LoginService } from '@/features/auth/application/services/login.service';
 import { AuthMapper } from '@/features/auth/infra/database/typeorm/mappers/auth.mapper';
-import { IAuthRepository } from '@/features/auth/domain/interfaces/auth.repository.interface';
-import { ILoginService } from '@/features/auth/domain/interfaces/login.service.interface';
+import { IAuthRepository } from '@/features/auth/domain/repositories/auth.repository.interface';
+import { ILoginService } from '@/features/auth/domain/services/login.service.interface';
 import { AclModule } from '@/acl/infra/modules/acl.module';
+import { JwtAuthService } from '@/jwt/application/services/jwt-auth.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AclModule } from '@/acl/infra/modules/acl.module';
   ],
   providers: [
     AuthMapper,
+    JwtAuthService,
     AuthRepository,
     { provide: IAuthRepository, useExisting: AuthRepository },
 

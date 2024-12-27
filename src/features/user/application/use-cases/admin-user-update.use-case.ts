@@ -1,5 +1,4 @@
 import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-user-update.use-case.interface';
-import { UpdateAdminUserDto } from '@/features/user/application/dto/update-admin-user.dto';
 import { User } from '@/features/user/domain/entities/user';
 import { Inject, Injectable } from '@nestjs/common';
 import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
@@ -16,6 +15,8 @@ import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Profile } from '@/features/user/domain/entities/profile';
 import { Helper } from 'src/utils/helpers';
 import { Hash } from '@/utils/hash';
+import { IUpdateAdminUserDto } from '@/features/user/domain/dto/update-admin-user.dto.interface';
+import { AclForbiddenException } from '@/common/domain/exceptions/acl.forbbiden.exception';
 
 @Injectable()
 export class AdminUserUpdateUseCase
@@ -25,7 +26,7 @@ export class AdminUserUpdateUseCase
   private userPayload: User;
   private profilePayload: Profile;
   private uuid: string;
-  private updateAdminUserDto: UpdateAdminUserDto;
+  private updateAdminUserDto: IUpdateAdminUserDto;
 
   constructor(
     @Inject(IPersonRepository)
@@ -45,20 +46,20 @@ export class AdminUserUpdateUseCase
 
   async execute(
     uuid: string,
-    updateAdminUserDto: UpdateAdminUserDto,
+    updateAdminUserDto: IUpdateAdminUserDto,
   ): Promise<User> {
     this.uuid = uuid;
     this.updateAdminUserDto = updateAdminUserDto;
 
     switch (true) {
-      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE):
         return await this.updateByAdminMaster();
 
-      case await this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE):
+      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE):
         return await this.updateByEmployee();
 
       default:
-        this.policy.forbiddenException();
+        throw new AclForbiddenException();
     }
   }
 

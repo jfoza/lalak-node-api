@@ -10,8 +10,12 @@ import {
 import { Transform, Type } from 'class-transformer';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { FiltersDto } from '@/common/application/dto/FiltersDto';
+import { IAdminUserSearchParamsDto } from '@/features/user/domain/dto/admin-user-search-params.dto.interface';
 
-export class AdminUserSearchParamsDto extends FiltersDto {
+export class AdminUserSearchParamsDto
+  extends FiltersDto
+  implements IAdminUserSearchParamsDto
+{
   @IsOptional()
   @IsString()
   @Transform(({ value }) => (value === '' ? undefined : value))

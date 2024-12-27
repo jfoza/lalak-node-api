@@ -14,10 +14,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Policy } from '@/acl/domain/core/policy';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { Policy } from '@/acl/domain/entities/policy';
 
 describe('Admin User Create UseCase', () => {
   let sut: AdminUserCreateUseCase;
@@ -52,8 +52,6 @@ describe('Admin User Create UseCase', () => {
       profileRepository,
     );
 
-    (sut as any).policy = new Policy();
-
     createAdminUserDto = {
       name: 'John Doe',
       email: 'john.doe@example.com',
@@ -80,7 +78,7 @@ describe('Admin User Create UseCase', () => {
   ])(
     'should create new admin user by abilities',
     async ({ ability, profile }) => {
-      sut.policy.abilities = [ability];
+      sut.policy = new Policy([ability]);
 
       profileRepository.findById = vi.fn(
         async () =>
@@ -105,7 +103,7 @@ describe('Admin User Create UseCase', () => {
   ])(
     'should return exception if user email already exists',
     async ({ ability }) => {
-      sut.policy.abilities = [ability];
+      sut.policy = new Policy([ability]);
 
       const user = await UserDataBuilder.getUserAdminType();
 
@@ -124,7 +122,7 @@ describe('Admin User Create UseCase', () => {
     { ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT },
     { ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT },
   ])('should return exception if profile not exists', async ({ ability }) => {
-    sut.policy.abilities = [ability];
+    sut.policy = new Policy([ability]);
 
     userRepository.findByEmail = vi.fn(async () => null);
     profileRepository.findById = vi.fn(async () => null);
@@ -155,7 +153,7 @@ describe('Admin User Create UseCase', () => {
   ])(
     'should return exception if profile is not allowed',
     async ({ ability, profile }) => {
-      sut.policy.abilities = [ability];
+      sut.policy = new Policy([ability]);
 
       userRepository.findByEmail = vi.fn(async () => null);
 
@@ -177,7 +175,7 @@ describe('Admin User Create UseCase', () => {
   );
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new Policy(['ABC']);
 
     await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
       ForbiddenException,
