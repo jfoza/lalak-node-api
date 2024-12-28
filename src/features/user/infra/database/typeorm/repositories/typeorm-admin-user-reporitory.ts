@@ -4,12 +4,12 @@ import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
 import { toPaginate } from '@/common/infra/database/typeorm/pagination';
 import { Inject, Injectable } from '@nestjs/common';
 import { AdminUser } from '@/features/user/domain/entities/admin-user';
 import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { UserMapper } from '@/features/user/infra/database/typeorm/mappers/user.mapper';
+import { IAdminUserSearchParamsDto } from '@/features/user/domain/dto/admin-user-search-params.dto.interface';
 
 @Injectable()
 export class TypeormAdminUserRepository implements IAdminUserRepository {
@@ -23,14 +23,16 @@ export class TypeormAdminUserRepository implements IAdminUserRepository {
   private readonly userMapper: UserMapper;
 
   async paginate(
-    adminUserSearchParamsDto: AdminUserSearchParamsDto,
+    adminUserSearchParamsDto: IAdminUserSearchParamsDto,
   ): Promise<ILengthAwarePaginator> {
     const queryBuilder: SelectQueryBuilder<UserEntity> =
       this.getListBaseQueryFilters(adminUserSearchParamsDto);
 
+    const { page, perPage } = adminUserSearchParamsDto.paginationOrderParams;
+
     const result = await toPaginate<UserEntity>(queryBuilder, {
-      page: adminUserSearchParamsDto.page,
-      perPage: adminUserSearchParamsDto.perPage,
+      page,
+      perPage,
     });
 
     result.data = await this.userMapper.collection(result.data);
@@ -77,9 +79,17 @@ export class TypeormAdminUserRepository implements IAdminUserRepository {
   }
 
   private getListBaseQueryFilters(
-    adminUserSearchParamsDto: AdminUserSearchParamsDto,
+    adminUserSearchParamsDto: IAdminUserSearchParamsDto,
   ): SelectQueryBuilder<UserEntity> {
     const queryBuilder = this.getListBaseQuery();
+
+    const { columnName, columnOrder } =
+      adminUserSearchParamsDto.paginationOrderParams;
+
+    const order: Record<string, string> = {
+      name: 'person.name',
+      email: 'user.email',
+    };
 
     queryBuilder
       .when(adminUserSearchParamsDto.profilesUniqueName, (qb) =>
@@ -88,19 +98,18 @@ export class TypeormAdminUserRepository implements IAdminUserRepository {
         }),
       )
       .when(adminUserSearchParamsDto.name, (qb, name) =>
-        qb.andWhere('user.name ILIKE :name', { name: `%${name}%` }),
+        qb.andWhere('person.name ILIKE :name', { name: `%${name}%` }),
       )
       .when(adminUserSearchParamsDto.email, (qb, email) =>
         qb.andWhere('user.email = :email', { email }),
       )
       .when(
-        adminUserSearchParamsDto.columnName,
-        (qb) =>
-          qb.orderBy(
-            `user.${adminUserSearchParamsDto.columnName}`,
-            adminUserSearchParamsDto.columnOrder,
-          ),
-        (qb) => qb.orderBy(`user.created_at`, 'DESC'),
+        columnName,
+        (qb) => {
+          const column = order[columnName] || 'user.created_at';
+          return qb.orderBy(column, columnOrder);
+        },
+        (qb) => qb.orderBy('user.created_at', 'DESC'),
       );
 
     return queryBuilder;

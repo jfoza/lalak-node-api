@@ -1,9 +1,8 @@
-import { FiltersDto } from '@/common/application/dto/FiltersDto';
+import { IPaginationOrder } from '@/common/domain/dto/pagination-order.interface';
 
-export class IAdminUserSearchParamsDto extends FiltersDto {
+export class IAdminUserSearchParamsDto {
   name?: string;
   email?: string;
-  page: number;
   profilesUniqueName: string[];
-  columnName: string | null = null;
+  paginationOrderParams: IPaginationOrder;
 }

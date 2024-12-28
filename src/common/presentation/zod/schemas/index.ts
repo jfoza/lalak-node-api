@@ -24,3 +24,47 @@ export const updatePasswordSchema = z
   });
 
 export const uuidSchema = z.string().uuid('Invalid UUID format.');
+
+export const orderSchema = {
+  columnName: z.string().optional(),
+  columnOrder: z.string().optional(),
+};
+
+export const paginationOrderSchema = {
+  page: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .refine((val) => val >= 1, {
+      message: 'The page param must be at least 1',
+    }),
+
+  perPage: z
+    .string()
+    .min(1, { message: 'The perPage param is required' })
+    .transform((val) => parseInt(val, 10))
+    .refine((val) => val >= 1, {
+      message: 'The perPage param must be at least 1',
+    }),
+
+  ...orderSchema,
+};
+
+export const optionalPaginationOrderSchema = {
+  page: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined))
+    .refine((val) => val === undefined || val >= 1, {
+      message: 'page must be at least 1',
+    }),
+
+  perPage: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined))
+    .refine((val) => val === undefined || val >= 1, {
+      message: 'perPage must be at least 1',
+    }),
+
+  ...orderSchema,
+};

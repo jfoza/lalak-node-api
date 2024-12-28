@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
 import { IAdminUserListUseCase } from '@/features/user/domain/use-cases/admin-user-list.use-case.interface';
-import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
+import { adminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { IAdminUserListById } from '@/features/user/domain/use-cases/admin-user-list-by-id.use-case.interface';
 import { User } from '@/features/user/domain/entities/user';
@@ -20,6 +20,14 @@ import { CreateAdminUserDto } from '@/features/user/application/dto/create-admin
 import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-user-create.use-case.interface';
 import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-user-update.use-case.interface';
 import { UpdateAdminUserDto } from '@/features/user/application/dto/update-admin-user.dto';
+import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
+import { adminUserSearchParamsDtoSchema } from '@/features/user/presentation/zod/schemas';
+import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
+
+type TAdminUserSearchParams = {
+  name?: string;
+  email?: string;
+} & TPaginationOrder;
 
 @UseGuards(AuthGuard)
 @Controller('admin/users')
@@ -38,8 +46,19 @@ export class AdminUserController {
 
   @Get()
   async index(
-    @Query() adminUserSearchParamsDto: AdminUserSearchParamsDto,
+    @Query(new ZodValidationPipe(adminUserSearchParamsDtoSchema))
+    query: TAdminUserSearchParams,
   ): Promise<ILengthAwarePaginator> {
+    adminUserSearchParamsDto.name = query.name;
+    adminUserSearchParamsDto.email = query.email;
+
+    adminUserSearchParamsDto.paginationOrderParams.page = query.page;
+    adminUserSearchParamsDto.paginationOrderParams.perPage = query.perPage;
+    adminUserSearchParamsDto.paginationOrderParams.columnOrder =
+      query.columnOrder;
+    adminUserSearchParamsDto.paginationOrderParams.columnName =
+      query.columnName;
+
     return await this.adminUserListUseCase.execute(adminUserSearchParamsDto);
   }
 

@@ -1,8 +1,7 @@
-import { FiltersDto } from '@/common/application/dto/FiltersDto';
+import { PaginationOrder } from '@/common/application/dto/pagination-order';
 
-export class ICustomerSearchParamsDto extends FiltersDto {
+export class ICustomerSearchParamsDto {
   name?: string;
   email?: string;
-  page: number;
-  columnName: string | null = null;
+  paginationOrder: PaginationOrder;
 }

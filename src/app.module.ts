@@ -18,6 +18,7 @@ import { EventModule } from '@/features/event/infra/modules/event.module';
 import { ProductModule } from '@/features/product/infra/modules/product.module';
 import { UploadModule } from '@/upload/infra/modules/upload.module';
 import { ImageModule } from '@/features/image/infra/modules/image.module';
+import { CommonModule } from '@/common/infra/modules/common.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ImageModule } from '@/features/image/infra/modules/image.module';
     DatabaseModule,
     RedisModule,
     AmqpModule,
+    CommonModule,
     MailModule,
     AclModule,
     AuthModule,

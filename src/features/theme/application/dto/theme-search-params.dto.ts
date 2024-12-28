@@ -1,9 +1,9 @@
 import { IsIn, IsOptional, IsString } from 'class-validator';
-import { FiltersDto } from '@/common/application/dto/FiltersDto';
+import { SearchParamsDto } from '@/common/application/dto/search-params.dto';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Transform } from 'class-transformer';
 
-export class ThemeSearchParamsDto extends FiltersDto {
+export class ThemeSearchParamsDto extends SearchParamsDto {
   @IsOptional()
   @IsString()
   description: string;

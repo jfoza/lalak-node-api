@@ -1,9 +1,9 @@
 import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Transform } from 'class-transformer';
-import { FiltersDto } from '@/common/application/dto/FiltersDto';
+import { SearchParamsDto } from '@/common/application/dto/search-params.dto';
 
-export class CategorySearchParamsDto extends FiltersDto {
+export class CategorySearchParamsDto extends SearchParamsDto {
   @IsOptional()
   @IsString()
   @IsUUID()

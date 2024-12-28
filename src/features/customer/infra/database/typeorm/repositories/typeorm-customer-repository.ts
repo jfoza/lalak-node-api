@@ -1,7 +1,6 @@
 import { ICustomerRepository } from '@/features/customer/domain/repositories/customer-repository.interface';
 import { Customer } from '@/features/customer/domain/entities/customer';
 import { User } from '@/features/user/domain/entities/user';
-import { CustomerSearchParamsDto } from '@/features/customer/application/dto/customer-search-params.dto';
 import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
@@ -10,6 +9,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from '@/features/customer/infra/database/typeorm/entities/customer.entity';
 import { UserMapper } from '@/features/user/infra/database/typeorm/mappers/user.mapper';
+import { ICustomerSearchParamsDto } from '@/features/customer/domain/dto/customer-search-params.dto.interface';
 
 @Injectable()
 export class TypeormCustomerRepository implements ICustomerRepository {
@@ -23,14 +23,16 @@ export class TypeormCustomerRepository implements ICustomerRepository {
   private readonly userMapper: UserMapper;
 
   async paginate(
-    customerSearchParamsDto: CustomerSearchParamsDto,
+    customerSearchParamsDto: ICustomerSearchParamsDto,
   ): Promise<ILengthAwarePaginator> {
     const queryBuilder: SelectQueryBuilder<UserEntity> =
       this.getListBaseQueryFilters(customerSearchParamsDto);
 
+    const { page, perPage } = customerSearchParamsDto.paginationOrder;
+
     const result = await toPaginate<UserEntity>(queryBuilder, {
-      page: customerSearchParamsDto.page,
-      perPage: customerSearchParamsDto.perPage,
+      page,
+      perPage,
     });
 
     result.data = await this.userMapper.collection(result.data);
@@ -89,25 +91,31 @@ export class TypeormCustomerRepository implements ICustomerRepository {
   }
 
   private getListBaseQueryFilters(
-    customerSearchParamsDto: CustomerSearchParamsDto,
+    customerSearchParamsDto: ICustomerSearchParamsDto,
   ): SelectQueryBuilder<UserEntity> {
     const queryBuilder = this.getListBaseQuery();
 
+    const { columnName, columnOrder } = customerSearchParamsDto.paginationOrder;
+
+    const order: Record<string, string> = {
+      name: 'person.name',
+      email: 'user.email',
+    };
+
     queryBuilder
       .when(customerSearchParamsDto.name, (qb, name) =>
-        qb.andWhere('user.name ILIKE :name', { name: `%${name}%` }),
+        qb.andWhere('person.name ILIKE :name', { name: `%${name}%` }),
       )
       .when(customerSearchParamsDto.email, (qb, email) =>
         qb.andWhere('user.email = :email', { email }),
       )
       .when(
-        customerSearchParamsDto.columnName,
-        (qb) =>
-          qb.orderBy(
-            `user.${customerSearchParamsDto.columnName}`,
-            customerSearchParamsDto.columnOrder,
-          ),
-        (qb) => qb.orderBy(`user.created_at`, 'DESC'),
+        columnName,
+        (qb) => {
+          const column = order[columnName] || 'user.created_at';
+          return qb.orderBy(column, columnOrder);
+        },
+        (qb) => qb.orderBy('user.created_at', 'DESC'),
       );
 
     return queryBuilder;

@@ -11,9 +11,9 @@ import {
 } from 'class-validator';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Transform, Type } from 'class-transformer';
-import { FiltersDto } from '@/common/application/dto/FiltersDto';
+import { SearchParamsDto } from '@/common/application/dto/search-params.dto';
 
-export class ProductSearchParamsDto extends FiltersDto {
+export class ProductSearchParamsDto extends SearchParamsDto {
   @IsOptional()
   @IsString()
   description?: string;
