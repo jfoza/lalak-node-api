@@ -13,7 +13,6 @@ import {
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
 import { customerSearchParamsDto } from '@/features/user/application/dto/customer-search-params.dto';
 import { CustomerUpdateDto } from '@/features/user/application/dto/customer-update.dto';
-import { IManyCustomersCreateUseCase } from '@/features/user/domain/use-cases/many-customers-create.use-case.interface';
 import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
 import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
 import { ICustomerListService } from '@/features/user/domain/services/customer-list.service';
@@ -40,9 +39,6 @@ export class CustomerController {
 
   @Inject(ICustomerCreateService)
   private readonly customerCreateService: ICustomerCreateService;
-
-  @Inject(IManyCustomersCreateUseCase)
-  private readonly manyCustomersCreateUseCase: IManyCustomersCreateUseCase;
 
   @Inject(ICustomerUpdateService)
   private readonly customerUpdateService: ICustomerUpdateService;
@@ -73,13 +69,6 @@ export class CustomerController {
   @Post()
   async insert(@Body() createCustomerDto: CustomerCreateDto): Promise<Person> {
     return await this.customerCreateService.execute(createCustomerDto);
-  }
-
-  @Post('many')
-  async insertMany(): Promise<{ status: string }> {
-    await this.manyCustomersCreateUseCase.execute();
-
-    return { status: 'OK' };
   }
 
   @Put(':uuid')

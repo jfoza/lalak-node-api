@@ -2,7 +2,7 @@ import { IThemeRemoveUseCase } from '@/features/theme/domain/use-cases/theme-rem
 import { Application } from '@/common/application/application';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
 import { Theme } from '@/features/theme/domain/entities/theme';
@@ -12,7 +12,10 @@ export class ThemeRemoveUseCase
   extends Application
   implements IThemeRemoveUseCase
 {
-  constructor(private readonly themeRepository: ThemeRepository) {
+  constructor(
+    @Inject(ThemeRepository)
+    private readonly themeRepository: ThemeRepository,
+  ) {
     super();
   }
 

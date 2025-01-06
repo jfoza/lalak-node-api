@@ -8,7 +8,6 @@ export interface PersonUserRepository {
     relation: string,
   ): Promise<PersonAuthUser | null>;
   findByEmail(email: string): Promise<Person | null>;
-  findByEmailInLogin(email: string): Promise<PersonAuthUser | null>;
   updateStatus(uuid: string, newStatus: boolean): Promise<void>;
   updatePassword(uuid: string, newPassword: string): Promise<void>;
 }

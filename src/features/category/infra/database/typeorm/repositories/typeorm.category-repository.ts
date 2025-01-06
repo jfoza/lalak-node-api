@@ -1,26 +1,23 @@
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
 import { Category } from '@/features/category/domain/entities/category';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CategoryEntity } from '@/features/category/infra/database/typeorm/entities/category.entity';
-import { CategoryMapper } from '@/features/category/infra/database/typeorm/mappers/category.mapper';
 import { ICategorySearchParamsDto } from '@/features/category/domain/dto/category-search-params.dto';
+import { CategoryMapper } from '@/features/category/infra/database/typeorm/mappers/category.mapper';
 
 @Injectable()
 export class TypeOrmCategoryRepository implements CategoryRepository {
   @InjectRepository(CategoryEntity)
   private readonly categoryEntityRepository: Repository<CategoryEntity>;
 
-  @Inject(CategoryMapper)
-  private readonly categoryMapper: CategoryMapper;
-
   async findAll(
     categorySearchParams: ICategorySearchParamsDto,
   ): Promise<Category[]> {
     const results = await this.getBaseQuery(categorySearchParams).getMany();
 
-    return this.categoryMapper.collection(results);
+    return CategoryMapper.toDomain.collection(results);
   }
 
   // async paginate(
@@ -45,7 +42,7 @@ export class TypeOrmCategoryRepository implements CategoryRepository {
       relations: ['products'],
     });
 
-    return this.categoryMapper.optional(result);
+    return CategoryMapper.toDomain.optional(result);
   }
 
   async findByName(description: string): Promise<Category | null> {
@@ -53,7 +50,7 @@ export class TypeOrmCategoryRepository implements CategoryRepository {
       where: { description },
     });
 
-    return this.categoryMapper.optional(result);
+    return CategoryMapper.toDomain.optional(result);
   }
 
   async findByThemeUuid(themeUuid: string): Promise<Category[]> {
@@ -61,7 +58,7 @@ export class TypeOrmCategoryRepository implements CategoryRepository {
       where: { theme_uuid: themeUuid },
     });
 
-    return this.categoryMapper.collection(result);
+    return CategoryMapper.toDomain.collection(result);
   }
 
   async findByUuids(uuids: string[]): Promise<Category[]> {
@@ -70,7 +67,7 @@ export class TypeOrmCategoryRepository implements CategoryRepository {
       .where('category.uuid IN (:...uuids)', { uuids })
       .getMany();
 
-    return this.categoryMapper.collection(result);
+    return CategoryMapper.toDomain.collection(result);
   }
 
   async create(category: Category): Promise<Category> {

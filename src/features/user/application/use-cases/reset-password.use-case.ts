@@ -1,11 +1,11 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { isAfter, addHours } from 'date-fns';
 import { Hash } from '@/utils/hash';
 import { IResetPasswordUseCase } from '@/features/user/domain/use-cases/reset-password.use-case.interface';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserTokenRepository } from '@/features/user/domain/repositories/user-token.repository';
 
 @Injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase {
@@ -13,8 +13,8 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
     @Inject(PersonUserRepository)
     private readonly personUserRepository: PersonUserRepository,
 
-    @Inject(IUserTokenRepository)
-    private readonly userTokenRepository: IUserTokenRepository,
+    @Inject(UserTokenRepository)
+    private readonly userTokenRepository: UserTokenRepository,
   ) {}
 
   async execute(token: string, newPassword: string): Promise<void> {

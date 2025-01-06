@@ -2,13 +2,16 @@ import { Application } from '@/common/application/application';
 import { Theme } from '@/features/theme/domain/entities/theme';
 import { ThemeSearchParamsDto } from '@/features/theme/application/dto/theme-search-params.dto';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IThemeListUseCase } from '@/features/theme/domain/use-cases/theme-list.use-case.interface';
 import { IThemeListService } from '@/features/theme/domain/services/theme-list.service';
 
 @Injectable()
 export class ThemeListService extends Application implements IThemeListService {
-  constructor(private readonly themeListUseCase: IThemeListUseCase) {
+  constructor(
+    @Inject(IThemeListUseCase)
+    private readonly themeListUseCase: IThemeListUseCase,
+  ) {
     super();
   }
 

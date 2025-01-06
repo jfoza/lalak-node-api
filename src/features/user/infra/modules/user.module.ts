@@ -26,9 +26,20 @@ import { CustomerModule } from '@/features/user/infra/modules/customer.module';
 import { CityModule } from '@/features/city/infra/modules/city.module';
 import { IAdminUserCreateService } from '@/features/user/domain/services/admin-user-create.service';
 import { AdminUserCreateService } from '@/features/user/application/services/admin-user-create.service';
-import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
 import { AdminUserListByUuidService } from '@/features/user/application/services/admin-user-list-by-uuid.service';
 import { IAdminUserListByUuidService } from '@/features/user/domain/services/admin-user-list-by-uuid.service';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository';
+import { TypeormPersonAdminUserRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.person-admin-user.repository';
+import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { TypeormPersonUserRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.person-user.repository';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { TypeormProfileRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.profile.repository';
+import { TypeormUserTokenRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.user-token.repository';
+import { UserTokenRepository } from '@/features/user/domain/repositories/user-token.repository';
+import { AdminUserListService } from '@/features/user/application/services/admin-user-list.service';
+import { IAdminUserListService } from '@/features/user/domain/services/admin-user-list.service';
+import { AdminUserUpdateService } from '@/features/user/application/services/admin-user-update.service';
+import { IAdminUserUpdateService } from '@/features/user/domain/services/admin-user-update.service';
 
 @Module({
   imports: [
@@ -48,10 +59,46 @@ import { IAdminUserListByUuidService } from '@/features/user/domain/services/adm
   providers: [
     SendForgotPasswordEmailJob,
 
+    TypeormPersonAdminUserRepository,
+    {
+      provide: PersonAdminUserRepository,
+      useClass: TypeormPersonAdminUserRepository,
+    },
+
+    TypeormPersonUserRepository,
+    {
+      provide: PersonUserRepository,
+      useClass: TypeormPersonUserRepository,
+    },
+
+    TypeormProfileRepository,
+    {
+      provide: ProfileRepository,
+      useClass: TypeormProfileRepository,
+    },
+
+    TypeormUserTokenRepository,
+    {
+      provide: UserTokenRepository,
+      useClass: TypeormUserTokenRepository,
+    },
+
+    AdminUserListService,
+    {
+      provide: IAdminUserListService,
+      useClass: AdminUserListService,
+    },
+
     AdminUserCreateService,
     {
       provide: IAdminUserCreateService,
       useClass: AdminUserCreateService,
+    },
+
+    AdminUserUpdateService,
+    {
+      provide: IAdminUserUpdateService,
+      useClass: AdminUserUpdateService,
     },
 
     UserListByEmailLoginUseCase,
@@ -98,6 +145,8 @@ import { IAdminUserListByUuidService } from '@/features/user/domain/services/adm
   ],
   exports: [
     SendForgotPasswordEmailJob,
+    PersonAdminUserRepository,
+    PersonUserRepository,
     ProfileRepository,
     IUserListByEmailLoginUseCase,
   ],

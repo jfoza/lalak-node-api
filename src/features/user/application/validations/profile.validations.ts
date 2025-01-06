@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { Profile } from '@/features/user/domain/entities/profile';
-import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository';
 
 export class ProfileValidations {
   static async profileExists(

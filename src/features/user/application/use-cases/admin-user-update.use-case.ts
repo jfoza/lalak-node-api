@@ -9,11 +9,11 @@ import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
 import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
-import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
 import { ShortName } from '@/common/domain/value-objects/short-name';
 import { Name } from '@/common/domain/value-objects/name';
 import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 import { Profile } from '@/features/user/domain/entities/profile';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository';
 
 type TDataBuilder = {
   uuid: string;

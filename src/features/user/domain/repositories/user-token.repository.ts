@@ -1,8 +1,8 @@
 import { UserToken } from '@/features/user/domain/entities/user-token';
 
-export interface IUserTokenRepository {
+export interface UserTokenRepository {
   findByToken(token: string): Promise<UserToken>;
   create(userToken: UserToken): Promise<UserToken>;
 }
 
-export const IUserTokenRepository = Symbol('IUserTokenRepository');
+export const UserTokenRepository = Symbol('UserTokenRepository');

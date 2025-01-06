@@ -1,6 +1,5 @@
 import { ISendForgotPasswordEmailUseCase } from '@/features/user/domain/use-cases/send-forgot-password-email.use-case.interface';
 import { Inject, Injectable } from '@nestjs/common';
-import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import {
   UserToken,
@@ -12,6 +11,7 @@ import { TokenTypesEnum } from '@/utils/enums/token-types.enum';
 import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 import { UserTokenType } from '@/features/user/domain/value-objects/user-token-type';
 import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserTokenRepository } from '@/features/user/domain/repositories/user-token.repository';
 
 @Injectable()
 export class SendForgotPasswordEmailUseCase
@@ -24,8 +24,8 @@ export class SendForgotPasswordEmailUseCase
     @Inject(PersonUserRepository)
     private readonly personUserRepository: PersonUserRepository,
 
-    @Inject(IUserTokenRepository)
-    private readonly userTokenRepository: IUserTokenRepository,
+    @Inject(UserTokenRepository)
+    private readonly userTokenRepository: UserTokenRepository,
   ) {}
 
   async execute(email: string): Promise<void> {

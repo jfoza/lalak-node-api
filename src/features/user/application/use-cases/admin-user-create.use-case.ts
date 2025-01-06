@@ -3,7 +3,6 @@ import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
-import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
 import { Person, PersonProps } from '@/features/user/domain/entities/person';
 import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
@@ -19,6 +18,7 @@ import {
 } from '@/features/user/domain/entities/admin-user';
 import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
 import { Profile } from '@/features/user/domain/entities/profile';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository';
 
 @Injectable()
 export class AdminUserCreateUseCase implements IAdminUserCreateUseCase {

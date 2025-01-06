@@ -2,7 +2,7 @@ import { Theme, ThemeProps } from '@/features/theme/domain/entities/theme';
 import { Application } from '@/common/application/application';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { IThemeCreateUseCase } from '@/features/theme/domain/use-cases/theme-create.use-case.interface';
 import { IThemeCreateDto } from '@/features/theme/domain/dto/theme-create.dto.interface';
 import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
@@ -12,7 +12,10 @@ export class ThemeCreateUseCase
   extends Application
   implements IThemeCreateUseCase
 {
-  constructor(private readonly themeRepository: ThemeRepository) {
+  constructor(
+    @Inject(ThemeRepository)
+    private readonly themeRepository: ThemeRepository,
+  ) {
     super();
   }
 

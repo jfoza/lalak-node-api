@@ -34,19 +34,16 @@ import { IPolicyAdapter } from '@/acl/application/adapters/policy.adapter.interf
       provide: IAclRepository,
       useExisting: AclRepository,
     },
-
-    PolicyAdapter,
     {
       provide: IPolicyAdapter,
       useFactory: async (aclService: IAclService): Promise<PolicyAdapter> => {
-        const policy: Policy = Policy.create(await aclService.execute());
-
+        const abilities = await aclService.execute();
+        const policy = Policy.create(abilities);
         return new PolicyAdapter(policy);
       },
-
       inject: [IAclService],
     },
   ],
-  exports: [PolicyAdapter, IAclRepository],
+  exports: [IPolicyAdapter, IAclRepository],
 })
 export class AclModule {}

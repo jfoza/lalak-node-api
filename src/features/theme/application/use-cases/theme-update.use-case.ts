@@ -1,7 +1,7 @@
 import { ThemeUpdateDto } from '@/features/theme/application/dto/theme-update.dto';
 import { Theme } from '@/features/theme/domain/entities/theme';
 import { Application } from '@/common/application/application';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { IThemeUpdateUseCase } from '@/features/theme/domain/use-cases/theme-update.use-case.interface';
@@ -12,7 +12,10 @@ export class ThemeUpdateUseCase
   extends Application
   implements IThemeUpdateUseCase
 {
-  constructor(private readonly themeRepository: ThemeRepository) {
+  constructor(
+    @Inject(ThemeRepository)
+    private readonly themeRepository: ThemeRepository,
+  ) {
     super();
   }
 

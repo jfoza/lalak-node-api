@@ -15,6 +15,8 @@ import { ICustomerListService } from '@/features/user/domain/services/customer-l
 import { ICustomerListByUuidService } from '@/features/user/domain/services/customer-list-by-uuid.service';
 import { ICustomerCreateService } from '@/features/user/domain/services/customer-create.service';
 import { ICustomerUpdateService } from '@/features/user/domain/services/customer-update.service';
+import { TypeormPersonCustomerRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.person-customer.repository';
+import { PersonCustomerRepository } from '@/features/user/domain/repositories/person-customer.repository';
 
 @Module({
   imports: [
@@ -29,6 +31,12 @@ import { ICustomerUpdateService } from '@/features/user/domain/services/customer
   ],
   controllers: [CustomerController],
   providers: [
+    TypeormPersonCustomerRepository,
+    {
+      provide: PersonCustomerRepository,
+      useClass: TypeormPersonCustomerRepository,
+    },
+
     CustomerListService,
     {
       provide: ICustomerListService,
@@ -53,6 +61,6 @@ import { ICustomerUpdateService } from '@/features/user/domain/services/customer
       useClass: CustomerUpdateService,
     },
   ],
-  exports: [],
+  exports: [PersonCustomerRepository],
 })
 export class CustomerModule {}

@@ -1,9 +1,9 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { UserToken } from '@/features/user/domain/entities/user-token';
 import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
 import { Person } from '@/features/user/domain/entities/person';
+import { UserTokenRepository } from '@/features/user/domain/repositories/user-token.repository';
 
 export class UserValidations {
   static async userExistsByUuid(
@@ -55,7 +55,7 @@ export class UserValidations {
 
   static async userTokenExists(
     token: string,
-    userTokenRepository: IUserTokenRepository,
+    userTokenRepository: UserTokenRepository,
   ): Promise<UserToken> {
     const userToken = await userTokenRepository.findByToken(token);
 
