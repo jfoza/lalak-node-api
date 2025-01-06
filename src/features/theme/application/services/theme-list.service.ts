@@ -1,24 +1,18 @@
 import { Application } from '@/common/application/application';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { Theme } from '@/features/theme/domain/core/theme';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { ThemeSearchParamsDto } from '@/features/theme/application/dto/theme-search-params.dto';
-import { AbstractThemeListUseCase } from '@/features/theme/domain/use-cases/abstract.theme-list.use-case';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { AbstractThemeListService } from '@/features/theme/domain/services/abstract.theme-list.service';
 import { Injectable } from '@nestjs/common';
+import { IThemeListUseCase } from '@/features/theme/domain/use-cases/theme-list.use-case.interface';
+import { IThemeListService } from '@/features/theme/domain/services/theme-list.service';
 
 @Injectable()
-export class ThemeListService
-  extends Application
-  implements AbstractThemeListService
-{
-  constructor(private readonly themeListUseCase: AbstractThemeListUseCase) {
+export class ThemeListService extends Application implements IThemeListService {
+  constructor(private readonly themeListUseCase: IThemeListUseCase) {
     super();
   }
 
-  async handle(
-    themeSearchParamsDto: ThemeSearchParamsDto,
-  ): Promise<ILengthAwarePaginator | Theme[]> {
+  async handle(themeSearchParamsDto: ThemeSearchParamsDto): Promise<Theme[]> {
     this.policy.can(AbilitiesEnum.THEMES_VIEW);
 
     return await this.themeListUseCase.execute(themeSearchParamsDto);

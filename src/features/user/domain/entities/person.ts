@@ -1,55 +1,64 @@
-import { Entity } from '@/common/domain/entities/entity';
-import { City } from '@/features/city/domain/core/city';
-import { PersonValidatorFactory } from '@/features/user/domain/validators/person.validator';
+import { City } from '@/features/city/domain/entities/city';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
+import { ShortName } from '@/common/domain/value-objects/short-name';
+import { BirthDate } from '@/common/domain/value-objects/birth-date';
+import { Phone } from '@/common/domain/value-objects/phone';
+import { ZipCode } from '@/common/domain/value-objects/zip-code';
+import { Address } from '@/common/domain/value-objects/address';
+import { AggregateRoot } from '@/common/domain/entities/aggregate-root';
+import { User } from '@/features/user/domain/entities/user';
+import { Name } from '@/common/domain/value-objects/name';
+import { Uf } from '@/common/domain/value-objects/uf';
 
 export type PersonProps = {
-  name: string;
-  shortName: string;
-  birthDate?: Date;
-  phone?: string;
-  zipCode?: string;
-  address?: string;
+  name: Name;
+  shortName: ShortName;
+  birthDate?: BirthDate;
+  phone?: Phone;
+  zipCode?: ZipCode;
+  address?: Address;
   numberAddress?: string;
   complement?: string;
   district?: string;
-  uf?: string;
-  cityUuid?: string;
+  uf?: Uf;
+  cityUuid?: UniqueEntityId;
   active: boolean;
   createdAt?: Date;
   city?: City;
+  user?: User;
 };
 
-export class Person extends Entity<PersonProps> {
+export class Person extends AggregateRoot<PersonProps> {
   constructor(
     public readonly props: PersonProps,
-    uuid?: string,
+    uniqueEntityId?: UniqueEntityId,
   ) {
-    super(props, uuid);
+    super(props, uniqueEntityId);
     this.props.createdAt = this.props.createdAt ?? new Date();
   }
 
   get name(): string {
-    return this.props.name;
+    return this.props.name.toValue();
   }
 
   get shortName(): string {
-    return this.props.shortName;
+    return this.props.shortName.toValue();
   }
 
-  get birthDate(): Date {
-    return this.props.birthDate;
+  get birthDate(): string {
+    return this.props.birthDate.toString();
   }
 
   get phone(): string {
-    return this.props.phone;
+    return this.props.phone.toValue();
   }
 
   get zipCode(): string {
-    return this.props.zipCode;
+    return this.props.zipCode.toValue();
   }
 
   get address(): string {
-    return this.props.address;
+    return this.props.address.toValue();
   }
 
   get numberAddress(): string {
@@ -65,11 +74,11 @@ export class Person extends Entity<PersonProps> {
   }
 
   get uf(): string {
-    return this.props.uf;
+    return this.props.uf.toValue();
   }
 
   get cityUuid(): string {
-    return this.props.cityUuid;
+    return this.props.cityUuid.toValue();
   }
 
   get active(): boolean {
@@ -80,31 +89,35 @@ export class Person extends Entity<PersonProps> {
     return this.props.createdAt;
   }
 
+  get user(): User {
+    return this.props.user;
+  }
+
   get city(): City {
     return this.props.city;
   }
 
-  set name(name: string) {
+  set name(name: Name) {
     this.props.name = name;
   }
 
-  set shortName(shortName: string) {
+  set shortName(shortName: ShortName) {
     this.props.shortName = shortName;
   }
 
-  set birthDate(birthDate: Date) {
+  set birthDate(birthDate: BirthDate) {
     this.props.birthDate = birthDate;
   }
 
-  set phone(phone: string) {
+  set phone(phone: Phone) {
     this.props.phone = phone;
   }
 
-  set zipCode(zipCode: string) {
+  set zipCode(zipCode: ZipCode) {
     this.props.zipCode = zipCode;
   }
 
-  set address(address: string) {
+  set address(address: Address) {
     this.props.address = address;
   }
 
@@ -120,11 +133,11 @@ export class Person extends Entity<PersonProps> {
     this.props.district = district;
   }
 
-  set uf(uf: string) {
+  set uf(uf: Uf) {
     this.props.uf = uf;
   }
 
-  set cityUuid(cityUuid: string) {
+  set cityUuid(cityUuid: UniqueEntityId) {
     this.props.cityUuid = cityUuid;
   }
 
@@ -136,20 +149,11 @@ export class Person extends Entity<PersonProps> {
     this.props.city = city;
   }
 
-  static async validate(props: PersonProps): Promise<void> {
-    const validator = PersonValidatorFactory.create();
-    await validator.validate(props);
+  set user(user: User) {
+    this.props.user = user;
   }
 
-  static async create(props: PersonProps, uuid?: string): Promise<Person> {
-    return new this(props, uuid);
-  }
-
-  static async createValidated(
-    props: PersonProps,
-    uuid?: string,
-  ): Promise<Person> {
-    await this.validate(props);
-    return this.create(props, uuid);
+  static create(props: PersonProps, uniqueEntityId?: UniqueEntityId): Person {
+    return new this(props, uniqueEntityId);
   }
 }

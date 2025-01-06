@@ -1,15 +1,15 @@
-import { AbstractProductRemoveUseCase } from '@/features/product/domain/use-cases/abstract.product-remove.use-case';
 import { Inject, Injectable } from '@nestjs/common';
 import { Application } from '@/common/application/application';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ProductValidations } from '@/features/product/application/validations/product.validations';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
+import { IProductRemoveUseCase } from '@/features/product/domain/use-cases/product-remove.use-case';
 
 @Injectable()
 export class ProductRemoveUseCase
   extends Application
-  implements AbstractProductRemoveUseCase
+  implements IProductRemoveUseCase
 {
   constructor(
     @Inject(ProductQueryRepository)

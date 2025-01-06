@@ -1,6 +1,6 @@
 import { Profile, ProfileProps } from '@/features/user/domain/entities/profile';
-import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 describe('Profile Domain Entity Unit Tests', () => {
   let sut: Profile;
@@ -29,12 +29,12 @@ describe('Profile Domain Entity Unit Tests', () => {
     expect(typeof sut.uniqueName).toBe('string');
   });
 
-  it('createValidated method should to instance new Profile class', async () => {
-    const uuid = UUID.generate();
+  it('create method should to instance new Profile class', async () => {
+    const uniqueEntityId = UniqueEntityId.create();
     const profileProps = UserDataBuilder.getAdminMasterProfileProps();
-    const profileClass = await Profile.createValidated(profileProps, uuid);
+    const profileClass = Profile.create(profileProps, uniqueEntityId);
 
     expect(profileClass).toBeInstanceOf(Profile);
-    expect(profileClass.uuid).toEqual(uuid);
+    expect(profileClass.uuid).toEqual(uniqueEntityId.toValue());
   });
 });

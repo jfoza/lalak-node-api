@@ -1,17 +1,14 @@
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Injectable } from '@nestjs/common';
-import { AbstractEventListUseCase } from '@/features/event/domain/use-cases/abstract.event-list.use-case';
 import { EventSearchParamsDto } from '@/features/event/application/dto/event-search-params.dto';
-import { Event } from '@/features/event/domain/core/event';
-import { PublicAbstractEventListService } from '@/features/event/domain/services/public.abstract.event-list.service';
+import { Event } from '@/features/event/domain/entities/event';
+import { IEventListUseCase } from '@/features/event/domain/use-cases/event-list.use-case';
+import { IPublicEventListService } from '@/features/event/domain/services/public.event-list.service';
 
 @Injectable()
-export class PublicEventListService implements PublicAbstractEventListService {
-  constructor(private readonly eventListUseCase: AbstractEventListUseCase) {}
+export class PublicEventListService implements IPublicEventListService {
+  constructor(private readonly eventListUseCase: IEventListUseCase) {}
 
-  async handle(
-    eventSearchParamsDto: EventSearchParamsDto,
-  ): Promise<ILengthAwarePaginator | Event[]> {
+  async handle(eventSearchParamsDto: EventSearchParamsDto): Promise<Event[]> {
     return await this.eventListUseCase.execute(eventSearchParamsDto);
   }
 }

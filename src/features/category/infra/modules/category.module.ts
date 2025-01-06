@@ -5,23 +5,22 @@ import { CategoryEntity } from '@/features/category/infra/database/typeorm/entit
 import { TypeOrmCategoryRepository } from '@/features/category/infra/database/typeorm/repositories/typeorm.category-repository';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
 import { CategoryListService } from '@/features/category/application/services/category-list.service';
-import { AbstractCategoryListService } from '@/features/category/domain/services/abstract.category-list.service';
 import { PublicCategoryListService } from '@/features/category/application/services/public.category-list.service';
-import { PublicAbstractCategoryListService } from '@/features/category/domain/services/public.abstract.category-list.service';
 import { CategoryListUseCase } from '@/features/category/application/use-cases/category-list.use-case';
-import { AbstractCategoryListUseCase } from '@/features/category/domain/use-cases/abstract.category-list.use-case';
 import { CategoryListByUuidUseCase } from '@/features/category/application/use-cases/category-list-by-uuid.use-case';
-import { AbstractCategoryListByUuidUseCase } from '@/features/category/domain/use-cases/abstract.category-list-by-uuid.use-case';
 import { CategoryCreateUseCase } from '@/features/category/application/use-cases/category-create.use-case';
-import { AbstractCategoryCreateUseCase } from '@/features/category/domain/use-cases/abstract.category-create.use-case';
 import { CategoryUpdateUseCase } from '@/features/category/application/use-cases/category-update.use-case';
-import { AbstractCategoryUpdateUseCase } from '@/features/category/domain/use-cases/abstract.category-update.use-case';
 import { CategoryRemoveUseCase } from '@/features/category/application/use-cases/category-remove.use-case';
-import { AbstractCategoryRemoveUseCase } from '@/features/category/domain/use-cases/abstract.category-remove.use-case';
 import { ThemeModule } from '@/features/theme/infra/modules/theme.module';
-import { CategoryMapper } from '@/features/category/infra/database/typeorm/mappers/category.mapper';
 import { CategoryController } from '@/features/category/presentation/controllers/category.controller';
 import { ProductModule } from '@/features/product/infra/modules/product.module';
+import { IPublicCategoryListService } from '@/features/category/domain/services/public.category-list.service';
+import { ICategoryListService } from '@/features/category/domain/services/category-list.service';
+import { ICategoryRemoveUseCase } from '@/features/category/domain/use-cases/category-remove.use-case';
+import { ICategoryCreateUseCase } from '@/features/category/domain/use-cases/category-create.use-case';
+import { ICategoryListByUuidUseCase } from '@/features/category/domain/use-cases/category-list-by-uuid.use-case';
+import { ICategoryListUseCase } from '@/features/category/domain/use-cases/category-list.use-case';
+import { ICategoryUpdateUseCase } from '@/features/category/domain/use-cases/category-update.use-case';
 
 @Module({
   imports: [
@@ -31,7 +30,6 @@ import { ProductModule } from '@/features/product/infra/modules/product.module';
   ],
   controllers: [CategoryController],
   providers: [
-    CategoryMapper,
     TypeOrmCategoryRepository,
     {
       provide: CategoryRepository,
@@ -40,43 +38,43 @@ import { ProductModule } from '@/features/product/infra/modules/product.module';
 
     CategoryListService,
     {
-      provide: AbstractCategoryListService,
+      provide: ICategoryListService,
       useExisting: CategoryListService,
     },
 
     PublicCategoryListService,
     {
-      provide: PublicAbstractCategoryListService,
+      provide: IPublicCategoryListService,
       useExisting: PublicCategoryListService,
     },
 
     CategoryListUseCase,
     {
-      provide: AbstractCategoryListUseCase,
+      provide: ICategoryListUseCase,
       useExisting: CategoryListUseCase,
     },
 
     CategoryListByUuidUseCase,
     {
-      provide: AbstractCategoryListByUuidUseCase,
+      provide: ICategoryListByUuidUseCase,
       useExisting: CategoryListByUuidUseCase,
     },
 
     CategoryCreateUseCase,
     {
-      provide: AbstractCategoryCreateUseCase,
+      provide: ICategoryCreateUseCase,
       useExisting: CategoryCreateUseCase,
     },
 
     CategoryUpdateUseCase,
     {
-      provide: AbstractCategoryUpdateUseCase,
+      provide: ICategoryUpdateUseCase,
       useExisting: CategoryUpdateUseCase,
     },
 
     CategoryRemoveUseCase,
     {
-      provide: AbstractCategoryRemoveUseCase,
+      provide: ICategoryRemoveUseCase,
       useExisting: CategoryRemoveUseCase,
     },
   ],

@@ -1,15 +1,15 @@
-import { AbstractThemeListByUuidUseCase } from '@/features/theme/domain/use-cases/abstract.theme-list-by-uuid.use-case';
-import { Theme } from '@/features/theme/domain/core/theme';
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { Application } from '@/common/application/application';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { Injectable } from '@nestjs/common';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { IThemeListByUuidUseCase } from '@/features/theme/domain/use-cases/theme-list-by-uuid.use-case.interface';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
 
 @Injectable()
 export class ThemeListByUuidUseCase
   extends Application
-  implements AbstractThemeListByUuidUseCase
+  implements IThemeListByUuidUseCase
 {
   constructor(private readonly themeRepository: ThemeRepository) {
     super();

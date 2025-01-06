@@ -4,22 +4,22 @@ import { EventMapper } from '@/features/event/infra/database/typeorm/mappers/eve
 import { TypeormEventRepository } from '@/features/event/infra/database/typeorm/repositories/typeorm.event.repository';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventListService } from '@/features/event/application/services/event-list.service';
-import { AbstractEventListService } from '@/features/event/domain/services/abstract.event-list.service';
 import { PublicEventListService } from '@/features/event/application/services/public.event-list.service';
-import { PublicAbstractEventListService } from '@/features/event/domain/services/public.abstract.event-list.service';
-import { AbstractEventCreateUseCase } from '@/features/event/domain/use-cases/abstract.event-create.use-case';
 import { EventListUseCase } from '@/features/event/application/use-cases/event-list.use-case';
-import { AbstractEventListUseCase } from '@/features/event/domain/use-cases/abstract.event-list.use-case';
-import { EventListByUuidUseCase } from '@/features/event/application/use-cases/event-list-by-uuid.use-case';
-import { AbstractEventListByUuidUseCase } from '@/features/event/domain/use-cases/abstract.event-list-by-uuid.use-case';
 import { EventCreateUseCase } from '@/features/event/application/use-cases/event-create.use-case';
 import { EventUpdateUseCase } from '@/features/event/application/use-cases/event-update.use-case';
-import { AbstractEventUpdateUseCase } from '@/features/event/domain/use-cases/abstract.event-update.use-case';
 import { EventRemoveUseCase } from '@/features/event/application/use-cases/event-remove.use-case';
-import { AbstractEventRemoveUseCase } from '@/features/event/domain/use-cases/abstract.event-remove.use-case';
 import { forwardRef, Module } from '@nestjs/common';
 import { EventController } from '@/features/event/presentation/controllers/event.controller';
 import { ProductModule } from '@/features/product/infra/modules/product.module';
+import { EventListByUuidUseCase } from '@/features/event/application/use-cases/event-list-by-uuid.use-case';
+import { IEventListByUuidUseCase } from '@/features/event/domain/use-cases/event-list-by-uuid.use-case';
+import { IEventUpdateUseCase } from '@/features/event/domain/use-cases/event-update.use-case';
+import { IEventRemoveUseCase } from '@/features/event/domain/use-cases/event-remove.use-case';
+import { IEventCreateUseCase } from '@/features/event/domain/use-cases/event-create.use-case';
+import { IPublicEventListService } from '@/features/event/domain/services/public.event-list.service';
+import { IEventListService } from '@/features/event/domain/services/event-list.service';
+import { IEventListUseCase } from '@/features/event/domain/use-cases/event-list.use-case';
 
 @Module({
   imports: [
@@ -37,43 +37,43 @@ import { ProductModule } from '@/features/product/infra/modules/product.module';
 
     EventListService,
     {
-      provide: AbstractEventListService,
+      provide: IEventListService,
       useExisting: EventListService,
     },
 
     PublicEventListService,
     {
-      provide: PublicAbstractEventListService,
+      provide: IPublicEventListService,
       useExisting: PublicEventListService,
     },
 
     EventListUseCase,
     {
-      provide: AbstractEventListUseCase,
+      provide: IEventListUseCase,
       useExisting: EventListUseCase,
     },
 
     EventListByUuidUseCase,
     {
-      provide: AbstractEventListByUuidUseCase,
+      provide: IEventListByUuidUseCase,
       useExisting: EventListByUuidUseCase,
     },
 
     EventCreateUseCase,
     {
-      provide: AbstractEventCreateUseCase,
+      provide: IEventCreateUseCase,
       useExisting: EventCreateUseCase,
     },
 
     EventUpdateUseCase,
     {
-      provide: AbstractEventUpdateUseCase,
+      provide: IEventUpdateUseCase,
       useExisting: EventUpdateUseCase,
     },
 
     EventRemoveUseCase,
     {
-      provide: AbstractEventRemoveUseCase,
+      provide: IEventRemoveUseCase,
       useExisting: EventRemoveUseCase,
     },
   ],

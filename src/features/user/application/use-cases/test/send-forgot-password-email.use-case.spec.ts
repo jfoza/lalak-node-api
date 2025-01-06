@@ -1,5 +1,4 @@
 import { SendForgotPasswordEmailUseCase } from '@/features/user/application/use-cases/send-forgot-password-email.use-case';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { vi } from 'vitest';
 import {
@@ -9,13 +8,14 @@ import {
 import { Queue } from 'bull';
 import { NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 describe('Send Forgot Password Email UseCase', () => {
   let sut: SendForgotPasswordEmailUseCase;
   let emailQueue: Queue;
-  let userRepository: IUserRepository;
+  let personUserRepository: PersonUserRepository;
   let userTokenRepository: IUserTokenRepository;
 
   beforeEach(async () => {
@@ -23,33 +23,31 @@ describe('Send Forgot Password Email UseCase', () => {
       add: vi.fn(async () => null),
     } as unknown as Queue;
 
-    userRepository = {
+    personUserRepository = {
       findByEmail: vi.fn(async () => null),
-    } as unknown as IUserRepository;
+    } as unknown as PersonUserRepository;
 
     userTokenRepository = {
       create: vi.fn(
         async () =>
           new UserToken({
-            userUuid: UUID.generate(),
-            token: UUID.generate(),
+            userUuid: UniqueEntityId.create(),
+            token: UniqueEntityId.create(),
           } as UserTokenProps),
       ),
     } as unknown as IUserTokenRepository;
 
     sut = new SendForgotPasswordEmailUseCase(
       emailQueue,
-      userRepository,
+      personUserRepository,
       userTokenRepository,
     );
   });
 
   it('should successfully send a forgot password email', async () => {
-    const person = UserDataBuilder.getPerson();
-    const user = await UserDataBuilder.getUserAdminType();
-    user.person = person;
+    const person = await UserDataBuilder.getPerson();
 
-    userRepository.findByEmail = vi.fn(async () => user);
+    personUserRepository.findByEmail = vi.fn(async () => person);
 
     await sut.execute('test@email.com');
 
@@ -57,7 +55,7 @@ describe('Send Forgot Password Email UseCase', () => {
   });
 
   it('should return exception if user is not found', async () => {
-    userRepository.findByEmail = vi.fn(async () => null);
+    personUserRepository.findByEmail = vi.fn(async () => null);
 
     await expect(sut.execute('test@email.com')).rejects.toThrow(
       NotFoundException,

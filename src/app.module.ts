@@ -8,7 +8,7 @@ import { RedisModule } from '@/redis/infra/modules/redis.module';
 import { DatabaseModule } from '@/database/infra/modules/database.module';
 import { AclModule } from '@/acl/infra/modules/acl.module';
 import { AuthModule } from '@/features/auth/infra/modules/auth.module';
-import { CustomerModule } from '@/features/customer/infra/modules/customer.module';
+import { CustomerModule } from '@/features/user/infra/modules/customer.module';
 import { CityModule } from '@/features/city/infra/modules/city.module';
 import { MailModule } from '@/mail/infra/modules/mail.module';
 import { AmqpModule } from '@/amqp/infra/modules/amqp.module';
@@ -34,7 +34,7 @@ import { CommonModule } from '@/common/infra/modules/common.module';
     CityModule,
     UserModule,
     CustomerModule,
-    // ThemeModule,
+    ThemeModule,
     // CategoryModule,
     // EventModule,
     // ProductModule,

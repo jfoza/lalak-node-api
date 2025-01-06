@@ -1,13 +1,21 @@
-import { OldMapper } from '@/common/infra/database/typeorm/mappers/OldMapper';
-import { Theme, ThemeProps } from '@/features/theme/domain/core/theme';
+import { Theme, ThemeProps } from '@/features/theme/domain/entities/theme';
 import { ThemeEntity } from '@/features/theme/infra/database/typeorm/entities/theme.entity';
-import { Injectable } from '@nestjs/common';
+import { Mapper } from '@/common/infra/database/typeorm/mappers/mapper';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
-@Injectable()
-export class ThemeMapper extends OldMapper<ThemeEntity, Theme, ThemeProps> {
-  protected snakeCaseMapper: boolean = true;
+export class ThemeMapper extends Mapper<ThemeEntity, Theme> {
+  static get toDomain(): ThemeMapper {
+    return new this();
+  }
 
-  protected toDomainEntity(props: ThemeProps, uuid: string): Promise<Theme> {
-    return Theme.create(props, uuid);
+  async from(ormEntity: ThemeEntity): Promise<Theme> {
+    return Theme.create(
+      {
+        description: ormEntity.description,
+        active: ormEntity.active,
+        createdAt: ormEntity.created_at,
+      } as ThemeProps,
+      UniqueEntityId.create(ormEntity.uuid),
+    );
   }
 }

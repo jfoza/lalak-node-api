@@ -1,15 +1,14 @@
-export abstract class Mapper<TOrmEntity, TDomainEntity> {
-  abstract from(ormEntity: TOrmEntity): Promise<TDomainEntity>;
+export abstract class Mapper<TRaw, TDomainEntity> {
+  abstract from(raw: TRaw): Promise<TDomainEntity>;
 
-  async optional(ormEntity: TOrmEntity): Promise<TDomainEntity> | null {
-    if (!ormEntity) {
+  async optional(raw: TRaw | null): Promise<TDomainEntity | null> {
+    if (!raw) {
       return null;
     }
-
-    return await this.from(ormEntity);
+    return this.from(raw);
   }
 
-  async collection(ormEntities: TOrmEntity[]): Promise<TDomainEntity[]> {
-    return Promise.all(ormEntities.map((entity) => this.from(entity)));
+  async collection(raws: TRaw[]): Promise<TDomainEntity[]> {
+    return Promise.all(raws.map((raw) => this.from(raw)));
   }
 }

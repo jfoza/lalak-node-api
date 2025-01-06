@@ -3,10 +3,7 @@ import moment from 'moment';
 import { ILoginService } from '@/features/auth/domain/services/login.service.interface';
 import { IAuthRepository } from '@/features/auth/domain/repositories/auth.repository.interface';
 import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
-import {
-  IJwtToken,
-  JwtAuthService,
-} from '@/jwt/application/services/jwt-auth.service';
+import { IJwtToken } from '@/jwt/application/services/jwt-auth.service';
 import { Hash } from '@/utils/hash';
 import { AuthTypesEnum } from '@/utils/enums/auth-types.enum';
 import { Auth, AuthProps } from '@/features/auth/domain/entities/auth';
@@ -14,17 +11,13 @@ import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
 import { IAuthResponse } from '@/features/auth/domain/dto/auth.response.dto.interface';
 import { IUserListByEmailLoginUseCase } from '@/features/user/domain/use-cases/user-list-by-email-login.use-case.interface';
-import { User } from '@/features/user/domain/entities/user';
 import { Ability } from '@/acl/domain/entities/ability';
 import { IAuthDto } from '@/features/auth/domain/dto/auth.dto.interface';
 import { IJwtAuthService } from '@/jwt/domain/services/jwt-auth.service.interface';
+import { Password } from '@/features/user/domain/value-objects/password';
 
 @Injectable()
 export class LoginService implements ILoginService {
-  private authDto: IAuthDto;
-  private loginType: LoginUserTypesEnum;
-  private user: User;
-
   constructor(
     @Inject(IUserListByEmailLoginUseCase)
     private readonly userListByEmailLoginUseCase: IUserListByEmailLoginUseCase,
@@ -43,52 +36,43 @@ export class LoginService implements ILoginService {
     authDto: IAuthDto,
     loginType: LoginUserTypesEnum,
   ): Promise<IAuthResponse> {
-    this.authDto = authDto;
-    this.loginType = loginType;
-
-    await this.handleValidations();
-
-    return await this.generateAuth();
-  }
-
-  private async handleValidations(): Promise<void> {
-    this.user = await this.userListByEmailLoginUseCase.execute(
-      this.authDto.email,
-      this.loginType,
+    const personAuthUser = await this.userListByEmailLoginUseCase.execute(
+      authDto.email,
+      loginType,
     );
 
-    if (!(await Hash.compareHash(this.authDto.password, this.user.password))) {
+    if (!personAuthUser) {
       throw new UnauthorizedException(ErrorMessagesEnum.UNAUTHORIZED_LOGIN);
     }
 
-    if (!this.user.active) {
+    const password: Password = personAuthUser.props.password;
+
+    if (!(await Hash.compare(authDto.password, password.toValue()))) {
+      throw new UnauthorizedException(ErrorMessagesEnum.UNAUTHORIZED_LOGIN);
+    }
+
+    if (!personAuthUser.active) {
       throw new UnauthorizedException(ErrorMessagesEnum.INACTIVE_USER);
     }
-  }
 
-  private async generateAuth(): Promise<IAuthResponse> {
+    const { uuid, name, shortName, email, profile, active } = personAuthUser;
+
     const payload = {
-      sub: this.user.uuid,
-      user: {
-        uuid: this.user.uuid,
-        profileUuid: this.user.profileUuid,
-        email: this.user.email,
-        active: this.user.active,
-      },
+      sub: uuid,
+      user: personAuthUser,
     };
 
     const authenticate: IJwtToken = this.jwtAuthService.sign(payload);
 
-    const ability: Ability[] = await this.abilityRepository.findAllByUserUuid(
-      this.user.uuid,
-    );
+    const ability: Ability[] =
+      await this.abilityRepository.findAllByUserUuid(uuid);
 
-    const auth = await Auth.create({
-      userUuid: this.user.uuid,
+    const auth: Auth = await Auth.create({
+      userUuid: uuid,
       initialDate: moment().toDate(),
       finalDate: moment().add(2, 'days').toDate(),
       token: authenticate.token,
-      ipAddress: this.authDto.ipAddress,
+      ipAddress: authDto.ipAddress,
       authType: AuthTypesEnum.EMAIL_PASSWORD,
       active: true,
     } as AuthProps);
@@ -100,12 +84,12 @@ export class LoginService implements ILoginService {
       type: authenticate.type,
       expiresIn: `${authenticate.expiration / 86400} days`,
       user: {
-        uuid: this.user.uuid,
-        email: this.user.email,
-        fullName: this.user.person.name,
-        shortName: this.user.person.shortName,
-        role: this.user.profile.description,
-        status: this.user.active,
+        uuid: uuid,
+        email: email,
+        fullName: name,
+        shortName,
+        role: profile.description,
+        status: active,
         ability,
       },
     };

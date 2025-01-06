@@ -1,18 +1,18 @@
-import { AbstractProductListByUuidService } from '@/features/product/domain/services/abstract.product-list-by-uuid.service';
-import { Product } from '@/features/product/domain/core/product';
+import { Product } from '@/features/product/domain/entities/product';
 import { Application } from '@/common/application/application';
 import { Inject, Injectable } from '@nestjs/common';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { AbstractProductListByUuidUseCase } from '@/features/product/domain/use-cases/abstract.product-list-by-uuid.use-case';
+import { IProductListByUuidService } from '@/features/product/domain/services/product-list-by-uuid.service';
+import { IProductListByUuidUseCase } from '@/features/product/domain/use-cases/product-list-by-uuid.use-case';
 
 @Injectable()
 export class ProductListByUuidService
   extends Application
-  implements AbstractProductListByUuidService
+  implements IProductListByUuidService
 {
   constructor(
-    @Inject(AbstractProductListByUuidUseCase)
-    private readonly productListByUuidUseCase: AbstractProductListByUuidUseCase,
+    @Inject(IProductListByUuidUseCase)
+    private readonly productListByUuidUseCase: IProductListByUuidUseCase,
   ) {
     super();
   }

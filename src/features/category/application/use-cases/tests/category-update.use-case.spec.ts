@@ -1,8 +1,6 @@
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { beforeEach, vi } from 'vitest';
-import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Theme } from '@/features/theme/domain/core/theme';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import {
   ConflictException,
@@ -11,17 +9,20 @@ import {
 } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
-import { CreateCategoryDto } from '@/features/category/application/dto/create-category.dto';
 import { UUID } from '@/utils/uuid';
-import { Category } from '@/features/category/domain/core/category';
+import { Category } from '@/features/category/domain/entities/category';
 import { CategoryUpdateUseCase } from '@/features/category/application/use-cases/category-update.use-case';
-import { UpdateCategoryDto } from '@/features/category/application/dto/update-category.dto';
+import { CategoryUpdateDto } from '@/features/category/application/dto/category-update.dto';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
+import { ICategoryUpdateDto } from '@/features/category/domain/dto/category-update.dto';
+import { PolicyAdapter } from '@/acl/application/adapters/policy.adapter';
+import { Policy } from '@/acl/domain/value-objects/policy';
 
 describe('CategoryUpdateUseCase Unit Tests', () => {
   let sut: CategoryUpdateUseCase;
   let categoryRepository: CategoryRepository;
   let themeRepository: ThemeRepository;
-  let updateCategoryDto: UpdateCategoryDto;
+  let updateCategoryDto: ICategoryUpdateDto;
 
   beforeEach(() => {
     themeRepository = {
@@ -36,13 +37,14 @@ describe('CategoryUpdateUseCase Unit Tests', () => {
 
     sut = new CategoryUpdateUseCase(categoryRepository, themeRepository);
 
-    updateCategoryDto = new CreateCategoryDto();
+    updateCategoryDto = new CategoryUpdateDto();
     updateCategoryDto.themeUuid = UUID.generate();
     updateCategoryDto.description = 'test';
     updateCategoryDto.active = true;
 
-    sut.policy = new Policy();
-    sut.policy.abilities = [AbilitiesEnum.CATEGORIES_UPDATE];
+    sut.policy = new PolicyAdapter(
+      Policy.create([AbilitiesEnum.CATEGORIES_UPDATE]),
+    );
   });
 
   it('Should update an Category', async () => {
@@ -105,7 +107,7 @@ describe('CategoryUpdateUseCase Unit Tests', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new PolicyAdapter(Policy.create());
 
     await expect(
       sut.execute(UUID.generate(), updateCategoryDto),

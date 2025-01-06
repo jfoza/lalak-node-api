@@ -1,5 +1,4 @@
 import { vi } from 'vitest';
-import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { UUID } from '@/utils/uuid';
@@ -7,7 +6,9 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { CategoryListByUuidUseCase } from '@/features/category/application/use-cases/category-list-by-uuid.use-case';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
-import { Category } from '@/features/category/domain/core/category';
+import { Category } from '@/features/category/domain/entities/category';
+import { PolicyAdapter } from '@/acl/application/adapters/policy.adapter';
+import { Policy } from '@/acl/domain/value-objects/policy';
 
 describe('CategoryListByUuidUseCase Unit Tests', () => {
   let sut: CategoryListByUuidUseCase;
@@ -20,9 +21,9 @@ describe('CategoryListByUuidUseCase Unit Tests', () => {
 
     sut = new CategoryListByUuidUseCase(categoryRepository);
 
-    sut.policy = new Policy();
-
-    sut.policy.abilities = [AbilitiesEnum.CATEGORIES_VIEW];
+    sut.policy = new PolicyAdapter(
+      Policy.create([AbilitiesEnum.CATEGORIES_VIEW]),
+    );
   });
 
   it('Should return a unique Category', async () => {
@@ -47,7 +48,7 @@ describe('CategoryListByUuidUseCase Unit Tests', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new PolicyAdapter(Policy.create());
 
     await expect(sut.execute(UUID.generate())).rejects.toThrow(
       ForbiddenException,

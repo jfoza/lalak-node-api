@@ -1,17 +1,14 @@
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { Theme } from '@/features/theme/domain/core/theme';
-import { ThemeSearchParamsDto } from '@/features/theme/application/dto/theme-search-params.dto';
-import { AbstractThemeListUseCase } from '@/features/theme/domain/use-cases/abstract.theme-list.use-case';
-import { PublicAbstractThemeListService } from '@/features/theme/domain/services/public.abstract.theme-list.service';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { Injectable } from '@nestjs/common';
+import { IThemeListUseCase } from '@/features/theme/domain/use-cases/theme-list.use-case.interface';
+import { IThemeSearchParamsDto } from '@/features/theme/domain/dto/theme-search-params.dto.interface';
+import { IPublicThemeListService } from '@/features/theme/domain/services/public.theme-list.service';
 
 @Injectable()
-export class PublicThemeListService implements PublicAbstractThemeListService {
-  constructor(private readonly themeListUseCase: AbstractThemeListUseCase) {}
+export class PublicThemeListService implements IPublicThemeListService {
+  constructor(private readonly themeListUseCase: IThemeListUseCase) {}
 
-  async handle(
-    themeSearchParamsDto: ThemeSearchParamsDto,
-  ): Promise<ILengthAwarePaginator | Theme[]> {
+  async handle(themeSearchParamsDto: IThemeSearchParamsDto): Promise<Theme[]> {
     return this.themeListUseCase.execute(themeSearchParamsDto);
   }
 }

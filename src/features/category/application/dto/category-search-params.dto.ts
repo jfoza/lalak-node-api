@@ -1,26 +1,16 @@
-import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
-import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Transform } from 'class-transformer';
-import { SearchParamsDto } from '@/common/application/dto/search-params.dto';
+import { ICategorySearchParamsDto } from '@/features/category/domain/dto/category-search-params.dto';
+import { IPaginationOrder } from '@/common/domain/dto/pagination-order.interface';
+import { PaginationOrder } from '@/common/application/dto/pagination-order';
 
-export class CategorySearchParamsDto extends SearchParamsDto {
-  @IsOptional()
-  @IsString()
-  @IsUUID()
+export class CategorySearchParamsDto implements ICategorySearchParamsDto {
   themeUuid?: string;
-
-  @IsOptional()
-  @IsString()
   description?: string;
-
-  @IsOptional()
-  @IsBoolean()
   active?: boolean;
+  paginationOrder: IPaginationOrder;
 
-  @IsOptional()
-  @IsIn(['description', 'created_at'], {
-    message: ErrorMessagesEnum.INVALID_COLUMN_NAME,
-  })
-  @Transform(({ value }) => (value === '' ? undefined : value))
-  columnName: string | null = null;
+  constructor() {
+    this.paginationOrder = new PaginationOrder();
+  }
 }
+
+export const categorySearchParamsDto = new CategorySearchParamsDto();

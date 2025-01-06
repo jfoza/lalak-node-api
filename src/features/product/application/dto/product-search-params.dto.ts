@@ -1,52 +1,18 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsIn,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Min,
-  ValidateIf,
-} from 'class-validator';
-import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Transform, Type } from 'class-transformer';
-import { SearchParamsDto } from '@/common/application/dto/search-params.dto';
+import { IProductSearchParamsDto } from '@/features/product/domain/dto/product-search-params.dto';
+import { IPaginationOrder } from '@/common/domain/dto/pagination-order.interface';
+import { PaginationOrder } from '@/common/application/dto/pagination-order';
 
-export class ProductSearchParamsDto extends SearchParamsDto {
-  @IsOptional()
-  @IsString()
+export class ProductSearchParamsDto implements IProductSearchParamsDto {
   description?: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUUID()
   userUuid?: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsUUID('all', {
-    each: true,
-  })
   categories?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsUUID('all', {
-    each: true,
-  })
   events?: string[];
+  active?: boolean;
+  paginationOrder?: IPaginationOrder;
 
-  @ValidateIf((o) => o.page !== undefined)
-  @IsNotEmpty()
-  @Type(() => Number)
-  @Min(1)
-  page: number;
-
-  @IsOptional()
-  @IsIn(['description', 'value', 'active', 'createdAt'], {
-    message: ErrorMessagesEnum.INVALID_COLUMN_NAME,
-  })
-  @Transform(({ value }) => (value === '' ? undefined : value))
-  columnName: string | null = null;
+  constructor() {
+    this.paginationOrder = new PaginationOrder();
+  }
 }
+
+export const productSearchParamsDto = new ProductSearchParamsDto();

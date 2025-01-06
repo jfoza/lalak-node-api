@@ -1,309 +1,188 @@
 import { vi } from 'vitest';
-import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
-import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Profile } from '@/features/user/domain/entities/profile';
-import { User } from '@/features/user/domain/entities/user';
+import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { Person } from '@/features/user/domain/entities/person';
+import { UUID } from '@/utils/uuid';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import {
   ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
+import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
+import { AdminUserCreateDto } from '@/features/user/application/dto/admin-user-create.dto';
 import { AdminUserUpdateUseCase } from '@/features/user/application/use-cases/admin-user-update.use-case';
-import { UpdateAdminUserDto } from '@/features/user/application/dto/update-admin-user.dto';
-import { UUID } from '@/utils/uuid';
-import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
-import { Policy } from '@/acl/domain/entities/policy';
 
-describe('Admin User Update UseCase', () => {
+describe('AdminUserUpdateUseCase Unit Tests', async () => {
   let sut: AdminUserUpdateUseCase;
-  let updateAdminUserDto: UpdateAdminUserDto;
-
-  const person = UserDataBuilder.getPerson();
-  const user = UserDataBuilder.getUserAdminType();
-  const adminUser = UserDataBuilder.getAdminUser();
-
-  const personRepository = {
-    update: vi.fn(async () => person),
-  } as unknown as IPersonRepository;
-
-  const userRepository = {
-    update: vi.fn(async () => user),
-    updatePassword: vi.fn(),
-  } as unknown as IUserRepository;
-
-  const adminUserRepository = {
-    update: vi.fn(async () => adminUser),
-  } as unknown as IAdminUserRepository;
-
-  const profileRepository = {
-    findById: vi.fn(async () => null),
-  } as unknown as IProfileRepository;
+  let personAdminUserRepository: PersonAdminUserRepository;
+  let personUserRepository: PersonUserRepository;
+  let profileRepository: ProfileRepository;
+  let createAdminUserDto: IAdminUserCreateDto;
+  const uuid: string = UUID.generate();
 
   beforeEach(() => {
+    personAdminUserRepository = {
+      findByUuid: vi.fn(() => null),
+      update: vi.fn(() => null),
+    } as unknown as PersonAdminUserRepository;
+
+    personUserRepository = {
+      findByEmail: vi.fn(() => null),
+    } as unknown as PersonUserRepository;
+
+    profileRepository = {
+      findByUuid: vi.fn(() => null),
+    } as unknown as ProfileRepository;
+
     sut = new AdminUserUpdateUseCase(
-      personRepository,
-      userRepository,
-      adminUserRepository,
+      personAdminUserRepository,
+      personUserRepository,
       profileRepository,
     );
 
-    updateAdminUserDto = {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      profileUuid: UUID.generate(),
-    } as UpdateAdminUserDto;
+    createAdminUserDto = new AdminUserCreateDto();
+    createAdminUserDto.name = 'Test';
+    createAdminUserDto.email = 'test@gmail.com';
+    createAdminUserDto.profileUuid = UUID.generate();
   });
 
   it.each([
     {
-      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE,
-      profile: {
-        description: 'Admin Master',
-        uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
-      },
+      profile: UserDataBuilder.getAdminMasterProfile(),
+      callback: async () =>
+        sut.updateUserForAdminMaster(uuid, createAdminUserDto),
     },
     {
-      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE,
-      profile: {
-        description: 'Employee',
-        uniqueName: ProfileUniqueNameEnum.EMPLOYEE,
-      },
+      profile: UserDataBuilder.getEmployeeProfile(),
+      callback: async () => sut.updateUserForEmployee(uuid, createAdminUserDto),
     },
   ])(
-    'should to update admin user by abilities',
-    async ({ ability, profile }) => {
-      sut.policy = new Policy([ability]);
+    'Should update a unique admin user for all admin profiles',
+    async ({ profile, callback }) => {
+      vi.spyOn(personAdminUserRepository, 'findByUuid').mockResolvedValue(
+        await UserDataBuilder.getPersonEmployee(),
+      );
+      vi.spyOn(personAdminUserRepository, 'update').mockResolvedValue(
+        await UserDataBuilder.getPerson(),
+      );
+      vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(null);
+      vi.spyOn(profileRepository, 'findByUuid').mockResolvedValue(profile);
 
-      const userProfile = new Profile({
-        description: profile.description,
-        uniqueName: profile.uniqueName,
-      });
+      const result = await callback();
 
-      const user = await UserDataBuilder.getUserAdminType();
-      user.profile = userProfile;
-      user.person = UserDataBuilder.getPerson();
-
-      adminUserRepository.findByUserUuid = vi.fn(async () => user);
-
-      userRepository.findByEmail = vi.fn(async () => null);
-
-      profileRepository.findById = vi.fn(async () => userProfile);
-
-      const result = await sut.execute(UUID.generate(), updateAdminUserDto);
-
-      expect(personRepository.update).toHaveBeenCalled();
-      expect(userRepository.update).toHaveBeenCalled();
-      expect(result).toBeInstanceOf(User);
+      expect(result).toBeInstanceOf(Person);
     },
   );
 
   it.each([
     {
-      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE,
-      profile: {
-        description: 'Admin Master',
-        uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
-      },
+      callback: async () =>
+        sut.updateUserForAdminMaster(uuid, createAdminUserDto),
     },
     {
-      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE,
-      profile: {
-        description: 'Employee',
-        uniqueName: ProfileUniqueNameEnum.EMPLOYEE,
-      },
+      callback: async () => sut.updateUserForEmployee(uuid, createAdminUserDto),
     },
   ])(
-    'should return exception if admin user not exists',
-    async ({ ability, profile }) => {
-      sut.policy = new Policy([ability]);
+    'Should return exception if admin user not found',
+    async ({ callback }) => {
+      vi.spyOn(personAdminUserRepository, 'findByUuid').mockResolvedValue(null);
 
-      adminUserRepository.findByUserUuid = vi.fn(async () => null);
+      await expect(callback()).rejects.toThrow(NotFoundException);
+      await expect(callback()).rejects.toThrow(
+        ErrorMessagesEnum.USER_NOT_FOUND,
+      );
+    },
+  );
 
-      profileRepository.findById = vi.fn(
-        async () =>
-          new Profile({
-            description: profile.description,
-            uniqueName: profile.uniqueName,
-          }),
+  it.each([
+    {
+      callback: async () =>
+        sut.updateUserForAdminMaster(uuid, createAdminUserDto),
+    },
+    {
+      callback: async () => sut.updateUserForEmployee(uuid, createAdminUserDto),
+    },
+  ])(
+    'Should return exception if email already exists',
+    async ({ callback }) => {
+      vi.spyOn(personAdminUserRepository, 'findByUuid').mockResolvedValue(
+        await UserDataBuilder.getPersonEmployee(),
+      );
+      vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(
+        await UserDataBuilder.getPerson(),
       );
 
-      await expect(
-        sut.execute(UUID.generate(), updateAdminUserDto),
-      ).rejects.toThrow(NotFoundException);
-      await expect(
-        sut.execute(UUID.generate(), updateAdminUserDto),
-      ).rejects.toThrow(ErrorMessagesEnum.USER_NOT_FOUND);
-    },
-  );
-
-  it.each([
-    {
-      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE,
-      profile: {
-        description: 'Admin Master',
-        uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
-      },
-    },
-    {
-      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE,
-      profile: {
-        description: 'Employee',
-        uniqueName: ProfileUniqueNameEnum.EMPLOYEE,
-      },
-    },
-  ])(
-    'should return exception if user email already exists',
-    async ({ ability, profile }) => {
-      sut.policy = new Policy([ability]);
-
-      const userProfile = new Profile({
-        description: profile.description,
-        uniqueName: profile.uniqueName,
-      });
-
-      const user = await UserDataBuilder.getUserAdminType();
-      user.profile = userProfile;
-      user.person = UserDataBuilder.getPerson();
-
-      adminUserRepository.findByUserUuid = vi.fn(async () => user);
-
-      userRepository.findByEmail = vi.fn(
-        async () => await UserDataBuilder.getUserAdminType(),
+      await expect(callback()).rejects.toThrow(ConflictException);
+      await expect(callback()).rejects.toThrow(
+        ErrorMessagesEnum.EMAIL_ALREADY_EXISTS,
       );
-
-      await expect(
-        sut.execute(UUID.generate(), updateAdminUserDto),
-      ).rejects.toThrow(ConflictException);
-      await expect(
-        sut.execute(UUID.generate(), updateAdminUserDto),
-      ).rejects.toThrow(ErrorMessagesEnum.EMAIL_ALREADY_EXISTS);
     },
   );
 
   it.each([
     {
-      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE,
-      profile: {
-        description: 'Admin Master',
-        uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
-      },
+      callback: async () =>
+        sut.updateUserForAdminMaster(uuid, createAdminUserDto),
     },
     {
-      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE,
-      profile: {
-        description: 'Employee',
-        uniqueName: ProfileUniqueNameEnum.EMPLOYEE,
-      },
+      callback: async () => sut.updateUserForEmployee(uuid, createAdminUserDto),
     },
-  ])(
-    'should return exception if profile not exists',
-    async ({ ability, profile }) => {
-      sut.policy = new Policy([ability]);
+  ])('Should return exception if profile not exists', async ({ callback }) => {
+    vi.spyOn(personAdminUserRepository, 'findByUuid').mockResolvedValue(
+      await UserDataBuilder.getPersonEmployee(),
+    );
+    vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(null);
+    vi.spyOn(profileRepository, 'findByUuid').mockResolvedValue(null);
 
-      const userProfile = new Profile({
-        description: profile.description,
-        uniqueName: profile.uniqueName,
-      });
+    await expect(callback()).rejects.toThrow(NotFoundException);
+    await expect(callback()).rejects.toThrow(
+      ErrorMessagesEnum.PROFILE_NOT_FOUND,
+    );
+  });
 
-      const user = await UserDataBuilder.getUserAdminType();
-      user.profile = userProfile;
-      user.person = UserDataBuilder.getPerson();
-
-      adminUserRepository.findByUserUuid = vi.fn(async () => user);
-
-      userRepository.findByEmail = vi.fn(async () => null);
-
-      profileRepository.findById = vi.fn(async () => null);
-
-      await expect(
-        sut.execute(UUID.generate(), updateAdminUserDto),
-      ).rejects.toThrow(NotFoundException);
-      await expect(
-        sut.execute(UUID.generate(), updateAdminUserDto),
-      ).rejects.toThrow(ErrorMessagesEnum.PROFILE_NOT_FOUND);
-    },
-  );
-
-  it('should return exception if user is not reachable because of disallowed profile', async () => {
-    sut.policy = new Policy([AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE]);
-
-    const adminMasterProfile = new Profile({
-      description: 'Admin Master',
-      uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
-    });
-
-    const user = await UserDataBuilder.getUserAdminType();
-    user.profile = adminMasterProfile;
-    user.person = UserDataBuilder.getPerson();
-
-    adminUserRepository.findByUserUuid = vi.fn(async () => user);
-
-    userRepository.findByEmail = vi.fn(async () => null);
-
-    profileRepository.findById = vi.fn(async () => adminMasterProfile);
+  it('Should return exception if user cannot be accessed', async () => {
+    vi.spyOn(personAdminUserRepository, 'findByUuid').mockResolvedValue(
+      await UserDataBuilder.getPersonAdminMaster(),
+    );
+    vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(null);
+    vi.spyOn(profileRepository, 'findByUuid').mockResolvedValue(
+      UserDataBuilder.getCustomerProfile(),
+    );
 
     await expect(
-      sut.execute(UUID.generate(), updateAdminUserDto),
+      sut.updateUserForEmployee(uuid, createAdminUserDto),
     ).rejects.toThrow(ForbiddenException);
     await expect(
-      sut.execute(UUID.generate(), updateAdminUserDto),
+      sut.updateUserForEmployee(uuid, createAdminUserDto),
     ).rejects.toThrow(ErrorMessagesEnum.USER_NOT_ALLOWED);
   });
 
   it.each([
     {
-      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE,
+      callback: async () =>
+        sut.updateUserForAdminMaster(uuid, createAdminUserDto),
     },
     {
-      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE,
+      callback: async () => sut.updateUserForEmployee(uuid, createAdminUserDto),
     },
   ])(
-    'should return exception if profile is not allowed',
-    async ({ ability }) => {
-      sut.policy = new Policy([ability]);
-
-      const user = await UserDataBuilder.getUserAdminType();
-      user.profile = new Profile({
-        description: 'Employee',
-        uniqueName: ProfileUniqueNameEnum.EMPLOYEE,
-      });
-      user.person = UserDataBuilder.getPerson();
-
-      adminUserRepository.findByUserUuid = vi.fn(async () => user);
-
-      userRepository.findByEmail = vi.fn(async () => null);
-
-      profileRepository.findById = vi.fn(
-        async () =>
-          new Profile({
-            description: 'Customer',
-            uniqueName: ProfileUniqueNameEnum.CUSTOMER,
-          }),
+    'Should return exception if profile is not allowed',
+    async ({ callback }) => {
+      vi.spyOn(personAdminUserRepository, 'findByUuid').mockResolvedValue(
+        await UserDataBuilder.getPersonEmployee(),
+      );
+      vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(null);
+      vi.spyOn(profileRepository, 'findByUuid').mockResolvedValue(
+        UserDataBuilder.getCustomerProfile(),
       );
 
-      await expect(
-        sut.execute(UUID.generate(), updateAdminUserDto),
-      ).rejects.toThrow(ForbiddenException);
-      await expect(
-        sut.execute(UUID.generate(), updateAdminUserDto),
-      ).rejects.toThrow(ErrorMessagesEnum.PROFILE_NOT_ALLOWED);
+      await expect(callback()).rejects.toThrow(ForbiddenException);
+      await expect(callback()).rejects.toThrow(
+        ErrorMessagesEnum.PROFILE_NOT_ALLOWED,
+      );
     },
   );
-
-  it('Should return exception if user has not permission', async () => {
-    sut.policy = new Policy(['ABC']);
-
-    await expect(
-      sut.execute(UUID.generate(), updateAdminUserDto),
-    ).rejects.toThrow(ForbiddenException);
-    await expect(
-      sut.execute(UUID.generate(), updateAdminUserDto),
-    ).rejects.toThrow(ErrorMessagesEnum.NOT_AUTHORIZED);
-  });
 });

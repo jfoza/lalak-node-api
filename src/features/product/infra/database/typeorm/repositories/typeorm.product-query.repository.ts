@@ -1,13 +1,11 @@
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
-import { ProductSearchParams } from '@/features/product/domain/core/product-search-params';
-import { Product } from '@/features/product/domain/core/product';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
+import { Product } from '@/features/product/domain/entities/product';
 import { Inject } from '@nestjs/common';
 import { ProductMapper } from '@/features/product/infra/database/typeorm/mappers/product.mapper';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from '@/features/product/infra/database/typeorm/entities/product.entity';
-import { toPaginate } from '@/common/infra/database/typeorm/pagination';
+import { IProductSearchParamsDto } from '@/features/product/domain/dto/product-search-params.dto';
 
 export class TypeormProductQueryRepository implements ProductQueryRepository {
   @InjectRepository(ProductEntity)
@@ -16,21 +14,29 @@ export class TypeormProductQueryRepository implements ProductQueryRepository {
   @Inject(ProductMapper)
   private readonly productMapper: ProductMapper;
 
-  async paginate(
-    productSearchParams: ProductSearchParams,
-  ): Promise<ILengthAwarePaginator> {
-    const result = await toPaginate<ProductEntity>(
-      this.getBaseQuery(productSearchParams),
-      {
-        page: productSearchParams.page,
-        perPage: productSearchParams.perPage,
-      },
-    );
+  async findAll(
+    productSearchParams: IProductSearchParamsDto,
+  ): Promise<Product[]> {
+    const results = await this.getBaseQuery(productSearchParams).getMany();
 
-    result.data = await this.productMapper.collection(result.data);
-
-    return result;
+    return ProductMapper.toDomain.collection(results);
   }
+
+  // async paginate(
+  //   productSearchParams: ProductSearchParams,
+  // ): Promise<ILengthAwarePaginator> {
+  //   const result = await toPaginate<ProductEntity>(
+  //     this.getBaseQuery(productSearchParams),
+  //     {
+  //       page: productSearchParams.page,
+  //       perPage: productSearchParams.perPage,
+  //     },
+  //   );
+  //
+  //   result.data = await this.productMapper.collection(result.data);
+  //
+  //   return result;
+  // }
 
   async findByUuid(uuid: string): Promise<Product | null> {
     const result = await this.productEntityRepository.findOne({
@@ -78,7 +84,7 @@ export class TypeormProductQueryRepository implements ProductQueryRepository {
   }
 
   private getBaseQuery(
-    productSearchParams: ProductSearchParams,
+    productSearchParams: IProductSearchParamsDto,
   ): SelectQueryBuilder<ProductEntity> {
     return this.productEntityRepository
       .createQueryBuilder('product')

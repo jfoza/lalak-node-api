@@ -1,18 +1,21 @@
-import { Event, EventProps } from '@/features/event/domain/core/event';
+import { Event, EventProps } from '@/features/event/domain/entities/event';
 import { Application } from '@/common/application/application';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Injectable } from '@nestjs/common';
-import { AbstractEventCreateUseCase } from '@/features/event/domain/use-cases/abstract.event-create.use-case';
+import { Inject, Injectable } from '@nestjs/common';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventCreateDto } from '@/features/event/application/dto/event-create.dto';
 import { EventValidations } from '@/features/event/application/validations/event.validations';
+import { IEventCreateUseCase } from '@/features/event/domain/use-cases/event-create.use-case';
 
 @Injectable()
 export class EventCreateUseCase
   extends Application
-  implements AbstractEventCreateUseCase
+  implements IEventCreateUseCase
 {
-  constructor(private readonly eventRepository: EventRepository) {
+  constructor(
+    @Inject(EventRepository)
+    private readonly eventRepository: EventRepository,
+  ) {
     super();
   }
 
@@ -24,7 +27,7 @@ export class EventCreateUseCase
       this.eventRepository,
     );
 
-    const event = await Event.create({
+    const event = Event.create({
       description: eventCreateDto.description,
       active: eventCreateDto.active,
     } as EventProps);

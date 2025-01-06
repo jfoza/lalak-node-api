@@ -1,18 +1,21 @@
 import { Application } from '@/common/application/application';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { AbstractEventRemoveUseCase } from '@/features/event/domain/use-cases/abstract.event-remove.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventValidations } from '@/features/event/application/validations/event.validations';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { Event } from '@/features/event/domain/core/event';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Event } from '@/features/event/domain/entities/event';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { IEventRemoveUseCase } from '@/features/event/domain/use-cases/event-remove.use-case';
 
 @Injectable()
 export class EventRemoveUseCase
   extends Application
-  implements AbstractEventRemoveUseCase
+  implements IEventRemoveUseCase
 {
-  constructor(private readonly eventRepository: EventRepository) {
+  constructor(
+    @Inject(EventRepository)
+    private readonly eventRepository: EventRepository,
+  ) {
     super();
   }
 

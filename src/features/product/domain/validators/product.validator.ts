@@ -1,72 +1,54 @@
-import {
-  IsDate,
-  IsNumber,
-  IsOptional,
-  Min,
-  Validate,
-  validate,
-  ValidationArguments,
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-} from 'class-validator';
-import { IValidator } from '@/common/domain/validators/validator.interface';
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
-import { ProductProps } from '@/features/product/domain/core/product';
+import { ProductProps } from '@/features/product/domain/entities/product';
+import { Validator } from '@/common/domain/validators/validator';
 
-@ValidatorConstraint({ name: 'isBalanceValid', async: false })
-export class IsBalanceValid implements ValidatorConstraintInterface {
-  validate(balance: number, args: ValidationArguments) {
-    const { quantity } = args.object as any;
-    return balance <= quantity;
-  }
-
-  defaultMessage() {
-    return 'O saldo não pode ser maior que a quantidade.';
-  }
-}
-
-export class ProductRules {
-  @IsNumber()
-  @Min(0, { message: 'O valor não pode ser menor que zero.' })
+type TNumericItem = {
+  name: string;
+  key: string;
   value: number;
+};
 
-  @IsNumber()
-  @Min(0, { message: 'A quantidade não pode ser menor que zero.' })
-  quantity: number;
+const PRODUCT_VALUE: string = 'PRODUCT_VALUE';
+const PRODUCT_QUANTITY: string = 'PRODUCT_QUANTITY';
+const PRODUCT_BALANCE: string = 'PRODUCT_BALANCE';
 
-  @IsNumber()
-  @Min(0, { message: 'O saldo não pode ser menor que zero.' })
-  @Validate(IsBalanceValid)
-  balance: number;
+export class ProductValidator extends Validator<ProductProps> {
+  validate(props: ProductProps): void {
+    const errors: string[] = [];
 
-  @IsDate()
-  @IsOptional()
-  createdAt?: Date;
+    const items: TNumericItem[] = [
+      { name: 'Product Value', key: PRODUCT_VALUE, value: props.value },
+      {
+        name: 'Product Quantity',
+        key: PRODUCT_QUANTITY,
+        value: props.quantity,
+      },
+      { name: 'Product Balance', key: PRODUCT_BALANCE, value: props.balance },
+    ];
 
-  constructor({ value, quantity, balance, createdAt }: ProductProps) {
-    Object.assign(this, {
-      value,
-      quantity,
-      balance,
-      createdAt,
+    items.forEach((item) => {
+      if (item.value < 0) {
+        errors.push(`O valor de "${item.name}" não pode ser menor que zero.`);
+      }
     });
-  }
-}
 
-export class ProductValidator implements IValidator<ProductProps> {
-  async validate(props: ProductProps): Promise<void> {
-    const rules = new ProductRules(props);
-    const errors = await validate(rules);
+    const productQuantity = items.find(
+      (item) => item.key === PRODUCT_QUANTITY,
+    )?.value;
+    const productBalance = items.find(
+      (item) => item.key === PRODUCT_BALANCE,
+    )?.value;
+
+    if (productQuantity !== undefined && productBalance !== undefined) {
+      if (productBalance > productQuantity) {
+        errors.push(`O saldo não pode ser maior que a quantidade.`);
+      }
+    }
 
     if (errors.length > 0) {
-      const errorMessages = errors.map((e) => e.toString());
-      throw new EntityValidationException(errorMessages);
+      throw new EntityValidationException(errors);
     }
   }
 }
 
-export class ProductValidatorFactory {
-  static create(): ProductValidator {
-    return new ProductValidator();
-  }
-}
+export const productValidator = new ProductValidator();

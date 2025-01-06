@@ -1,68 +1,43 @@
 import { vi } from 'vitest';
-import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
-import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { AdminUserListUseCase } from '@/features/user/application/use-cases/admin-user-list.use-case';
+import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { IAdminUserSearchParamsDto } from '@/features/user/domain/dto/admin-user-search-params.dto.interface';
 import { AdminUserSearchParamsDto } from '@/features/user/application/dto/admin-user-search-params.dto';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { ForbiddenException } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Policy } from '@/acl/domain/entities/policy';
+import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { Person } from '@/features/user/domain/entities/person';
 
-describe('Admin User List UseCase', () => {
+describe('AdminUserListUseCase Unit Tests', () => {
   let sut: AdminUserListUseCase;
-  let adminUserSearchParamsDto: AdminUserSearchParamsDto;
-
-  const lengthAwarePaginator: ILengthAwarePaginator = {
-    currentPage: 1,
-    data: [],
-    from: 1,
-    lastPage: 1,
-    perPage: 1,
-    to: 1,
-    total: 1,
-  };
-
-  const adminUserRepository = {
-    paginate: vi.fn(async () => lengthAwarePaginator),
-  } as unknown as IAdminUserRepository;
+  let personAdminUserRepository: PersonAdminUserRepository;
+  let adminUserSearchParamsDto: IAdminUserSearchParamsDto;
 
   beforeEach(() => {
-    sut = new AdminUserListUseCase(adminUserRepository);
+    personAdminUserRepository = {
+      findAll: vi.fn(async () => [await UserDataBuilder.getPerson()]),
+    } as unknown as PersonAdminUserRepository;
 
     adminUserSearchParamsDto = new AdminUserSearchParamsDto();
+
+    sut = new AdminUserListUseCase(personAdminUserRepository);
   });
 
-  it.each([
-    {
-      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_VIEW,
-    },
-    {
-      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_VIEW,
-    },
-  ])('should to list admin users by ability', async ({ ability }) => {
-    sut.policy = new Policy([ability]);
+  it('Should return a list of admin users for admin master', async () => {
+    const result = await sut.listUserForAdminMaster(adminUserSearchParamsDto);
 
-    const result = await sut.execute(adminUserSearchParamsDto);
-
-    expect(adminUserRepository.paginate).toHaveBeenCalled();
-    expect(result).toBeInstanceOf(Object);
-    expect(result.currentPage).toBe(lengthAwarePaginator.currentPage);
-    expect(result.data).toBe(lengthAwarePaginator.data);
-    expect(result.from).toBe(lengthAwarePaginator.from);
-    expect(result.lastPage).toBe(lengthAwarePaginator.lastPage);
-    expect(result.perPage).toBe(lengthAwarePaginator.perPage);
-    expect(result.to).toBe(lengthAwarePaginator.to);
-    expect(result.total).toBe(lengthAwarePaginator.total);
+    expect(Array.isArray(result)).toBe(true);
+    result.forEach((person) => {
+      expect(person).toBeInstanceOf(Person);
+    });
+    expect(result.every((person) => person instanceof Person)).toBe(true);
   });
 
-  it('Should return exception if user has not permission', async () => {
-    sut.policy = new Policy(['ABC']);
+  it('Should return a list of admin users for employee', async () => {
+    const result = await sut.listUserForEmployee(adminUserSearchParamsDto);
 
-    await expect(sut.execute(adminUserSearchParamsDto)).rejects.toThrow(
-      ForbiddenException,
-    );
-    await expect(sut.execute(adminUserSearchParamsDto)).rejects.toThrow(
-      ErrorMessagesEnum.NOT_AUTHORIZED,
-    );
+    expect(Array.isArray(result)).toBe(true);
+    result.forEach((person) => {
+      expect(person).toBeInstanceOf(Person);
+    });
+    expect(result.every((person) => person instanceof Person)).toBe(true);
   });
 });

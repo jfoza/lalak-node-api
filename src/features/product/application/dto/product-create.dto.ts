@@ -8,8 +8,9 @@ import {
   IsUUID,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IProductCreateDto } from '@/features/product/domain/dto/product-create.dto';
 
-export class ProductCreateDto {
+export class ProductCreateDto implements IProductCreateDto {
   @IsNotEmpty()
   @IsString()
   description: string;

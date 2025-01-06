@@ -1,18 +1,21 @@
-import { Event } from '@/features/event/domain/core/event';
+import { Event } from '@/features/event/domain/entities/event';
 import { Application } from '@/common/application/application';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { AbstractEventUpdateUseCase } from '@/features/event/domain/use-cases/abstract.event-update.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventUpdateDto } from '@/features/event/application/dto/event-update.dto';
 import { EventValidations } from '@/features/event/application/validations/event.validations';
+import { IEventUpdateUseCase } from '@/features/event/domain/use-cases/event-update.use-case';
 
 @Injectable()
 export class EventUpdateUseCase
   extends Application
-  implements AbstractEventUpdateUseCase
+  implements IEventUpdateUseCase
 {
-  constructor(private readonly eventRepository: EventRepository) {
+  constructor(
+    @Inject(EventRepository)
+    private readonly eventRepository: EventRepository,
+  ) {
     super();
   }
 

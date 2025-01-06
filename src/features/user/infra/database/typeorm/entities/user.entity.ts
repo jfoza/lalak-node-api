@@ -13,7 +13,7 @@ import { AuthEntity } from '@/features/auth/infra/database/typeorm/entities/auth
 import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/profile.entity';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
 import { AdminUserEntity } from '@/features/user/infra/database/typeorm/entities/admin-user.entity';
-import { CustomerEntity } from '@/features/customer/infra/database/typeorm/entities/customer.entity';
+import { CustomerEntity } from '@/features/user/infra/database/typeorm/entities/customer.entity';
 import { UserTokenEntity } from '@/features/user/infra/database/typeorm/entities/user-token.entity';
 
 @Entity({ schema: 'user_schema', name: 'users' })

@@ -6,19 +6,16 @@ function toCamelCase(snakeStr: string): string {
 
 export function mapKeysToCamelCase(obj: any): any {
   if (Array.isArray(obj)) {
-    return obj.map((item) => mapKeysToCamelCase(item));
-  } else if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj).reduce((result, key) => {
-      const camelKey = toCamelCase(key);
-      const value = obj[key];
-
-      if (value instanceof Date) {
-        result[camelKey] = value;
-      } else {
-        result[camelKey] = mapKeysToCamelCase(value);
-      }
-      return result;
-    }, {} as any);
+    return obj.map(mapKeysToCamelCase);
+  } else if (obj && typeof obj === 'object') {
+    return Object.keys(obj).reduce(
+      (result, key) => {
+        const camelKey = toCamelCase(key);
+        result[camelKey] = mapKeysToCamelCase(obj[key]);
+        return result;
+      },
+      {} as Record<string, any>,
+    );
   }
   return obj;
 }

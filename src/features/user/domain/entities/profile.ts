@@ -1,5 +1,5 @@
 import { Entity } from '@/common/domain/entities/entity';
-import { ProfileValidatorFactory } from '@/features/user/domain/validators/profile.validator';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 export type ProfileProps = {
   description: string;
@@ -10,9 +10,9 @@ export type ProfileProps = {
 export class Profile extends Entity<ProfileProps> {
   constructor(
     public readonly props: ProfileProps,
-    uuid?: string,
+    uniqueEntityId?: UniqueEntityId,
   ) {
-    super(props, uuid);
+    super(props, uniqueEntityId);
     this.props.createdAt = this.props.createdAt ?? new Date();
   }
 
@@ -28,20 +28,7 @@ export class Profile extends Entity<ProfileProps> {
     return this.props.createdAt;
   }
 
-  static async validate(props: ProfileProps): Promise<void> {
-    const validator = ProfileValidatorFactory.create();
-    await validator.validate(props);
-  }
-
-  static async create(props: ProfileProps, uuid?: string): Promise<Profile> {
-    return new this(props, uuid);
-  }
-
-  static async createValidated(
-    props: ProfileProps,
-    uuid?: string,
-  ): Promise<Profile> {
-    await this.validate(props);
-    return this.create(props, uuid);
+  static create(props: ProfileProps, uniqueEntityId?: UniqueEntityId): Profile {
+    return new this(props, uniqueEntityId);
   }
 }

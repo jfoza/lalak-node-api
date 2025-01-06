@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageEntity } from '@/features/image/infra/database/typeorm/entities/image.entity';
 import { TypeormImageRepository } from '@/features/image/infra/database/typeorm/repositories/typeorm.image.repository';
-import { AbstractImageRepository } from '@/features/image/domain/repositories/abstract.image.repository';
+import { IImageRepository } from '@/features/image/domain/repositories/image.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ImageEntity])],
@@ -10,10 +10,10 @@ import { AbstractImageRepository } from '@/features/image/domain/repositories/ab
   providers: [
     TypeormImageRepository,
     {
-      provide: AbstractImageRepository,
+      provide: IImageRepository,
       useExisting: TypeormImageRepository,
     },
   ],
-  exports: [AbstractImageRepository],
+  exports: [IImageRepository],
 })
 export class ImageModule {}

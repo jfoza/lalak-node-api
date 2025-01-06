@@ -1,15 +1,16 @@
-import { AbstractThemeRemoveUseCase } from '@/features/theme/domain/use-cases/abstract.theme-remove.use-case';
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
+import { IThemeRemoveUseCase } from '@/features/theme/domain/use-cases/theme-remove.use-case.interface';
 import { Application } from '@/common/application/application';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
+import { Theme } from '@/features/theme/domain/entities/theme';
 
 @Injectable()
 export class ThemeRemoveUseCase
   extends Application
-  implements AbstractThemeRemoveUseCase
+  implements IThemeRemoveUseCase
 {
   constructor(private readonly themeRepository: ThemeRepository) {
     super();
@@ -18,7 +19,7 @@ export class ThemeRemoveUseCase
   async execute(uuid: string): Promise<void> {
     this.policy.can(AbilitiesEnum.THEMES_DELETE);
 
-    const theme = await ThemeValidations.themeExists(
+    const theme: Theme = await ThemeValidations.themeExists(
       uuid,
       this.themeRepository,
     );

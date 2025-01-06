@@ -1,21 +1,22 @@
 import { Application } from '@/common/application/application';
-import { AbstractCategoryCreateUseCase } from '@/features/category/domain/use-cases/abstract.category-create.use-case';
-import { CreateCategoryDto } from '@/features/category/application/dto/create-category.dto';
 import {
   Category,
   CategoryProps,
-} from '@/features/category/domain/core/category';
+} from '@/features/category/domain/entities/category';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { Inject, Injectable } from '@nestjs/common';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { CategoryValidations } from '@/features/category/application/validations/category.validations';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { ICategoryCreateUseCase } from '@/features/category/domain/use-cases/category-create.use-case';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
+import { ICategoryCreateDto } from '@/features/category/domain/dto/category-create.dto';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 @Injectable()
 export class CategoryCreateUseCase
   extends Application
-  implements AbstractCategoryCreateUseCase
+  implements ICategoryCreateUseCase
 {
   constructor(
     @Inject(CategoryRepository)
@@ -27,7 +28,7 @@ export class CategoryCreateUseCase
     super();
   }
 
-  async execute(createCategoryDto: CreateCategoryDto): Promise<Category> {
+  async execute(createCategoryDto: ICategoryCreateDto): Promise<Category> {
     this.policy.can(AbilitiesEnum.CATEGORIES_INSERT);
 
     const theme = await ThemeValidations.themeExists(
@@ -40,8 +41,8 @@ export class CategoryCreateUseCase
       this.categoryRepository,
     );
 
-    const category = await Category.create({
-      themeUuid: createCategoryDto.themeUuid,
+    const category = Category.create({
+      themeUuid: UniqueEntityId.create(createCategoryDto.themeUuid),
       description: createCategoryDto.description,
       active: createCategoryDto.active,
       theme: theme,

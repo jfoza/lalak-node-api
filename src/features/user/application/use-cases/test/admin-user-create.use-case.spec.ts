@@ -1,187 +1,134 @@
 import { vi } from 'vitest';
-import { AdminUserCreateUseCase } from '@/features/user/application/use-cases/admin-user-create.use-case';
-import { CreateAdminUserDto } from '@/features/user/application/dto/create-admin-user.dto';
-import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
-import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Profile } from '@/features/user/domain/entities/profile';
-import { User } from '@/features/user/domain/entities/user';
+import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { Person } from '@/features/user/domain/entities/person';
+import { UUID } from '@/utils/uuid';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import {
   ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
-import { UUID } from '@/utils/uuid';
-import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
-import { Policy } from '@/acl/domain/entities/policy';
+import { AdminUserCreateUseCase } from '@/features/user/application/use-cases/admin-user-create.use-case';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
+import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
+import { AdminUserCreateDto } from '@/features/user/application/dto/admin-user-create.dto';
 
-describe('Admin User Create UseCase', () => {
+describe('AdminUserCreateUseCase Unit Tests', async () => {
   let sut: AdminUserCreateUseCase;
-  let createAdminUserDto: CreateAdminUserDto;
-
-  const person = UserDataBuilder.getPerson();
-  const user = UserDataBuilder.getUserAdminType();
-  const adminUser = UserDataBuilder.getAdminUser();
-
-  const personRepository = {
-    create: vi.fn(async () => person),
-  } as unknown as IPersonRepository;
-
-  const userRepository = {
-    create: vi.fn(async () => user),
-    findByEmail: vi.fn(async () => null),
-  } as unknown as IUserRepository;
-
-  const adminUserRepository = {
-    create: vi.fn(async () => adminUser),
-  } as unknown as IAdminUserRepository;
-
-  const profileRepository = {
-    findById: vi.fn(async () => null),
-  } as unknown as IProfileRepository;
+  let personAdminUserRepository: PersonAdminUserRepository;
+  let personUserRepository: PersonUserRepository;
+  let profileRepository: ProfileRepository;
+  let createAdminUserDto: IAdminUserCreateDto;
 
   beforeEach(() => {
+    personAdminUserRepository = {
+      findByUuid: vi.fn(() => null),
+      create: vi.fn(() => null),
+    } as unknown as PersonAdminUserRepository;
+
+    personUserRepository = {
+      findByEmail: vi.fn(() => null),
+    } as unknown as PersonUserRepository;
+
+    profileRepository = {
+      findByUuid: vi.fn(() => null),
+    } as unknown as ProfileRepository;
+
     sut = new AdminUserCreateUseCase(
-      personRepository,
-      userRepository,
-      adminUserRepository,
+      personAdminUserRepository,
+      personUserRepository,
       profileRepository,
     );
 
-    createAdminUserDto = {
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      profileUuid: UUID.generate(),
-    } as CreateAdminUserDto;
+    createAdminUserDto = new AdminUserCreateDto();
+    createAdminUserDto.name = 'Test';
+    createAdminUserDto.email = 'test@gmail.com';
+    createAdminUserDto.password = 'password';
+    createAdminUserDto.profileUuid = UUID.generate();
   });
 
   it.each([
     {
-      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT,
-      profile: {
-        description: 'Admin Master',
-        uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
-      },
+      profile: UserDataBuilder.getAdminMasterProfile(),
+      callback: async () => sut.createUserForAdminMaster(createAdminUserDto),
     },
     {
-      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT,
-      profile: {
-        description: 'Employee',
-        uniqueName: ProfileUniqueNameEnum.EMPLOYEE,
-      },
+      profile: UserDataBuilder.getEmployeeProfile(),
+      callback: async () => sut.createUserForEmployee(createAdminUserDto),
     },
   ])(
-    'should create new admin user by abilities',
-    async ({ ability, profile }) => {
-      sut.policy = new Policy([ability]);
-
-      profileRepository.findById = vi.fn(
-        async () =>
-          new Profile({
-            description: profile.description,
-            uniqueName: profile.uniqueName,
-          }),
+    'Should create a unique admin user for all admin profiles',
+    async ({ profile, callback }) => {
+      vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(null);
+      vi.spyOn(personAdminUserRepository, 'create').mockResolvedValue(
+        await UserDataBuilder.getPerson(),
       );
+      vi.spyOn(profileRepository, 'findByUuid').mockResolvedValue(profile);
 
-      const result = await sut.execute(createAdminUserDto);
+      const result = await callback();
 
-      expect(personRepository.create).toHaveBeenCalled();
-      expect(userRepository.create).toHaveBeenCalled();
-      expect(adminUserRepository.create).toHaveBeenCalled();
-      expect(result).toBeInstanceOf(User);
+      expect(result).toBeInstanceOf(Person);
     },
   );
 
   it.each([
-    { ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT },
-    { ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT },
+    {
+      callback: async () => sut.createUserForAdminMaster(createAdminUserDto),
+    },
+    {
+      callback: async () => sut.createUserForEmployee(createAdminUserDto),
+    },
   ])(
-    'should return exception if user email already exists',
-    async ({ ability }) => {
-      sut.policy = new Policy([ability]);
-
-      const user = await UserDataBuilder.getUserAdminType();
-
-      userRepository.findByEmail = vi.fn(async () => user);
-
-      await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
-        ConflictException,
+    'Should return exception if email already exists',
+    async ({ callback }) => {
+      vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(
+        await UserDataBuilder.getPerson(),
       );
-      await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
+
+      await expect(callback()).rejects.toThrow(ConflictException);
+      await expect(callback()).rejects.toThrow(
         ErrorMessagesEnum.EMAIL_ALREADY_EXISTS,
       );
     },
   );
 
   it.each([
-    { ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT },
-    { ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT },
-  ])('should return exception if profile not exists', async ({ ability }) => {
-    sut.policy = new Policy([ability]);
+    {
+      callback: async () => sut.createUserForAdminMaster(createAdminUserDto),
+    },
+    {
+      callback: async () => sut.createUserForEmployee(createAdminUserDto),
+    },
+  ])('Should return exception if profile not exists', async ({ callback }) => {
+    vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(null);
 
-    userRepository.findByEmail = vi.fn(async () => null);
-    profileRepository.findById = vi.fn(async () => null);
-
-    await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
-      NotFoundException,
-    );
-    await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
+    await expect(callback()).rejects.toThrow(NotFoundException);
+    await expect(callback()).rejects.toThrow(
       ErrorMessagesEnum.PROFILE_NOT_FOUND,
     );
   });
 
   it.each([
     {
-      ability: AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT,
-      profile: {
-        description: 'Customer',
-        uniqueName: ProfileUniqueNameEnum.CUSTOMER,
-      },
+      profile: UserDataBuilder.getCustomerProfile(),
+      callback: async () => sut.createUserForAdminMaster(createAdminUserDto),
     },
     {
-      ability: AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT,
-      profile: {
-        description: 'Customer',
-        uniqueName: ProfileUniqueNameEnum.CUSTOMER,
-      },
+      profile: UserDataBuilder.getAdminMasterProfile(),
+      callback: async () => sut.createUserForEmployee(createAdminUserDto),
     },
   ])(
-    'should return exception if profile is not allowed',
-    async ({ ability, profile }) => {
-      sut.policy = new Policy([ability]);
+    'Should return exception if profile is not allowed',
+    async ({ profile, callback }) => {
+      vi.spyOn(personUserRepository, 'findByEmail').mockResolvedValue(null);
+      vi.spyOn(profileRepository, 'findByUuid').mockResolvedValue(profile);
 
-      userRepository.findByEmail = vi.fn(async () => null);
-
-      profileRepository.findById = vi.fn(
-        async () =>
-          new Profile({
-            description: profile.description,
-            uniqueName: profile.uniqueName,
-          }),
-      );
-
-      await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
-        ForbiddenException,
-      );
-      await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
+      await expect(callback()).rejects.toThrow(ForbiddenException);
+      await expect(callback()).rejects.toThrow(
         ErrorMessagesEnum.PROFILE_NOT_ALLOWED,
       );
     },
   );
-
-  it('Should return exception if user has not permission', async () => {
-    sut.policy = new Policy(['ABC']);
-
-    await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
-      ForbiddenException,
-    );
-    await expect(sut.execute(createAdminUserDto)).rejects.toThrow(
-      ErrorMessagesEnum.NOT_AUTHORIZED,
-    );
-  });
 });

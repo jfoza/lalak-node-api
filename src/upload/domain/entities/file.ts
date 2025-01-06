@@ -1,5 +1,6 @@
 import { Entity } from '@/common/domain/entities/entity';
 import { Readable } from 'stream';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 export type FileProps = {
   fieldname: string;
@@ -18,9 +19,9 @@ export type FileProps = {
 export class File extends Entity<FileProps> {
   constructor(
     public readonly props: FileProps,
-    uuid?: string,
+    uniqueEntityId?: UniqueEntityId,
   ) {
-    super(props, uuid);
+    super(props, uniqueEntityId);
   }
 
   get fieldname(): string {
@@ -67,7 +68,10 @@ export class File extends Entity<FileProps> {
     return this.props.buffer;
   }
 
-  static async create(props: FileProps, uuid?: string): Promise<File> {
-    return new this(props, uuid);
+  static async create(
+    props: FileProps,
+    uniqueEntityId?: UniqueEntityId,
+  ): Promise<File> {
+    return new this(props, uniqueEntityId);
   }
 }

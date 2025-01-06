@@ -1,38 +1,37 @@
-import { Entity } from '@/common/domain/entities/entity';
 import { Profile } from '@/features/user/domain/entities/profile';
-import { Person } from '@/features/user/domain/entities/person';
 import { AdminUser } from '@/features/user/domain/entities/admin-user';
-import { Customer } from '@/features/customer/domain/entities/customer';
-import { UserValidatorFactory } from '@/features/user/domain/validators/user.validator';
+import { Customer } from '@/features/user/domain/entities/customer';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
+import { AggregateRoot } from '@/common/domain/entities/aggregate-root';
+import { Password } from '@/features/user/domain/value-objects/password';
 
 export type UserProps = {
-  personUuid: string;
-  profileUuid: string;
+  personUuid: UniqueEntityId;
+  profileUuid: UniqueEntityId;
   email: string;
-  password: string;
+  password: Password;
   active: boolean;
   createdAt?: Date;
-  profile: Profile;
-  person: Person;
+  profile?: Profile;
   adminUser?: AdminUser;
   customer?: Customer;
 };
 
-export class User extends Entity<UserProps> {
+export class User extends AggregateRoot<UserProps> {
   constructor(
     public readonly props: UserProps,
-    uuid?: string,
+    uniqueEntityId?: UniqueEntityId,
   ) {
-    super(props, uuid);
+    super(props, uniqueEntityId);
     this.props.createdAt = this.props.createdAt ?? new Date();
   }
 
   get personUuid(): string {
-    return this.props.personUuid;
+    return this.props.personUuid.toValue();
   }
 
   get profileUuid(): string {
-    return this.props.profileUuid;
+    return this.props.profileUuid.toValue();
   }
 
   get email(): string {
@@ -40,15 +39,11 @@ export class User extends Entity<UserProps> {
   }
 
   get password(): string {
-    return this.props.password;
+    return this.props.password.toValue();
   }
 
   get active(): boolean {
     return this.props.active;
-  }
-
-  get person(): Person {
-    return this.props.person;
   }
 
   get createdAt(): Date {
@@ -71,11 +66,11 @@ export class User extends Entity<UserProps> {
     this.props.email = email;
   }
 
-  set profileUuid(profileUuid: string) {
-    this.props.profileUuid = profileUuid;
+  set profileUuid(uniqueEntityId: UniqueEntityId) {
+    this.props.profileUuid = uniqueEntityId;
   }
 
-  set password(password: string) {
+  set password(password: Password) {
     this.props.password = password;
   }
 
@@ -83,25 +78,15 @@ export class User extends Entity<UserProps> {
     this.props.active = active;
   }
 
-  set person(person: Person) {
-    this.props.person = person;
-  }
-
   set profile(profile: Profile) {
     this.props.profile = profile;
   }
 
-  static async validate(props: UserProps): Promise<void> {
-    const validator = UserValidatorFactory.create();
-    await validator.validate(props);
+  set adminUser(adminUser: AdminUser) {
+    this.props.adminUser = adminUser;
   }
 
-  static async create(props: UserProps, uuid?: string): Promise<User> {
-    return new this(props, uuid);
-  }
-
-  static async createValidated(props: UserProps, uuid?: string): Promise<User> {
-    await this.validate(props);
-    return this.create(props, uuid);
+  static create(props: UserProps, uniqueEntityId?: UniqueEntityId): User {
+    return new this(props, uniqueEntityId);
   }
 }

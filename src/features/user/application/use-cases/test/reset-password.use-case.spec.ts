@@ -1,68 +1,54 @@
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { vi } from 'vitest';
 import {
   UserToken,
   UserTokenProps,
 } from '@/features/user/domain/entities/user-token';
-import { User, UserProps } from '@/features/user/domain/entities/user';
 import { ResetPasswordUseCase } from '@/features/user/application/use-cases/reset-password.use-case';
 import { addHours, subHours } from 'date-fns';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
-import { Profile } from '@/features/user/domain/entities/profile';
-import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 describe('Send Forgot Password Email UseCase', () => {
   let sut: ResetPasswordUseCase;
-  let userRepository: IUserRepository;
+  let personUserRepository: PersonUserRepository;
   let userTokenRepository: IUserTokenRepository;
 
   beforeEach(async () => {
-    userRepository = {
+    personUserRepository = {
       findByEmail: vi.fn(async () => null),
       updatePassword: vi.fn(),
-    } as unknown as IUserRepository;
+    } as unknown as PersonUserRepository;
 
     userTokenRepository = {
       findByToken: vi.fn(async () => null),
     } as unknown as IUserTokenRepository;
 
-    sut = new ResetPasswordUseCase(userRepository, userTokenRepository);
+    sut = new ResetPasswordUseCase(personUserRepository, userTokenRepository);
   });
 
   it('should reset user password', async () => {
-    const person = UserDataBuilder.getPerson();
-    const userProfile = new Profile({
-      description: 'Admin Master',
-      uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
-    });
-    const user = new User({
-      personUuid: person.uuid,
-      profileUuid: userProfile.uuid,
-      email: 'test@test.com',
-      password: 'pass',
-      active: true,
-      person,
-      profile: userProfile,
-    } as UserProps);
-    user.person = person;
+    const person = await UserDataBuilder.getPerson();
+
+    const { user } = person;
 
     const userToken = new UserToken({
-      userUuid: user.uuid,
-      token: UUID.generate(),
+      userUuid: UniqueEntityId.create(user.uuid),
+      token: UniqueEntityId.create(),
     } as UserTokenProps);
 
     userToken.props.createdAt = addHours(userToken.createdAt, 2);
 
     userTokenRepository.findByToken = vi.fn(async () => userToken);
-    userRepository.findByUuid = vi.fn(async () => user);
+    personUserRepository.findByUuid = vi.fn(async () => person);
 
     await sut.execute(UUID.generate(), 'new-password');
 
-    expect(userRepository.updatePassword).toHaveBeenCalled();
+    expect(personUserRepository.updatePassword).toHaveBeenCalled();
   });
 
   it('should return exception if user token not exists', async () => {
@@ -77,13 +63,17 @@ describe('Send Forgot Password Email UseCase', () => {
   });
 
   it('should return exception if user is not found', async () => {
+    const person = await UserDataBuilder.getPerson();
+
+    const { user } = person;
+
     const userToken = new UserToken({
-      userUuid: UUID.generate(),
-      token: UUID.generate(),
+      userUuid: UniqueEntityId.create(user.uuid),
+      token: UniqueEntityId.create(),
     } as UserTokenProps);
 
     userTokenRepository.findByToken = vi.fn(async () => userToken);
-    userRepository.findByUuid = vi.fn(async () => null);
+    personUserRepository.findByUuid = vi.fn(async () => null);
 
     await expect(sut.execute(UUID.generate(), 'new-password')).rejects.toThrow(
       NotFoundException,
@@ -94,31 +84,19 @@ describe('Send Forgot Password Email UseCase', () => {
   });
 
   it('should return exception if user token is invalid', async () => {
-    const person = UserDataBuilder.getPerson();
-    const userProfile = new Profile({
-      description: 'Admin Master',
-      uniqueName: ProfileUniqueNameEnum.ADMIN_MASTER,
-    });
-    const user = new User({
-      personUuid: person.uuid,
-      profileUuid: userProfile.uuid,
-      email: 'test@test.com',
-      password: 'pass',
-      active: true,
-      person,
-      profile: userProfile,
-    } as UserProps);
-    user.person = person;
+    const person = await UserDataBuilder.getPerson();
+
+    const { user } = person;
 
     const userToken = new UserToken({
-      userUuid: user.uuid,
-      token: UUID.generate(),
+      userUuid: UniqueEntityId.create(user.uuid),
+      token: UniqueEntityId.create(),
     } as UserTokenProps);
 
     userToken.props.createdAt = subHours(userToken.createdAt, 4);
 
     userTokenRepository.findByToken = vi.fn(async () => userToken);
-    userRepository.findByUuid = vi.fn(async () => user);
+    personUserRepository.findByUuid = vi.fn(async () => person);
 
     await expect(sut.execute(UUID.generate(), 'new-password')).rejects.toThrow(
       BadRequestException,

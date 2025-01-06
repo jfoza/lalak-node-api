@@ -1,7 +1,7 @@
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Theme } from '@/features/theme/domain/core/theme';
+import { Theme } from '@/features/theme/domain/entities/theme';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
 
 export class ThemeValidations {
   static async themeExists(

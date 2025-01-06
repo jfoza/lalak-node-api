@@ -1,4 +1,4 @@
-import { Category } from '@/features/category/domain/core/category';
+import { Category } from '@/features/category/domain/entities/category';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';

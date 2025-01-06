@@ -1,55 +1,43 @@
 import { Entity } from '@/common/domain/entities/entity';
-import { UserTokenValidatorFactory } from '@/features/user/domain/validators/user-token.validator';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
+import { UserTokenType } from '@/features/user/domain/value-objects/user-token-type';
 
 export type UserTokenProps = {
-  userUuid: string;
-  token: string;
-  tokenType: string;
+  userUuid: UniqueEntityId;
+  token: UniqueEntityId;
+  tokenType: UserTokenType;
   createdAt?: Date;
 };
 
 export class UserToken extends Entity<UserTokenProps> {
   constructor(
     public readonly props: UserTokenProps,
-    uuid?: string,
+    uniqueEntityId?: UniqueEntityId,
   ) {
-    super(props, uuid);
+    super(props, uniqueEntityId);
     this.props.createdAt = this.props.createdAt ?? new Date();
   }
 
   get userUuid(): string {
-    return this.props.userUuid;
+    return this.props.userUuid.toValue();
   }
 
   get token(): string {
-    return this.props.token;
+    return this.props.token.toValue();
   }
 
   get tokenType(): string {
-    return this.props.tokenType;
+    return this.props.tokenType.toValue();
   }
 
   get createdAt(): Date {
     return this.props.createdAt;
   }
 
-  static async validate(props: UserTokenProps): Promise<void> {
-    const validator = UserTokenValidatorFactory.create();
-    await validator.validate(props);
-  }
-
-  static async create(
+  static create(
     props: UserTokenProps,
-    uuid?: string,
-  ): Promise<UserToken> {
-    return new this(props, uuid);
-  }
-
-  static async createValidated(
-    props: UserTokenProps,
-    uuid?: string,
-  ): Promise<UserToken> {
-    await this.validate(props);
-    return this.create(props, uuid);
+    uniqueEntityId?: UniqueEntityId,
+  ): UserToken {
+    return new this(props, uniqueEntityId);
   }
 }

@@ -1,8 +1,6 @@
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { vi } from 'vitest';
-import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Theme } from '@/features/theme/domain/core/theme';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { UUID } from '@/utils/uuid';
 import {
@@ -12,6 +10,9 @@ import {
 } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ThemeRemoveUseCase } from '@/features/theme/application/use-cases/theme-remove.use-case';
+import { PolicyAdapter } from '@/acl/application/adapters/policy.adapter';
+import { Policy } from '@/acl/domain/value-objects/policy';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
 
 describe('ThemeRemoveUseCase Unit Tests', () => {
   let sut: ThemeRemoveUseCase;
@@ -25,9 +26,9 @@ describe('ThemeRemoveUseCase Unit Tests', () => {
 
     sut = new ThemeRemoveUseCase(themeRepository);
 
-    sut.policy = new Policy();
-
-    sut.policy.abilities = [AbilitiesEnum.THEMES_DELETE];
+    sut.policy = new PolicyAdapter(
+      Policy.create([AbilitiesEnum.THEMES_DELETE]),
+    );
   });
 
   it('Should remove a unique Theme', async () => {
@@ -66,7 +67,7 @@ describe('ThemeRemoveUseCase Unit Tests', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new PolicyAdapter(Policy.create());
 
     await expect(sut.execute(UUID.generate())).rejects.toThrow(
       ForbiddenException,

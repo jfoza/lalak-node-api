@@ -1,17 +1,17 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
 import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { isAfter, addHours } from 'date-fns';
 import { Hash } from '@/utils/hash';
 import { IResetPasswordUseCase } from '@/features/user/domain/use-cases/reset-password.use-case.interface';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
 
 @Injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
-    @Inject(IUserRepository)
-    private readonly userRepository: IUserRepository,
+    @Inject(PersonUserRepository)
+    private readonly personUserRepository: PersonUserRepository,
 
     @Inject(IUserTokenRepository)
     private readonly userTokenRepository: IUserTokenRepository,
@@ -25,7 +25,7 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
 
     const user = await UserValidations.userExistsByUuid(
       userToken.userUuid,
-      this.userRepository,
+      this.personUserRepository,
     );
 
     const compareDate = addHours(userToken.createdAt, 2);
@@ -34,8 +34,8 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
       throw new BadRequestException(ErrorMessagesEnum.INVALID_USER_TOKEN);
     }
 
-    const newPasswordAux = await Hash.createHash(newPassword);
+    const newPasswordAux = await Hash.create(newPassword);
 
-    await this.userRepository.updatePassword(user.uuid, newPasswordAux);
+    await this.personUserRepository.updatePassword(user.uuid, newPasswordAux);
   }
 }

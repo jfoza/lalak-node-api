@@ -2,9 +2,8 @@ import {
   UserToken,
   UserTokenProps,
 } from '@/features/user/domain/entities/user-token';
-import { UUID } from '@/utils/uuid';
-import { BadRequestException } from '@nestjs/common';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 describe('UserToken Domain Entity Unit Tests', () => {
   let sut: UserToken;
@@ -25,19 +24,19 @@ describe('UserToken Domain Entity Unit Tests', () => {
 
   it('Getter of userUuid field', () => {
     expect(sut.userUuid).toBeDefined();
-    expect(sut.userUuid).toEqual(props.userUuid);
+    expect(sut.userUuid).toEqual(props.userUuid.toValue());
     expect(typeof sut.userUuid).toBe('string');
   });
 
   it('Getter of token field', () => {
     expect(sut.token).toBeDefined();
-    expect(sut.token).toEqual(props.token);
+    expect(sut.token).toEqual(props.token.toValue());
     expect(typeof sut.token).toBe('string');
   });
 
   it('Getter of tokenType field', () => {
     expect(sut.tokenType).toBeDefined();
-    expect(sut.tokenType).toEqual(props.tokenType);
+    expect(sut.tokenType).toEqual(props.tokenType.toValue());
     expect(typeof sut.tokenType).toBe('string');
   });
 
@@ -46,42 +45,12 @@ describe('UserToken Domain Entity Unit Tests', () => {
     expect(sut.createdAt).toBeInstanceOf(Date);
   });
 
-  it('createValidated method should to instance new UserToken class', async () => {
-    const uuid = UUID.generate();
+  it('create method should to instance new UserToken class', async () => {
+    const uniqueEntityId: UniqueEntityId = UniqueEntityId.create();
     const userTokenProps = UserDataBuilder.getUserTokenProps();
-    const userTokenClass = await UserToken.createValidated(
-      userTokenProps,
-      uuid,
-    );
+    const userTokenClass = UserToken.create(userTokenProps, uniqueEntityId);
 
     expect(userTokenClass).toBeInstanceOf(UserToken);
-    expect(userTokenClass.uuid).toEqual(uuid);
-  });
-
-  it('createValidated method should return exception if userUuid field is invalid', async () => {
-    const userTokenProps = UserDataBuilder.getUserTokenProps();
-    userTokenProps.userUuid = 'invalid';
-
-    await expect(UserToken.createValidated(userTokenProps)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  it('createValidated method should return exception if token field is invalid', async () => {
-    const userTokenProps = UserDataBuilder.getUserTokenProps();
-    userTokenProps.token = 'invalid';
-
-    await expect(UserToken.createValidated(userTokenProps)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  it('createValidated method should return exception if tokenType field is invalid', async () => {
-    const userTokenProps = UserDataBuilder.getUserTokenProps();
-    userTokenProps.tokenType = 'invalid';
-
-    await expect(UserToken.createValidated(userTokenProps)).rejects.toThrow(
-      BadRequestException,
-    );
+    expect(userTokenClass.uuid).toEqual(uniqueEntityId.toValue());
   });
 });

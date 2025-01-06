@@ -1,5 +1,5 @@
 import { Entity } from '@/common/domain/entities/entity';
-import { AuthValidatorFactory } from '@/features/auth/domain/validators/auth.validator';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 export type AuthProps = {
   userUuid: string;
@@ -15,19 +15,9 @@ export type AuthProps = {
 export class Auth extends Entity<AuthProps> {
   constructor(
     public readonly props: AuthProps,
-    uuid?: string,
+    uniqueEntityId?: UniqueEntityId,
   ) {
-    super(props, uuid);
-  }
-
-  static async validate(props: AuthProps): Promise<void> {
-    const validator = AuthValidatorFactory.create();
-    await validator.validate(props);
-  }
-
-  static async create(props: AuthProps, uuid?: string): Promise<Auth> {
-    await this.validate(props);
-    return new this(props, uuid);
+    super(props, uniqueEntityId);
   }
 
   get userUuid(): string {
@@ -60,5 +50,12 @@ export class Auth extends Entity<AuthProps> {
 
   get createdAt(): Date {
     return this.props.createdAt;
+  }
+
+  static async create(
+    props: AuthProps,
+    uniqueEntityId?: UniqueEntityId,
+  ): Promise<Auth> {
+    return new this(props, uniqueEntityId);
   }
 }

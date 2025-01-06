@@ -1,14 +1,10 @@
 import { User, UserProps } from '@/features/user/domain/entities/user';
-import { Person } from '@/features/user/domain/entities/person';
 import { Profile } from '@/features/user/domain/entities/profile';
 import { AdminUser } from '@/features/user/domain/entities/admin-user';
-import {
-  Customer,
-  CustomerProps,
-} from '@/features/customer/domain/entities/customer';
-import { UUID } from '@/utils/uuid';
-import { BadRequestException } from '@nestjs/common';
+import { CustomerProps } from '@/features/user/domain/entities/customer';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
+import { Password } from '@/features/user/domain/value-objects/password';
 
 describe('User Domain Entity Unit Tests', () => {
   let sut: User;
@@ -20,8 +16,6 @@ describe('User Domain Entity Unit Tests', () => {
   });
 
   it('Constructor method', async () => {
-    expect(sut.props.person.name).toEqual(props.person.name);
-    expect(sut.props.person.shortName).toEqual(props.person.shortName);
     expect(sut.props.email).toEqual(props.email);
     expect(sut.props.personUuid).toEqual(props.personUuid);
     expect(sut.props.profileUuid).toEqual(props.profileUuid);
@@ -31,13 +25,13 @@ describe('User Domain Entity Unit Tests', () => {
 
   it('Getter of personUuid field', () => {
     expect(sut.personUuid).toBeDefined();
-    expect(sut.personUuid).toEqual(props.personUuid);
+    expect(sut.personUuid).toEqual(props.personUuid.toValue());
     expect(typeof sut.personUuid).toBe('string');
   });
 
   it('Getter of profileUuid field', () => {
     expect(sut.profileUuid).toBeDefined();
-    expect(sut.profileUuid).toEqual(props.profileUuid);
+    expect(sut.profileUuid).toEqual(props.profileUuid.toValue());
     expect(typeof sut.profileUuid).toBe('string');
   });
 
@@ -49,7 +43,7 @@ describe('User Domain Entity Unit Tests', () => {
 
   it('Getter of password field', () => {
     expect(sut.password).toBeDefined();
-    expect(sut.password).toEqual(props.password);
+    expect(sut.password).toEqual(props.password.toValue());
     expect(typeof sut.password).toBe('string');
   });
 
@@ -57,12 +51,6 @@ describe('User Domain Entity Unit Tests', () => {
     expect(sut.active).toBeDefined();
     expect(sut.active).toEqual(props.active);
     expect(typeof sut.active).toBe('boolean');
-  });
-
-  it('Getter of person field', () => {
-    expect(sut.person).toBeDefined();
-    expect(sut.person).toEqual(props.person);
-    expect(sut.person).toBeInstanceOf(Person);
   });
 
   it('Getter of createdAt field', () => {
@@ -77,19 +65,10 @@ describe('User Domain Entity Unit Tests', () => {
 
   it('Getter of adminUser field', () => {
     props.adminUser = new AdminUser({
-      userUuid: sut.uuid,
+      userUuid: UniqueEntityId.create(sut.uuid),
     } as CustomerProps);
 
     expect(sut.adminUser).toBeInstanceOf(AdminUser);
-  });
-
-  it('Getter of adminUser field', () => {
-    props.adminUser = new Customer({
-      userUuid: sut.uuid,
-      verifiedEmail: true,
-    } as CustomerProps);
-
-    expect(sut.adminUser).toBeInstanceOf(Customer);
   });
 
   it('Setter of email field', () => {
@@ -98,32 +77,23 @@ describe('User Domain Entity Unit Tests', () => {
     expect(typeof sut.props.email).toBe('string');
   });
 
-  it('Setter of email field', () => {
-    const profileUuid = UUID.generate();
+  it('Setter of profileUuid field', () => {
+    const uniqueEntityId = UniqueEntityId.create();
 
-    sut['profileUuid'] = profileUuid;
-    expect(sut.props.profileUuid).toEqual(profileUuid);
-    expect(typeof sut.props.profileUuid).toBe('string');
+    sut['profileUuid'] = uniqueEntityId;
+    expect(sut.props.profileUuid).toEqual(uniqueEntityId);
+    expect(typeof sut.profileUuid).toBe('string');
   });
 
-  it('Setter of password field', () => {
-    sut['password'] = 'new-password';
-    expect(sut.props.password).toEqual('new-password');
-    expect(typeof sut.props.password).toBe('string');
+  it('Setter of password field', async () => {
+    sut.password = await Password.createFrom('new-password');
+    expect(sut.props.password).toBeInstanceOf(Password);
   });
 
   it('Setter of active field', () => {
     sut['active'] = false;
     expect(sut.props.active).toEqual(false);
     expect(typeof sut.props.active).toBe('boolean');
-  });
-
-  it('Setter of person field', () => {
-    const person = UserDataBuilder.getPerson();
-
-    sut['person'] = person;
-    expect(sut.props.person.uuid).toEqual(person.uuid);
-    expect(sut.person).toBeInstanceOf(Person);
   });
 
   it('Setter of profile field', () => {
@@ -134,39 +104,12 @@ describe('User Domain Entity Unit Tests', () => {
     expect(sut.profile).toBeInstanceOf(Profile);
   });
 
-  it('createValidated method should to instance new User class', async () => {
-    const uuid = UUID.generate();
+  it('create method should to instance new User class', async () => {
+    const uniqueEntityId = UniqueEntityId.create();
     const userProps = await UserDataBuilder.getUserProps();
-    const userClass = await User.createValidated(userProps, uuid);
+    const userClass = User.create(userProps, uniqueEntityId);
 
     expect(userClass).toBeInstanceOf(User);
-    expect(userClass.uuid).toEqual(uuid);
-  });
-
-  it('createValidated method should return exception if personUuid is invalid', async () => {
-    const userProps = await UserDataBuilder.getUserProps();
-    userProps.personUuid = 'invalid';
-
-    await expect(User.createValidated(userProps)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  it('createValidated method should return exception if profileUuid is invalid', async () => {
-    const userProps = await UserDataBuilder.getUserProps();
-    userProps.profileUuid = 'invalid';
-
-    await expect(User.createValidated(userProps)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  it('createValidated method should return exception if email is invalid', async () => {
-    const userProps = await UserDataBuilder.getUserProps();
-    userProps.email = 'invalid';
-
-    await expect(User.createValidated(userProps)).rejects.toThrow(
-      BadRequestException,
-    );
+    expect(userClass.uuid).toEqual(uniqueEntityId.toValue());
   });
 });

@@ -1,6 +1,14 @@
 import path from 'path';
 
 export abstract class Helper {
+  static capitalize(value: string): string {
+    return value
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
   static shortStringGenerate(value: string, end: number = 2): string {
     return value.substring(0, end).toUpperCase();
   }
@@ -9,23 +17,27 @@ export abstract class Helper {
     return array.map((item) => item[property]);
   }
 
-  static stringUniqueName(string: string | null): string | null {
-    if (string === null) return null;
+  static stringUniqueName(value: string | null): string | null {
+    if (value === null) return null;
 
-    string = string.toLowerCase();
-    string = this.removeAccents(string);
-    string = this.removeSpecialCharacters(string);
+    value = value.toLowerCase();
+    value = this.removeAccents(value);
+    value = this.removeSpecialCharacters(value);
 
-    return string.replace(/[\s-]+/g, '-');
+    return value.replace(/[\s-]+/g, '-');
   }
 
-  static removeSpecialCharacters(string: string | null): string | null {
-    if (string === null) return null;
-    return string.replace(/[^A-Za-z0-9]/g, '');
+  static removeAllSpaces(value: string): string {
+    return value.replace(/\s+/g, '');
   }
 
-  static removeAccents(string: string | null): string | null {
-    if (string === null) return null;
+  static removeSpecialCharacters(value: string | null): string | null {
+    if (value === null) return null;
+    return value.replace(/[^A-Za-z0-9 ]/g, '');
+  }
+
+  static removeAccents(value: string | null): string | null {
+    if (value === null) return null;
 
     const accentsMap: { [key: string]: string } = {
       À: 'a',
@@ -56,7 +68,7 @@ export abstract class Helper {
       ç: 'c',
     };
 
-    return string
+    return value
       .split('')
       .map((char) => accentsMap[char] || char)
       .join('');

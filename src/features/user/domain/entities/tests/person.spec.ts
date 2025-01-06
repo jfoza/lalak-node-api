@@ -1,15 +1,22 @@
 import { Person, PersonProps } from '@/features/user/domain/entities/person';
-import { City, CityProps } from '@/features/city/domain/core/city';
-import { UUID } from '@/utils/uuid';
-import { BadRequestException } from '@nestjs/common';
+import { City, CityProps } from '@/features/city/domain/entities/city';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
+import { Name } from '@/common/domain/value-objects/name';
+import { ShortName } from '@/common/domain/value-objects/short-name';
+import { BirthDate } from '@/common/domain/value-objects/birth-date';
+import { Phone } from '@/common/domain/value-objects/phone';
+import { ZipCode } from '@/common/domain/value-objects/zip-code';
+import { Uf } from '@/common/domain/value-objects/uf';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
+import { Address } from '@/common/domain/value-objects/address';
 
 describe('Person Domain Entity Unit Tests', () => {
   let sut: Person;
   let props: PersonProps;
 
   beforeEach(async () => {
-    props = UserDataBuilder.getPersonProps();
+    props = await UserDataBuilder.getPersonProps();
 
     sut = new Person(props);
   });
@@ -33,37 +40,37 @@ describe('Person Domain Entity Unit Tests', () => {
 
   it('Getter of name field', () => {
     expect(sut.name).toBeDefined();
-    expect(sut.name).toEqual(props.name);
+    expect(sut.name).toEqual(props.name.toValue());
     expect(typeof sut.name).toBe('string');
   });
 
   it('Getter of shortName field', () => {
     expect(sut.shortName).toBeDefined();
-    expect(sut.shortName).toEqual(props.shortName);
+    expect(sut.shortName).toEqual(props.shortName.toValue());
     expect(typeof sut.shortName).toBe('string');
   });
 
   it('Getter of birthDate field', () => {
     expect(sut.birthDate).toBeDefined();
-    expect(sut.birthDate).toEqual(props.birthDate);
+    expect(sut.birthDate).toEqual(props.birthDate.toString());
     expect(sut.createdAt).toBeInstanceOf(Date);
   });
 
   it('Getter of phone field', () => {
     expect(sut.phone).toBeDefined();
-    expect(sut.phone).toEqual(props.phone);
+    expect(sut.phone).toEqual(props.phone.toValue());
     expect(typeof sut.shortName).toBe('string');
   });
 
   it('Getter of zipCode field', () => {
     expect(sut.zipCode).toBeDefined();
-    expect(sut.zipCode).toEqual(props.zipCode);
+    expect(sut.zipCode).toEqual(props.zipCode.toValue());
     expect(typeof sut.shortName).toBe('string');
   });
 
   it('Getter of address field', () => {
     expect(sut.address).toBeDefined();
-    expect(sut.address).toEqual(props.address);
+    expect(sut.address).toEqual(props.address.toValue());
     expect(typeof sut.address).toBe('string');
   });
 
@@ -87,13 +94,13 @@ describe('Person Domain Entity Unit Tests', () => {
 
   it('Getter of uf field', () => {
     expect(sut.uf).toBeDefined();
-    expect(sut.uf).toEqual(props.uf);
+    expect(sut.uf).toEqual(props.uf.toValue());
     expect(typeof sut.uf).toBe('string');
   });
 
   it('Getter of cityUuid field', () => {
     expect(sut.cityUuid).toBeDefined();
-    expect(sut.cityUuid).toEqual(props.cityUuid);
+    expect(sut.cityUuid).toEqual(props.cityUuid.toValue());
     expect(typeof sut.cityUuid).toBe('string');
   });
 
@@ -115,40 +122,57 @@ describe('Person Domain Entity Unit Tests', () => {
   });
 
   it('Setter of name field', () => {
-    sut['name'] = 'new name';
-    expect(sut.props.name).toEqual('new name');
-    expect(typeof sut.props.name).toBe('string');
+    const name = Name.createFrom('new name');
+
+    sut['name'] = name;
+    expect(sut.props.name).toEqual(name);
+    expect(sut.props.name).toBeInstanceOf(Name);
+    expect(typeof sut.name).toBe('string');
   });
 
   it('Setter of shortName field', () => {
-    sut['shortName'] = 'new shortName';
-    expect(sut.props.shortName).toEqual('new shortName');
-    expect(typeof sut.props.shortName).toBe('string');
+    const shortName = ShortName.createFrom('new shortName');
+
+    sut['shortName'] = shortName;
+    expect(sut.props.shortName).toEqual(shortName);
+    expect(sut.props.shortName).toBeInstanceOf(ShortName);
+    expect(typeof sut.shortName).toBe('string');
   });
 
   it('Setter of birthDate field', () => {
-    sut['birthDate'] = '2000-02-15';
-    expect(sut.props.birthDate).toEqual('2000-02-15');
-    expect(typeof sut.props.birthDate).toBe('string');
+    const birthDate = BirthDate.createFrom(new Date());
+
+    sut['birthDate'] = birthDate;
+    expect(sut.props.birthDate).toEqual(birthDate);
+    expect(typeof sut.birthDate).toBe('string');
     expect(sut.createdAt).toBeInstanceOf(Date);
   });
 
   it('Setter of phone field', () => {
-    sut['phone'] = '54000000000';
-    expect(sut.props.phone).toEqual('54000000000');
-    expect(typeof sut.props.phone).toBe('string');
+    const phone = Phone.createFrom('54000000000');
+
+    sut['phone'] = phone;
+    expect(sut.props.phone).toEqual(phone);
+    expect(sut.props.phone).toBeInstanceOf(Phone);
+    expect(typeof sut.phone).toBe('string');
   });
 
   it('Setter of zipCode field', () => {
-    sut['zipCode'] = '00000000';
-    expect(sut.props.zipCode).toEqual('00000000');
-    expect(typeof sut.props.zipCode).toBe('string');
+    const zipCode = ZipCode.createFrom('00000000');
+
+    sut['zipCode'] = zipCode;
+    expect(sut.props.zipCode).toEqual(zipCode);
+    expect(sut.props.zipCode).toBeInstanceOf(ZipCode);
+    expect(typeof sut.zipCode).toBe('string');
   });
 
   it('Setter of address field', () => {
-    sut['address'] = 'address';
-    expect(sut.props.address).toEqual('address');
-    expect(typeof sut.props.address).toBe('string');
+    const address = Address.createFrom('address');
+
+    sut['address'] = address;
+    expect(sut.props.address).toEqual(address);
+    expect(sut.props.address).toBeInstanceOf(Address);
+    expect(typeof sut.address).toBe('string');
   });
 
   it('Setter of numberAddress field', () => {
@@ -170,17 +194,21 @@ describe('Person Domain Entity Unit Tests', () => {
   });
 
   it('Setter of uf field', () => {
-    sut['uf'] = 'BA';
-    expect(sut.props.uf).toEqual('BA');
-    expect(typeof sut.props.uf).toBe('string');
+    const uf = Uf.create(BrazilianStates.AL);
+
+    sut['uf'] = uf;
+    expect(sut.props.uf).toEqual(uf);
+    expect(sut.props.uf).toBeInstanceOf(Uf);
+    expect(typeof sut.uf).toBe('string');
   });
 
   it('Setter of cityUuid field', () => {
-    const uuid = UUID.generate();
+    const uniqueEntityId = UniqueEntityId.create();
 
-    sut['cityUuid'] = uuid;
-    expect(sut.props.cityUuid).toEqual(uuid);
-    expect(typeof sut.props.cityUuid).toBe('string');
+    sut['cityUuid'] = uniqueEntityId;
+    expect(sut.props.cityUuid).toEqual(uniqueEntityId);
+    expect(sut.props.cityUuid).toBeInstanceOf(UniqueEntityId);
+    expect(typeof sut.cityUuid).toBe('string');
   });
 
   it('Setter of active field', () => {
@@ -190,9 +218,11 @@ describe('Person Domain Entity Unit Tests', () => {
   });
 
   it('Setter of city field', () => {
+    const uf = Uf.create(BrazilianStates.AL);
+
     const city = new City({
       description: 'test',
-      uf: 'RS',
+      uf,
     } as CityProps);
 
     sut['city'] = city;
@@ -200,57 +230,12 @@ describe('Person Domain Entity Unit Tests', () => {
     expect(sut.props.city).toBeInstanceOf(City);
   });
 
-  it('createValidated method should to instance new Person class', async () => {
-    const uuid = UUID.generate();
-    const personProps = UserDataBuilder.getPersonProps();
-    const personClass = await Person.createValidated(personProps, uuid);
+  it('create method should to instance new Person class', async () => {
+    const uniqueEntityId = UniqueEntityId.create();
+    const personProps = await UserDataBuilder.getPersonProps();
+    const personClass = Person.create(personProps, uniqueEntityId);
 
     expect(personClass).toBeInstanceOf(Person);
-    expect(personClass.uuid).toEqual(uuid);
-  });
-
-  it('createValidated method should return exception if birthDate field is invalid', async () => {
-    const personProps = UserDataBuilder.getPersonProps();
-    personProps.birthDate = 'invalid';
-
-    await expect(Person.createValidated(personProps)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  it('createValidated method should return exception if phone field is invalid', async () => {
-    const personProps = UserDataBuilder.getPersonProps();
-    personProps.phone = '51999';
-
-    await expect(Person.createValidated(personProps)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  it('createValidated method should return exception if zipCode field is invalid', async () => {
-    const personProps = UserDataBuilder.getPersonProps();
-    personProps.zipCode = '0000';
-
-    await expect(Person.createValidated(personProps)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  it('createValidated method should return exception if uf field is invalid', async () => {
-    const personProps = UserDataBuilder.getPersonProps();
-    personProps.uf = 'abc';
-
-    await expect(Person.createValidated(personProps)).rejects.toThrow(
-      BadRequestException,
-    );
-  });
-
-  it('createValidated method should return exception if cityUuid field is invalid', async () => {
-    const personProps = UserDataBuilder.getPersonProps();
-    personProps.cityUuid = 'invalid';
-
-    await expect(Person.createValidated(personProps)).rejects.toThrow(
-      BadRequestException,
-    );
+    expect(personClass.uuid).toEqual(uniqueEntityId.toValue());
   });
 });

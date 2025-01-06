@@ -1,28 +1,15 @@
-import { ForbiddenException, Inject } from '@nestjs/common';
-import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Policy } from '@/acl/domain/entities/policy';
+import { Inject } from '@nestjs/common';
+import { IPolicyAdapter } from '@/acl/application/adapters/policy.adapter.interface';
 
 export abstract class Application {
-  @Inject(Policy)
-  private _policy: Policy;
+  @Inject(IPolicyAdapter)
+  private policyAdapter: IPolicyAdapter;
 
-  get policy(): Policy {
-    return this._policy;
+  get policy(): IPolicyAdapter {
+    return this.policyAdapter;
   }
 
-  set policy(policy: Policy) {
-    this._policy = policy;
-  }
-
-  protected profileHierarchyValidation(
-    needle: string,
-    haystack: string[],
-    message: string = null,
-  ): void {
-    if (!haystack.includes(needle)) {
-      throw new ForbiddenException(
-        message || ErrorMessagesEnum.USER_NOT_ALLOWED,
-      );
-    }
+  set policy(policy: IPolicyAdapter) {
+    this.policyAdapter = policy;
   }
 }

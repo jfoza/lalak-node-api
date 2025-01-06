@@ -1,13 +1,11 @@
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
-import { Category } from '@/features/category/domain/core/category';
-import { CategorySearchParams } from '@/features/category/domain/core/category-search-params';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
+import { Category } from '@/features/category/domain/entities/category';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CategoryEntity } from '@/features/category/infra/database/typeorm/entities/category.entity';
-import { toPaginate } from '@/common/infra/database/typeorm/pagination';
 import { CategoryMapper } from '@/features/category/infra/database/typeorm/mappers/category.mapper';
+import { ICategorySearchParamsDto } from '@/features/category/domain/dto/category-search-params.dto';
 
 @Injectable()
 export class TypeOrmCategoryRepository implements CategoryRepository {
@@ -18,28 +16,28 @@ export class TypeOrmCategoryRepository implements CategoryRepository {
   private readonly categoryMapper: CategoryMapper;
 
   async findAll(
-    categorySearchParams: CategorySearchParams,
+    categorySearchParams: ICategorySearchParamsDto,
   ): Promise<Category[]> {
     const results = await this.getBaseQuery(categorySearchParams).getMany();
 
     return this.categoryMapper.collection(results);
   }
 
-  async paginate(
-    categorySearchParams: CategorySearchParams,
-  ): Promise<ILengthAwarePaginator> {
-    const result = await toPaginate<CategoryEntity>(
-      this.getBaseQuery(categorySearchParams),
-      {
-        page: categorySearchParams.page,
-        perPage: categorySearchParams.perPage,
-      },
-    );
-
-    result.data = await this.categoryMapper.collection(result.data);
-
-    return result;
-  }
+  // async paginate(
+  //   categorySearchParams: ICategorySearchParamsDto,
+  // ): Promise<ILengthAwarePaginator> {
+  //   const result = await toPaginate<CategoryEntity>(
+  //     this.getBaseQuery(categorySearchParams),
+  //     {
+  //       page: categorySearchParams.page,
+  //       perPage: categorySearchParams.perPage,
+  //     },
+  //   );
+  //
+  //   result.data = await this.categoryMapper.collection(result.data);
+  //
+  //   return result;
+  // }
 
   async findByUuid(uuid: string): Promise<Category | null> {
     const result = await this.categoryEntityRepository.findOne({
@@ -104,7 +102,7 @@ export class TypeOrmCategoryRepository implements CategoryRepository {
   }
 
   private getBaseQuery(
-    categorySearchParams: CategorySearchParams,
+    categorySearchParams: ICategorySearchParamsDto,
   ): SelectQueryBuilder<CategoryEntity> {
     return this.categoryEntityRepository
       .createQueryBuilder('category')

@@ -1,4 +1,5 @@
 import { Entity } from '@/common/domain/entities/entity';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 export type AbilityProps = {
   description: string;
@@ -9,9 +10,9 @@ export type AbilityProps = {
 export class Ability extends Entity<AbilityProps> {
   private constructor(
     public readonly props: AbilityProps,
-    uuid?: string,
+    uniqueEntityId?: UniqueEntityId,
   ) {
-    super(props, uuid);
+    super(props, uniqueEntityId);
   }
 
   get description(): string {
@@ -26,7 +27,7 @@ export class Ability extends Entity<AbilityProps> {
     return this.props.action;
   }
 
-  static create(props: AbilityProps, uuid?: string): Ability {
-    return new this(props, uuid);
+  static create(props: AbilityProps, uniqueEntityId?: UniqueEntityId): Ability {
+    return new this(props, uniqueEntityId);
   }
 }

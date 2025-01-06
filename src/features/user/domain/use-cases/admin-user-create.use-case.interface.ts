@@ -1,8 +1,13 @@
-import { User } from '@/features/user/domain/entities/user';
-import { ICreateAdminUserDto } from '@/features/user/domain/dto/create-admin-user.dto.interface';
+import { Person } from '@/features/user/domain/entities/person';
+import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
 
 export interface IAdminUserCreateUseCase {
-  execute(createAdminUserDto: ICreateAdminUserDto): Promise<User>;
+  createUserForAdminMaster(
+    createAdminUserDto: IAdminUserCreateDto,
+  ): Promise<Person>;
+  createUserForEmployee(
+    createAdminUserDto: IAdminUserCreateDto,
+  ): Promise<Person>;
 }
 
 export const IAdminUserCreateUseCase = Symbol('IAdminUserCreateUseCase');

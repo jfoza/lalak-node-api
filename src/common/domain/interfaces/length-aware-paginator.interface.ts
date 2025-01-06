@@ -1,6 +1,6 @@
-export interface ILengthAwarePaginator {
+export interface LengthAwarePaginator<T> {
   currentPage: number;
-  data: any[];
+  data: T[];
   from: number;
   lastPage: number;
   perPage: number;

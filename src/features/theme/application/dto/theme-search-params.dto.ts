@@ -1,17 +1,14 @@
-import { IsIn, IsOptional, IsString } from 'class-validator';
-import { SearchParamsDto } from '@/common/application/dto/search-params.dto';
-import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Transform } from 'class-transformer';
+import { IThemeSearchParamsDto } from '@/features/theme/domain/dto/theme-search-params.dto.interface';
+import { PaginationOrder } from '@/common/application/dto/pagination-order';
+import { IPaginationOrder } from '@/common/domain/dto/pagination-order.interface';
 
-export class ThemeSearchParamsDto extends SearchParamsDto {
-  @IsOptional()
-  @IsString()
-  description: string;
+export class ThemeSearchParamsDto implements IThemeSearchParamsDto {
+  description?: string | null;
+  paginationOrder?: IPaginationOrder;
 
-  @IsOptional()
-  @IsIn(['description', 'created_at'], {
-    message: ErrorMessagesEnum.INVALID_COLUMN_NAME,
-  })
-  @Transform(({ value }) => (value === '' ? undefined : value))
-  columnName: string | null = null;
+  constructor() {
+    this.paginationOrder = new PaginationOrder();
+  }
 }
+
+export const themeSearchParamsDto = new ThemeSearchParamsDto();

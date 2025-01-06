@@ -6,3 +6,9 @@ export const adminUserSearchParamsDtoSchema = z.object({
   email: z.string().email().optional(),
   ...paginationOrderSchema,
 });
+
+export const customerSearchParamsDtoSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+  ...paginationOrderSchema,
+});

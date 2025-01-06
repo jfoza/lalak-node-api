@@ -1,4 +1,4 @@
-import { Product } from '@/features/product/domain/core/product';
+import { Product } from '@/features/product/domain/entities/product';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';

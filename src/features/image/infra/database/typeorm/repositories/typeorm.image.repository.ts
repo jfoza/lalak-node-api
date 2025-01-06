@@ -1,12 +1,12 @@
-import { AbstractImageRepository } from '@/features/image/domain/repositories/abstract.image.repository';
 import { Injectable } from '@nestjs/common';
-import { Image } from '@/features/image/domain/core/image';
+import { Image } from '@/features/image/domain/entities/image';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ImageEntity } from '@/features/image/infra/database/typeorm/entities/image.entity';
+import { IImageRepository } from '@/features/image/domain/repositories/image.repository';
 
 @Injectable()
-export class TypeormImageRepository implements AbstractImageRepository {
+export class TypeormImageRepository implements IImageRepository {
   @InjectRepository(ImageEntity)
   private readonly imageEntityRepository: Repository<ImageEntity>;
 

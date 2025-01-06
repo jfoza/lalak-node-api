@@ -1,18 +1,19 @@
-import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
 import { NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { Person } from '@/features/user/domain/entities/person';
+import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
 
 export class AdminUserValidations {
   static async adminUserExistsByUserUuid(
     uuid: string,
-    adminUserRepository: IAdminUserRepository,
-  ) {
-    const adminUser = await adminUserRepository.findByUserUuid(uuid);
+    personAdminUserRepository: PersonAdminUserRepository,
+  ): Promise<Person> {
+    const person = await personAdminUserRepository.findByUuid(uuid);
 
-    if (!adminUser) {
+    if (!person) {
       throw new NotFoundException(ErrorMessagesEnum.USER_NOT_FOUND);
     }
 
-    return adminUser;
+    return person;
   }
 }

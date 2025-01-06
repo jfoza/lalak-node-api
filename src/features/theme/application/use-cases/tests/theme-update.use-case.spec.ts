@@ -1,9 +1,7 @@
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
-import { UpdateThemeDto } from '@/features/theme/application/dto/update-theme.dto';
+import { ThemeUpdateDto } from '@/features/theme/application/dto/theme-update.dto';
 import { beforeEach, vi } from 'vitest';
-import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Theme } from '@/features/theme/domain/core/theme';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import {
   ConflictException,
@@ -13,11 +11,14 @@ import {
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { ThemeUpdateUseCase } from '@/features/theme/application/use-cases/theme-update.use-case';
 import { UUID } from '@/utils/uuid';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
+import { PolicyAdapter } from '@/acl/application/adapters/policy.adapter';
+import { Policy } from '@/acl/domain/value-objects/policy';
 
 describe('ThemeUpdateUseCase Unit Tests', () => {
   let sut: ThemeUpdateUseCase;
   let themeRepository: ThemeRepository;
-  let updateThemeDto: UpdateThemeDto;
+  let updateThemeDto: ThemeUpdateDto;
 
   beforeEach(() => {
     themeRepository = {
@@ -28,12 +29,13 @@ describe('ThemeUpdateUseCase Unit Tests', () => {
 
     sut = new ThemeUpdateUseCase(themeRepository);
 
-    updateThemeDto = new UpdateThemeDto();
+    updateThemeDto = new ThemeUpdateDto();
     updateThemeDto.description = 'test';
     updateThemeDto.active = true;
 
-    sut.policy = new Policy();
-    sut.policy.abilities = [AbilitiesEnum.THEMES_UPDATE];
+    sut.policy = new PolicyAdapter(
+      Policy.create([AbilitiesEnum.THEMES_UPDATE]),
+    );
   });
 
   it('Should update a theme', async () => {
@@ -78,7 +80,7 @@ describe('ThemeUpdateUseCase Unit Tests', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new PolicyAdapter(Policy.create());
 
     await expect(sut.execute(UUID.generate(), updateThemeDto)).rejects.toThrow(
       ForbiddenException,

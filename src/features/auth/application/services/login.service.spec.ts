@@ -10,11 +10,23 @@ import {
 import { IAuthRepository } from '@/features/auth/domain/repositories/auth.repository.interface';
 import { UserDataBuilder } from '../../../../../test/unit/user-data-builder';
 import { UUID } from '@/utils/uuid';
-import { Hash } from '@/utils/hash';
-import { User } from '@/features/user/domain/entities/user';
 import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
 import { UnauthorizedException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { Name } from '@/common/domain/value-objects/name';
+import { Password } from '@/features/user/domain/value-objects/password';
+import { ShortName } from '@/common/domain/value-objects/short-name';
+import { BirthDate } from '@/common/domain/value-objects/birth-date';
+import { Phone } from '@/common/domain/value-objects/phone';
+import { ZipCode } from '@/common/domain/value-objects/zip-code';
+import { Address } from '@/common/domain/value-objects/address';
+import { Uf } from '@/common/domain/value-objects/uf';
+import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
+import { City, CityProps } from '@/features/city/domain/entities/city';
+import {
+  PersonAuthUser,
+  PersonAuthUserProps,
+} from '@/features/user/domain/entities/person-auth-user';
 
 describe('LoginService Unit Tests', () => {
   let sut: LoginService;
@@ -50,6 +62,8 @@ describe('LoginService Unit Tests', () => {
     } as unknown as JwtAuthService;
 
     authDto = new AuthDto();
+    authDto.email = 'test@email.com';
+    authDto.password = 'pass';
 
     sut = new LoginService(
       userListByEmailLoginUseCase,
@@ -60,79 +74,53 @@ describe('LoginService Unit Tests', () => {
   });
 
   it('Should to create login user', async () => {
-    authDto.email = 'test@email.com';
+    const personAuthUser = await UserDataBuilder.getPersonAuthUser();
+
+    authDto.email = personAuthUser.email;
     authDto.password = 'pass';
 
-    const userProps = {
-      personUuid: UUID.generate(),
-      profileUuid: UUID.generate(),
-      email: 'test@email.com',
-      password: await Hash.createHash('pass'),
-      active: true,
-      createdAt: new Date(),
-      profile: UserDataBuilder.getAdminMasterProfile(),
-      person: UserDataBuilder.getPerson(),
-    };
-
-    const user = new User(userProps);
-
-    userListByEmailLoginUseCase.execute = vi.fn(async () => user);
+    vi.spyOn(userListByEmailLoginUseCase, 'execute').mockResolvedValue(
+      personAuthUser,
+    );
 
     const result = await sut.handle(authDto, LoginUserTypesEnum.ADMIN);
 
-    expect(jwtAuthService.sign).toHaveBeenCalledWith({
-      sub: user.uuid,
-      user: {
-        uuid: user.uuid,
-        profileUuid: user.profileUuid,
-        email: user.email,
-        active: user.active,
-      },
-    });
-
-    expect(authRepository.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        userUuid: user.uuid,
-        ipAddress: authDto.ipAddress,
-        authType: 'EMAIL_PASSWORD',
-        active: true,
-      }),
-    );
-
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       token: expect.any(String),
       type: 'JWT',
       expiresIn: '2 days',
       user: {
-        uuid: user.uuid,
-        email: user.email,
-        fullName: user.person.name,
-        shortName: user.person.shortName,
-        role: user.profile.description,
-        status: user.active,
+        uuid: personAuthUser.uuid,
+        email: personAuthUser.email,
+        fullName: personAuthUser.name,
+        shortName: personAuthUser.shortName,
+        role: personAuthUser.profile.description,
+        status: personAuthUser.active,
         ability: [],
       },
     });
   });
 
+  it('Should return exception if user email not exists', async () => {
+    vi.spyOn(userListByEmailLoginUseCase, 'execute').mockResolvedValue(null);
+
+    await expect(sut.handle(authDto, LoginUserTypesEnum.ADMIN)).rejects.toThrow(
+      UnauthorizedException,
+    );
+    await expect(sut.handle(authDto, LoginUserTypesEnum.ADMIN)).rejects.toThrow(
+      ErrorMessagesEnum.UNAUTHORIZED_LOGIN,
+    );
+  });
+
   it('Should return exception if passwords not match', async () => {
-    authDto.email = 'test@email.com';
-    authDto.password = 'pass';
+    const personAuthUser = await UserDataBuilder.getPersonAuthUser();
 
-    const userProps = {
-      personUuid: UUID.generate(),
-      profileUuid: UUID.generate(),
-      email: 'test@email.com',
-      password: await Hash.createHash('pass2'),
-      active: true,
-      createdAt: new Date(),
-      profile: UserDataBuilder.getAdminMasterProfile(),
-      person: UserDataBuilder.getPerson(),
-    };
+    authDto.email = personAuthUser.email;
+    authDto.password = 'password-not-match';
 
-    const user = new User(userProps);
-
-    userListByEmailLoginUseCase.execute = vi.fn(async () => user);
+    vi.spyOn(userListByEmailLoginUseCase, 'execute').mockResolvedValue(
+      personAuthUser,
+    );
 
     await expect(sut.handle(authDto, LoginUserTypesEnum.ADMIN)).rejects.toThrow(
       UnauthorizedException,
@@ -143,23 +131,37 @@ describe('LoginService Unit Tests', () => {
   });
 
   it('Should return exception if user is inactive', async () => {
-    authDto.email = 'test@email.com';
-    authDto.password = 'pass';
-
-    const userProps = {
-      personUuid: UUID.generate(),
-      profileUuid: UUID.generate(),
+    const personAuthUserProps: PersonAuthUserProps = {
+      name: Name.createFrom('Test'),
       email: 'test@email.com',
-      password: await Hash.createHash('pass'),
+      password: await Password.createFrom('pass'),
+      shortName: ShortName.createFrom('Test'),
+      birthDate: BirthDate.createFrom(new Date()),
+      phone: Phone.createFrom('(51) 99999-9999'),
+      zipCode: ZipCode.createFrom('99999-999'),
+      address: Address.createFrom('test'),
+      numberAddress: '00',
+      complement: 'test',
+      district: 'test',
+      uf: Uf.create(BrazilianStates.RJ),
       active: false,
       createdAt: new Date(),
+      city: new City({
+        description: 'test',
+        uf: Uf.create(BrazilianStates.RJ),
+      } as CityProps),
       profile: UserDataBuilder.getAdminMasterProfile(),
-      person: UserDataBuilder.getPerson(),
-    };
+      abilities: [],
+    } as PersonAuthUserProps;
 
-    const user = new User(userProps);
+    const personAuthUser = PersonAuthUser.create(personAuthUserProps);
 
-    userListByEmailLoginUseCase.execute = vi.fn(async () => user);
+    authDto.email = personAuthUser.email;
+    authDto.password = 'pass';
+
+    vi.spyOn(userListByEmailLoginUseCase, 'execute').mockResolvedValue(
+      personAuthUser,
+    );
 
     await expect(sut.handle(authDto, LoginUserTypesEnum.ADMIN)).rejects.toThrow(
       UnauthorizedException,

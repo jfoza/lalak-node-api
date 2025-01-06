@@ -1,16 +1,17 @@
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { EventSearchParams } from '@/features/event/domain/core/event-search-params';
-import { Event } from '@/features/event/domain/core/event';
+import { Event } from '@/features/event/domain/entities/event';
+import { IEventSearchParamsDto } from '@/features/event/domain/dto/event-search-params.dto';
 
-export abstract class EventRepository {
-  abstract findAll(eventSearchParams: EventSearchParams): Promise<Event[]>;
-  abstract paginate(
-    eventSearchParams: EventSearchParams,
-  ): Promise<ILengthAwarePaginator>;
-  abstract findByUuid(uuid: string): Promise<Event | null>;
-  abstract findByUuids(uuids: string[]): Promise<Event[]>;
-  abstract findByName(description: string): Promise<Event | null>;
-  abstract create(event: Event): Promise<Event>;
-  abstract update(event: Event): Promise<Event>;
-  abstract remove(uuid: string): Promise<void>;
+export interface EventRepository {
+  findAll(eventSearchParams: IEventSearchParamsDto): Promise<Event[]>;
+  // abstract paginate(
+  //   eventSearchParams: EventSearchParams,
+  // ): Promise<ILengthAwarePaginator>;
+  findByUuid(uuid: string): Promise<Event | null>;
+  findByUuids(uuids: string[]): Promise<Event[]>;
+  findByName(description: string): Promise<Event | null>;
+  create(event: Event): Promise<Event>;
+  update(event: Event): Promise<Event>;
+  remove(uuid: string): Promise<void>;
 }
+
+export const EventRepository = Symbol('EventRepository');

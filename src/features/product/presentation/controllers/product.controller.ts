@@ -16,41 +16,63 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { AbstractProductListService } from '@/features/product/domain/services/abstract.product-list.service';
-import { AbstractProductListByUuidService } from '@/features/product/domain/services/abstract.product-list-by-uuid.service';
-import { AbstractProductUpdateUseCase } from '@/features/product/domain/use-cases/abstract.product-update.use-case';
-import { AbstractProductRemoveUseCase } from '@/features/product/domain/use-cases/abstract.product-remove.use-case';
-import { ProductSearchParamsDto } from '@/features/product/application/dto/product-search-params.dto';
-import { Product } from '@/features/product/domain/core/product';
+import { productSearchParamsDto } from '@/features/product/application/dto/product-search-params.dto';
+import { Product } from '@/features/product/domain/entities/product';
 import { ProductCreateDto } from '@/features/product/application/dto/product-create.dto';
 import { ProductUpdateDto } from '@/features/product/application/dto/product-update.dto';
 import { FileDto } from '@/upload/application/dto/file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AbstractProductCreateService } from '@/features/product/domain/services/abstract.product-create.service';
+import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
+import { productSearchParamsDtoSchema } from '@/features/product/presentation/zod/schemas';
+import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
+import { IProductRemoveUseCase } from '@/features/product/domain/use-cases/product-remove.use-case';
+import { IProductListService } from '@/features/product/domain/services/product-list.service';
+import { IProductListByUuidService } from '@/features/product/domain/services/product-list-by-uuid.service';
+import { IProductCreateService } from '@/features/product/domain/services/product-create.service';
+import { IProductUpdateUseCase } from '@/features/product/domain/use-cases/product-update.use-case';
+
+type TProductSearchParams = {
+  description?: string;
+  userUuid?: string;
+  categories?: string[];
+  events?: string[];
+  active?: boolean;
+} & TPaginationOrder;
 
 @UseGuards(AuthGuard)
 @Controller('admin/products')
 export class ProductController {
-  @Inject(AbstractProductListService)
-  private readonly productListService: AbstractProductListService;
+  @Inject(IProductListService)
+  private readonly productListService: IProductListService;
 
-  @Inject(AbstractProductListByUuidService)
-  private readonly productListByUuidService: AbstractProductListByUuidService;
+  @Inject(IProductListByUuidService)
+  private readonly productListByUuidService: IProductListByUuidService;
 
-  @Inject(AbstractProductCreateService)
-  private readonly productCreateService: AbstractProductCreateService;
+  @Inject(IProductCreateService)
+  private readonly productCreateService: IProductCreateService;
 
-  @Inject(AbstractProductUpdateUseCase)
-  private readonly productUpdateUseCase: AbstractProductUpdateUseCase;
+  @Inject(IProductUpdateUseCase)
+  private readonly productUpdateUseCase: IProductUpdateUseCase;
 
-  @Inject(AbstractProductRemoveUseCase)
-  private readonly productRemoveUseCase: AbstractProductRemoveUseCase;
+  @Inject(IProductRemoveUseCase)
+  private readonly productRemoveUseCase: IProductRemoveUseCase;
 
   @Get()
   async index(
-    @Query() productSearchParamsDto: ProductSearchParamsDto,
-  ): Promise<ILengthAwarePaginator> {
+    @Query(new ZodValidationPipe(productSearchParamsDtoSchema))
+    query: TProductSearchParams,
+  ): Promise<Product[]> {
+    productSearchParamsDto.description = query.description;
+    productSearchParamsDto.userUuid = query.userUuid;
+    productSearchParamsDto.categories = query.categories;
+    productSearchParamsDto.events = query.events;
+    productSearchParamsDto.active = query.active;
+
+    productSearchParamsDto.paginationOrder.page = query.page;
+    productSearchParamsDto.paginationOrder.perPage = query.perPage;
+    productSearchParamsDto.paginationOrder.columnOrder = query.columnOrder;
+    productSearchParamsDto.paginationOrder.columnName = query.columnName;
+
     return await this.productListService.handle(productSearchParamsDto);
   }
 
@@ -67,10 +89,7 @@ export class ProductController {
     @Body() productCreateDto: ProductCreateDto,
     @UploadedFile() file?: FileDto,
   ): Promise<any> {
-    return await this.productCreateService.handle(
-      productCreateDto,
-      file || null,
-    );
+    return await this.productCreateService.handle(productCreateDto);
   }
 
   @Put(':uuid')

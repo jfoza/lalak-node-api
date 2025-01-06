@@ -1,6 +1,6 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Event } from '@/features/event/domain/core/event';
+import { Event } from '@/features/event/domain/entities/event';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 
 export class EventValidations {

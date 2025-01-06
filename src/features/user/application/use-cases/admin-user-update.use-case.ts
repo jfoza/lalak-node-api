@@ -1,141 +1,141 @@
 import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-user-update.use-case.interface';
-import { User } from '@/features/user/domain/entities/user';
-import { Inject, Injectable } from '@nestjs/common';
-import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
-import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { Application } from '@/common/application/application';
-import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { UserValidations } from '@/features/user/application/validations/user.validations';
-import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { IAdminUserUpdateDto } from '@/features/user/domain/dto/admin-user-update.dto.interface';
+import { Person } from '@/features/user/domain/entities/person';
 import { AdminUserValidations } from '@/features/user/application/validations/admin-user.validations';
-import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { UserValidations } from '@/features/user/application/validations/user.validations';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
+import { ShortName } from '@/common/domain/value-objects/short-name';
+import { Name } from '@/common/domain/value-objects/name';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 import { Profile } from '@/features/user/domain/entities/profile';
-import { Helper } from 'src/utils/helpers';
-import { Hash } from '@/utils/hash';
-import { IUpdateAdminUserDto } from '@/features/user/domain/dto/update-admin-user.dto.interface';
-import { AclForbiddenException } from '@/common/domain/exceptions/acl.forbbiden.exception';
+
+type TDataBuilder = {
+  uuid: string;
+  person: Person;
+  profile: Profile;
+  updateAdminUserDto: IAdminUserUpdateDto;
+};
 
 @Injectable()
-export class AdminUserUpdateUseCase
-  extends Application
-  implements IAdminUserUpdateUseCase
-{
-  private userPayload: User;
-  private profilePayload: Profile;
-  private uuid: string;
-  private updateAdminUserDto: IUpdateAdminUserDto;
-
+export class AdminUserUpdateUseCase implements IAdminUserUpdateUseCase {
   constructor(
-    @Inject(IPersonRepository)
-    private readonly personRepository: IPersonRepository,
+    @Inject(PersonAdminUserRepository)
+    private readonly personAdminUserRepository: PersonAdminUserRepository,
 
-    @Inject(IUserRepository)
-    private readonly userRepository: IUserRepository,
+    @Inject(PersonUserRepository)
+    private readonly personUserRepository: PersonUserRepository,
 
-    @Inject(IAdminUserRepository)
-    private readonly adminUserRepository: IAdminUserRepository,
+    @Inject(ProfileRepository)
+    private readonly profileRepository: ProfileRepository,
+  ) {}
 
-    @Inject(IProfileRepository)
-    private readonly profileRepository: IProfileRepository,
-  ) {
-    super();
-  }
-
-  async execute(
+  async updateUserForAdminMaster(
     uuid: string,
-    updateAdminUserDto: IUpdateAdminUserDto,
-  ): Promise<User> {
-    this.uuid = uuid;
-    this.updateAdminUserDto = updateAdminUserDto;
+    updateAdminUserDto: IAdminUserUpdateDto,
+  ): Promise<Person> {
+    const person = await this.getUserOrFail(
+      uuid,
+      ProfileUniqueNameEnum.ADMIN_USERS,
+    );
 
-    switch (true) {
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_UPDATE):
-        return await this.updateByAdminMaster();
+    const profile = await this.getProfileOrFail(
+      updateAdminUserDto.profileUuid,
+      ProfileUniqueNameEnum.ADMIN_USERS,
+    );
 
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_UPDATE):
-        return await this.updateByEmployee();
+    const dataBuilder: TDataBuilder = {
+      uuid,
+      updateAdminUserDto,
+      person,
+      profile,
+    };
 
-      default:
-        throw new AclForbiddenException();
-    }
+    return await this.update(dataBuilder);
   }
 
-  private async updateByAdminMaster(): Promise<User> {
-    await this.handleValidations();
-
-    this.profileHierarchyValidation(
-      this.userPayload.profile.uniqueName,
-      ProfileUniqueNameEnum.PROFILES_BY_ADMIN_MASTER_USERS,
-      ErrorMessagesEnum.USER_NOT_ALLOWED,
+  async updateUserForEmployee(
+    uuid: string,
+    updateAdminUserDto: IAdminUserUpdateDto,
+  ): Promise<Person> {
+    const person = await this.getUserOrFail(
+      uuid,
+      ProfileUniqueNameEnum.EMPLOYEE_USERS,
     );
 
-    this.profileHierarchyValidation(
-      this.profilePayload.uniqueName,
-      ProfileUniqueNameEnum.PROFILES_BY_ADMIN_MASTER_USERS,
-      ErrorMessagesEnum.PROFILE_NOT_ALLOWED,
+    const profile = await this.getProfileOrFail(
+      updateAdminUserDto.profileUuid,
+      ProfileUniqueNameEnum.EMPLOYEE_USERS,
     );
 
-    return await this.updateAdminUser();
+    const dataBuilder: TDataBuilder = {
+      uuid,
+      updateAdminUserDto,
+      person,
+      profile,
+    };
+
+    return await this.update(dataBuilder);
   }
 
-  private async updateByEmployee(): Promise<User> {
-    await this.handleValidations();
-
-    this.profileHierarchyValidation(
-      this.userPayload.profile.uniqueName,
-      ProfileUniqueNameEnum.PROFILES_BY_EMPLOYEE_USERS,
-      ErrorMessagesEnum.USER_NOT_ALLOWED,
+  private async getUserOrFail(
+    uuid: string,
+    haystack: string[],
+  ): Promise<Person> {
+    const person = await AdminUserValidations.adminUserExistsByUserUuid(
+      uuid,
+      this.personAdminUserRepository,
     );
 
-    this.profileHierarchyValidation(
-      this.profilePayload.uniqueName,
-      ProfileUniqueNameEnum.PROFILES_BY_EMPLOYEE_USERS,
-      ErrorMessagesEnum.PROFILE_NOT_ALLOWED,
-    );
-
-    return await this.updateAdminUser();
-  }
-
-  private async handleValidations(): Promise<void> {
-    this.userPayload = await AdminUserValidations.adminUserExistsByUserUuid(
-      this.uuid,
-      this.adminUserRepository,
-    );
+    const { user } = person;
 
     await UserValidations.userAlreadyExistsByEmailInUpdate(
-      this.uuid,
-      this.updateAdminUserDto.email,
-      this.userRepository,
+      uuid,
+      user.email,
+      this.personUserRepository,
     );
 
-    this.profilePayload = await ProfileValidations.profileExists(
-      this.updateAdminUserDto.profileUuid,
-      this.profileRepository,
-    );
-  }
-
-  private async updateAdminUser(): Promise<User> {
-    this.userPayload.person.name = this.updateAdminUserDto.name;
-    this.userPayload.person.shortName = Helper.shortStringGenerate(
-      this.updateAdminUserDto.name,
-    );
-
-    this.userPayload.email = this.updateAdminUserDto.email;
-    this.userPayload.profileUuid = this.profilePayload.uuid;
-    this.userPayload.profile = this.profilePayload;
-
-    await this.personRepository.update(this.userPayload.person);
-    await this.userRepository.update(this.userPayload);
-
-    if (this.updateAdminUserDto.password) {
-      const password = await Hash.createHash(this.updateAdminUserDto.password);
-
-      await this.userRepository.updatePassword(this.userPayload.uuid, password);
+    if (!haystack.includes(user.profile.uniqueName)) {
+      throw new ForbiddenException(ErrorMessagesEnum.USER_NOT_ALLOWED);
     }
 
-    return this.userPayload;
+    return person;
+  }
+
+  private async getProfileOrFail(
+    profileUuid: string,
+    haystack: string[],
+  ): Promise<Profile> {
+    const profile = await ProfileValidations.profileExists(
+      profileUuid,
+      this.profileRepository,
+    );
+
+    if (!haystack.includes(profile.uniqueName)) {
+      throw new ForbiddenException(ErrorMessagesEnum.PROFILE_NOT_ALLOWED);
+    }
+
+    return profile;
+  }
+
+  private async update(dataBuilder: TDataBuilder): Promise<Person> {
+    const { person, updateAdminUserDto } = dataBuilder;
+
+    person.name = Name.createFrom(updateAdminUserDto.name);
+    person.shortName = ShortName.createFrom(updateAdminUserDto.name);
+
+    person.user.email = updateAdminUserDto.email;
+    person.user.profileUuid = UniqueEntityId.create(
+      updateAdminUserDto.profileUuid,
+    );
+
+    await this.personAdminUserRepository.update(person);
+
+    return person;
   }
 }

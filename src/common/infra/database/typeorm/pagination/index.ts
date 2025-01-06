@@ -1,5 +1,5 @@
 import { SelectQueryBuilder } from 'typeorm';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
+import { LengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 
 type PaginationOptionsType = {
   page: number;
@@ -9,7 +9,7 @@ type PaginationOptionsType = {
 export async function toPaginate<T>(
   queryBuilder: SelectQueryBuilder<T>,
   options: PaginationOptionsType,
-): Promise<ILengthAwarePaginator> {
+): Promise<LengthAwarePaginator<any>> {
   const { page, perPage } = options;
   const [items, total] = await queryBuilder
     .skip((page - 1) * perPage)

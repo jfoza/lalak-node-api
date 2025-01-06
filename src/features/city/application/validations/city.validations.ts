@@ -1,12 +1,12 @@
-import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
 import { NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { City } from '@/features/city/domain/core/city';
+import { City } from '@/features/city/domain/entities/city';
+import { CityRepository } from '@/features/city/domain/repositories/city.repository';
 
 export class CityValidations {
   static async cityExists(
     uuid: string,
-    cityRepository: ICityRepository,
+    cityRepository: CityRepository,
   ): Promise<City> {
     const city = await cityRepository.findById(uuid);
 

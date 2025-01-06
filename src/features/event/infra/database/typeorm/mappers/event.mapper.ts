@@ -1,13 +1,22 @@
-import { OldMapper } from '@/common/infra/database/typeorm/mappers/OldMapper';
 import { Injectable } from '@nestjs/common';
 import { EventEntity } from '@/features/event/infra/database/typeorm/entities/event.entity';
-import { EventProps, Event } from '@/features/event/domain/core/event';
+import { Event, EventProps } from '@/features/event/domain/entities/event';
+import { Mapper } from '@/common/infra/database/typeorm/mappers/mapper';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 @Injectable()
-export class EventMapper extends OldMapper<EventEntity, Event, EventProps> {
-  protected snakeCaseMapper: boolean = true;
+export class EventMapper extends Mapper<EventEntity, Event> {
+  static get toDomain(): EventMapper {
+    return new this();
+  }
 
-  protected toDomainEntity(props: EventProps, uuid: string): Promise<Event> {
-    return Event.create(props, uuid);
+  async from(raw: EventEntity): Promise<Event> {
+    const props: EventProps = {
+      description: raw.description,
+      active: raw.active,
+      createdAt: raw.created_at,
+    };
+
+    return Event.create(props, UniqueEntityId.create(raw.uuid));
   }
 }

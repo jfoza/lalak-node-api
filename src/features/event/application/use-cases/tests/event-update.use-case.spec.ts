@@ -1,7 +1,6 @@
 import { beforeEach, vi } from 'vitest';
-import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Event } from '@/features/event/domain/core/event';
+import { Event } from '@/features/event/domain/entities/event';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import {
   ConflictException,
@@ -13,6 +12,8 @@ import { UUID } from '@/utils/uuid';
 import { EventUpdateUseCase } from '@/features/event/application/use-cases/event-update.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventUpdateDto } from '@/features/event/application/dto/event-update.dto';
+import { PolicyAdapter } from '@/acl/application/adapters/policy.adapter';
+import { Policy } from '@/acl/domain/value-objects/policy';
 
 describe('EventUpdateUseCase Unit Tests', () => {
   let sut: EventUpdateUseCase;
@@ -32,8 +33,9 @@ describe('EventUpdateUseCase Unit Tests', () => {
     eventUpdateDto.description = 'test';
     eventUpdateDto.active = true;
 
-    sut.policy = new Policy();
-    sut.policy.abilities = [AbilitiesEnum.EVENTS_UPDATE];
+    sut.policy = new PolicyAdapter(
+      Policy.create([AbilitiesEnum.EVENTS_UPDATE]),
+    );
   });
 
   it('Should update a event', async () => {
@@ -78,8 +80,7 @@ describe('EventUpdateUseCase Unit Tests', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
-
+    sut.policy = new PolicyAdapter(Policy.create());
     await expect(sut.execute(UUID.generate(), eventUpdateDto)).rejects.toThrow(
       ForbiddenException,
     );

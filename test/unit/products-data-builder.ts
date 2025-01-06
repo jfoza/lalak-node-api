@@ -1,11 +1,15 @@
-import { Theme, ThemeProps } from '@/features/theme/domain/core/theme';
+import { Theme, ThemeProps } from '@/features/theme/domain/entities/theme';
 import {
   Category,
   CategoryProps,
-} from '@/features/category/domain/core/category';
-import { UUID } from '@/utils/uuid';
-import { Product, ProductProps } from '@/features/product/domain/core/product';
-import { EventProps, Event } from '@/features/event/domain/core/event';
+} from '@/features/category/domain/entities/category';
+import {
+  Product,
+  ProductProps,
+} from '@/features/product/domain/entities/product';
+import { EventProps, Event } from '@/features/event/domain/entities/event';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
+import { UniqueName } from '@/common/domain/value-objects/unique-name';
 
 export class ProductsDataBuilder {
   static getThemeProps(): ThemeProps {
@@ -18,12 +22,12 @@ export class ProductsDataBuilder {
   }
 
   static getTheme(): Theme {
-    return new Theme(this.getThemeProps());
+    return Theme.create(this.getThemeProps());
   }
 
   static getCategoryProps(): CategoryProps {
     return {
-      themeUuid: UUID.generate(),
+      themeUuid: UniqueEntityId.create(),
       description: 'Theme 1',
       active: true,
       createdAt: new Date(),
@@ -32,7 +36,7 @@ export class ProductsDataBuilder {
   }
 
   static getCategory(): Category {
-    return new Category(this.getCategoryProps());
+    return Category.create(this.getCategoryProps());
   }
 
   static getEventProps(): EventProps {
@@ -45,14 +49,14 @@ export class ProductsDataBuilder {
   }
 
   static getEvent(): Event {
-    return new Event(this.getEventProps());
+    return Event.create(this.getEventProps());
   }
 
   static getProductProps(): ProductProps {
     return {
       description: 'test',
       details: '',
-      uniqueName: 'test',
+      uniqueName: UniqueName.createFrom('Test Name'),
       value: 0,
       quantity: 1,
       balance: 1,
@@ -62,6 +66,6 @@ export class ProductsDataBuilder {
   }
 
   static getProduct(): Product {
-    return new Product(this.getProductProps());
+    return Product.create(this.getProductProps());
   }
 }

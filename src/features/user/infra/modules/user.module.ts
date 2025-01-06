@@ -1,11 +1,5 @@
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
-import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
-import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { IUserListByEmailLoginUseCase } from '@/features/user/domain/use-cases/user-list-by-email-login.use-case.interface';
-import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
 import { IAdminUserListUseCase } from '@/features/user/domain/use-cases/admin-user-list.use-case.interface';
-import { IAdminUserListById } from '@/features/user/domain/use-cases/admin-user-list-by-id.use-case.interface';
 import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-user-create.use-case.interface';
 import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-user-update.use-case.interface';
 import { ISendForgotPasswordEmailUseCase } from '@/features/user/domain/use-cases/send-forgot-password-email.use-case.interface';
@@ -22,25 +16,19 @@ import { MailModule } from '@/mail/infra/modules/mail.module';
 import { AdminUserController } from '@/features/user/presentation/controllers/admin-user.controller';
 import { ForgotPasswordController } from '@/features/user/presentation/controllers/forgot-password.controller';
 import { SendForgotPasswordEmailJob } from '../../application/jobs/send-forgot-password-email.job';
-import { AdminUserMapper } from '../database/typeorm/mappers/admin-user.mapper';
-import { PersonMapper } from '@/features/user/infra/database/typeorm/mappers/person.mapper';
-import { ProfileMapper } from '@/features/user/infra/database/typeorm/mappers/profile.mapper';
-import { UserMapper } from '@/features/user/infra/database/typeorm/mappers/user.mapper';
-import { UserTokenMapper } from '../database/typeorm/mappers/user-token.mapper';
-import { TypeormUserRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm-user.repository';
-import { TypeormAdminUserRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm-admin-user-reporitory';
-import { TypeormPersonRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm-person-repository';
-import { TypeormProfileRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm-profile.repository';
-import { TypeormUserTokenRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm-user-token.repository';
 import { UserListByEmailLoginUseCase } from '@/features/user/application/use-cases/user-list-by-email-login.use-case';
 import { AdminUserListUseCase } from '@/features/user/application/use-cases/admin-user-list.use-case';
-import { AdminUserListByIdUseCase } from '@/features/user/application/use-cases/admin-user-list-by-id.use-case';
 import { AdminUserCreateUseCase } from '@/features/user/application/use-cases/admin-user-create.use-case';
 import { AdminUserUpdateUseCase } from '@/features/user/application/use-cases/admin-user-update.use-case';
 import { SendForgotPasswordEmailUseCase } from '@/features/user/application/use-cases/send-forgot-password-email.use-case';
 import { ResetPasswordUseCase } from '@/features/user/application/use-cases/reset-password.use-case';
-import { CustomerModule } from '@/features/customer/infra/modules/customer.module';
+import { CustomerModule } from '@/features/user/infra/modules/customer.module';
 import { CityModule } from '@/features/city/infra/modules/city.module';
+import { IAdminUserCreateService } from '@/features/user/domain/services/admin-user-create.service';
+import { AdminUserCreateService } from '@/features/user/application/services/admin-user-create.service';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
+import { AdminUserListByUuidService } from '@/features/user/application/services/admin-user-list-by-uuid.service';
+import { IAdminUserListByUuidService } from '@/features/user/domain/services/admin-user-list-by-uuid.service';
 
 @Module({
   imports: [
@@ -59,39 +47,11 @@ import { CityModule } from '@/features/city/infra/modules/city.module';
   controllers: [AdminUserController, ForgotPasswordController],
   providers: [
     SendForgotPasswordEmailJob,
-    AdminUserMapper,
-    PersonMapper,
-    ProfileMapper,
-    UserMapper,
-    UserTokenMapper,
-    TypeormUserRepository,
-    {
-      provide: IUserRepository,
-      useExisting: TypeormUserRepository,
-    },
 
-    TypeormAdminUserRepository,
+    AdminUserCreateService,
     {
-      provide: IAdminUserRepository,
-      useExisting: TypeormAdminUserRepository,
-    },
-
-    TypeormPersonRepository,
-    {
-      provide: IPersonRepository,
-      useExisting: TypeormPersonRepository,
-    },
-
-    TypeormProfileRepository,
-    {
-      provide: IProfileRepository,
-      useExisting: TypeormProfileRepository,
-    },
-
-    TypeormUserTokenRepository,
-    {
-      provide: IUserTokenRepository,
-      useExisting: TypeormUserTokenRepository,
+      provide: IAdminUserCreateService,
+      useClass: AdminUserCreateService,
     },
 
     UserListByEmailLoginUseCase,
@@ -106,10 +66,10 @@ import { CityModule } from '@/features/city/infra/modules/city.module';
       useExisting: AdminUserListUseCase,
     },
 
-    AdminUserListByIdUseCase,
+    AdminUserListByUuidService,
     {
-      provide: IAdminUserListById,
-      useExisting: AdminUserListByIdUseCase,
+      provide: IAdminUserListByUuidService,
+      useExisting: AdminUserListByUuidService,
     },
 
     AdminUserCreateUseCase,
@@ -138,11 +98,8 @@ import { CityModule } from '@/features/city/infra/modules/city.module';
   ],
   exports: [
     SendForgotPasswordEmailJob,
-    IPersonRepository,
-    IUserRepository,
-    IProfileRepository,
+    ProfileRepository,
     IUserListByEmailLoginUseCase,
-    UserMapper,
   ],
 })
 export class UserModule {}

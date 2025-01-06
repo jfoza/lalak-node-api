@@ -1,21 +1,16 @@
 import { CategorySearchParamsDto } from '@/features/category/application/dto/category-search-params.dto';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { Category } from '@/features/category/domain/core/category';
-import { PublicAbstractCategoryListService } from '@/features/category/domain/services/public.abstract.category-list.service';
-import { AbstractCategoryListUseCase } from '@/features/category/domain/use-cases/abstract.category-list.use-case';
+import { Category } from '@/features/category/domain/entities/category';
 import { Injectable } from '@nestjs/common';
+import { IPublicCategoryListService } from '@/features/category/domain/services/public.category-list.service';
+import { ICategoryListUseCase } from '@/features/category/domain/use-cases/category-list.use-case';
 
 @Injectable()
-export class PublicCategoryListService
-  implements PublicAbstractCategoryListService
-{
-  constructor(
-    private readonly categoryListUseCase: AbstractCategoryListUseCase,
-  ) {}
+export class PublicCategoryListService implements IPublicCategoryListService {
+  constructor(private readonly categoryListUseCase: ICategoryListUseCase) {}
 
   handle(
     categorySearchParamsDto: CategorySearchParamsDto,
-  ): Promise<ILengthAwarePaginator | Category[]> {
+  ): Promise<Category[]> {
     return this.categoryListUseCase.execute(categorySearchParamsDto);
   }
 }

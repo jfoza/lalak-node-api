@@ -14,39 +14,53 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { ThemeSearchParamsDto } from '@/features/theme/application/dto/theme-search-params.dto';
-import { Theme } from '@/features/theme/domain/core/theme';
-import { AbstractThemeCreateUseCase } from '@/features/theme/domain/use-cases/abstract.theme-create.use-case';
-import { AbstractThemeUpdateUseCase } from '@/features/theme/domain/use-cases/abstract.theme-update.use-case';
-import { CreateThemeDto } from '@/features/theme/application/dto/create-theme.dto';
-import { UpdateThemeDto } from '@/features/theme/application/dto/update-theme.dto';
-import { AbstractThemeListByUuidUseCase } from '@/features/theme/domain/use-cases/abstract.theme-list-by-uuid.use-case';
-import { AbstractThemeListService } from '@/features/theme/domain/services/abstract.theme-list.service';
-import { AbstractThemeRemoveUseCase } from '@/features/theme/domain/use-cases/abstract.theme-remove.use-case';
+import { themeSearchParamsDto } from '@/features/theme/application/dto/theme-search-params.dto';
+import { Theme } from '@/features/theme/domain/entities/theme';
+import { ThemeCreateDto } from '@/features/theme/application/dto/theme-create.dto';
+import { ThemeUpdateDto } from '@/features/theme/application/dto/theme-update.dto';
+import { IThemeListService } from '@/features/theme/domain/services/theme-list.service';
+import { IThemeRemoveUseCase } from '@/features/theme/domain/use-cases/theme-remove.use-case.interface';
+import { IThemeUpdateUseCase } from '@/features/theme/domain/use-cases/theme-update.use-case.interface';
+import { IThemeCreateUseCase } from '@/features/theme/domain/use-cases/theme-create.use-case.interface';
+import { IThemeListByUuidUseCase } from '@/features/theme/domain/use-cases/theme-list-by-uuid.use-case.interface';
+import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
+import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
+import { themeSearchParamsDtoSchema } from '@/features/theme/presentation/zod/schemas';
+
+type TThemeSearchParams = {
+  description?: string;
+} & TPaginationOrder;
 
 @UseGuards(AuthGuard)
 @Controller('admin/themes')
 export class ThemeController {
-  @Inject(AbstractThemeListService)
-  private readonly themeListService: AbstractThemeListService;
+  @Inject(IThemeListService)
+  private readonly themeListService: IThemeListService;
 
-  @Inject(AbstractThemeListByUuidUseCase)
-  private readonly themeListByUuidUseCase: AbstractThemeListByUuidUseCase;
+  @Inject(IThemeListByUuidUseCase)
+  private readonly themeListByUuidUseCase: IThemeListByUuidUseCase;
 
-  @Inject(AbstractThemeCreateUseCase)
-  private readonly themeCreateUseCase: AbstractThemeCreateUseCase;
+  @Inject(IThemeCreateUseCase)
+  private readonly themeCreateUseCase: IThemeCreateUseCase;
 
-  @Inject(AbstractThemeUpdateUseCase)
-  private readonly themeUpdateUseCase: AbstractThemeUpdateUseCase;
+  @Inject(IThemeUpdateUseCase)
+  private readonly themeUpdateUseCase: IThemeUpdateUseCase;
 
-  @Inject(AbstractThemeRemoveUseCase)
-  private readonly themeRemoveUseCase: AbstractThemeRemoveUseCase;
+  @Inject(IThemeRemoveUseCase)
+  private readonly themeRemoveUseCase: IThemeRemoveUseCase;
 
   @Get()
   async index(
-    @Query() themeSearchParamsDto: ThemeSearchParamsDto,
-  ): Promise<ILengthAwarePaginator | Theme[]> {
+    @Query(new ZodValidationPipe(themeSearchParamsDtoSchema))
+    query: TThemeSearchParams,
+  ): Promise<Theme[]> {
+    themeSearchParamsDto.description = query.description;
+
+    themeSearchParamsDto.paginationOrder.page = query.page;
+    themeSearchParamsDto.paginationOrder.perPage = query.perPage;
+    themeSearchParamsDto.paginationOrder.columnOrder = query.columnOrder;
+    themeSearchParamsDto.paginationOrder.columnName = query.columnName;
+
     return await this.themeListService.handle(themeSearchParamsDto);
   }
 
@@ -56,14 +70,14 @@ export class ThemeController {
   }
 
   @Post()
-  async insert(@Body() createThemeDto: CreateThemeDto): Promise<Theme> {
+  async insert(@Body() createThemeDto: ThemeCreateDto): Promise<Theme> {
     return await this.themeCreateUseCase.execute(createThemeDto);
   }
 
   @Put(':uuid')
   async update(
     @Param('uuid', new ParseUUIDPipe()) uuid: string,
-    @Body() updateThemeDto: UpdateThemeDto,
+    @Body() updateThemeDto: ThemeUpdateDto,
   ): Promise<Theme> {
     return await this.themeUpdateUseCase.execute(uuid, updateThemeDto);
   }

@@ -1,5 +1,5 @@
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
-import { Product } from '@/features/product/domain/core/product';
+import { Product } from '@/features/product/domain/entities/product';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from '@/features/product/infra/database/typeorm/entities/product.entity';
 import { Repository } from 'typeorm';
@@ -45,27 +45,27 @@ export class TypeormProductCommandRepository
     await this.productEntityRepository.delete(uuid);
   }
 
-  async saveCategories(product: Product): Promise<void> {
-    await this.productEntityRepository
-      .createQueryBuilder()
-      .relation(ProductEntity, 'categories')
-      .of(product.uuid)
-      .add(product.categoriesUuid);
-  }
-
-  async saveEvents(product: Product): Promise<void> {
-    await this.productEntityRepository
-      .createQueryBuilder()
-      .relation(ProductEntity, 'events')
-      .of(product.uuid)
-      .add(product.eventsUuid);
-  }
-
-  async saveImages(product: Product): Promise<void> {
-    await this.productEntityRepository
-      .createQueryBuilder()
-      .relation(ProductEntity, 'images')
-      .of(product.uuid)
-      .add(product.imagesUuid);
-  }
+  // async saveCategories(product: Product): Promise<void> {
+  //   await this.productEntityRepository
+  //     .createQueryBuilder()
+  //     .relation(ProductEntity, 'categories')
+  //     .of(product.uuid)
+  //     .add(product.categoriesUuid);
+  // }
+  //
+  // async saveEvents(product: Product): Promise<void> {
+  //   await this.productEntityRepository
+  //     .createQueryBuilder()
+  //     .relation(ProductEntity, 'events')
+  //     .of(product.uuid)
+  //     .add(product.eventsUuid);
+  // }
+  //
+  // async saveImages(product: Product): Promise<void> {
+  //   await this.productEntityRepository
+  //     .createQueryBuilder()
+  //     .relation(ProductEntity, 'images')
+  //     .of(product.uuid)
+  //     .add(product.imagesUuid);
+  // }
 }

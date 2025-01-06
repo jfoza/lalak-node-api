@@ -1,26 +1,26 @@
-import { AbstractProductListService } from '@/features/product/domain/services/abstract.product-list.service';
-import { ProductSearchParamsDto } from '@/features/product/application/dto/product-search-params.dto';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Application } from '@/common/application/application';
 import { Inject, Injectable } from '@nestjs/common';
-import { AbstractProductListUseCase } from '@/features/product/domain/use-cases/abstract.product-list.use-case';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { IProductListService } from '@/features/product/domain/services/product-list.service';
+import { IProductListUseCase } from '@/features/product/domain/use-cases/product-list.use-case';
+import { Product } from '@/features/product/domain/entities/product';
+import { IProductSearchParamsDto } from '@/features/product/domain/dto/product-search-params.dto';
 
 @Injectable()
 export class ProductListService
   extends Application
-  implements AbstractProductListService
+  implements IProductListService
 {
   constructor(
-    @Inject(AbstractProductListUseCase)
-    private readonly productListUseCase: AbstractProductListUseCase,
+    @Inject(IProductListUseCase)
+    private readonly productListUseCase: IProductListUseCase,
   ) {
     super();
   }
 
   async handle(
-    productSearchParamsDto: ProductSearchParamsDto,
-  ): Promise<ILengthAwarePaginator> {
+    productSearchParamsDto: IProductSearchParamsDto,
+  ): Promise<Product[]> {
     this.policy.can(AbilitiesEnum.PRODUCTS_VIEW);
 
     return await this.productListUseCase.execute(productSearchParamsDto);

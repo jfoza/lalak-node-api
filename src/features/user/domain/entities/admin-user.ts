@@ -1,45 +1,32 @@
 import { Entity } from '@/common/domain/entities/entity';
-import { AdminUserValidatorFactory } from '@/features/user/domain/validators/admin-user.validator';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 export type AdminUserProps = {
-  userUuid: string;
+  userUuid: UniqueEntityId;
   createdAt?: Date;
 };
 
 export class AdminUser extends Entity<AdminUserProps> {
   constructor(
     public readonly props: AdminUserProps,
-    uuid?: string,
+    uniqueEntityId?: UniqueEntityId,
   ) {
-    super(props, uuid);
+    super(props, uniqueEntityId);
     this.props.createdAt = this.props.createdAt ?? new Date();
   }
 
   get userUuid(): string {
-    return this.props.userUuid;
+    return this.props.userUuid.toValue();
   }
 
   get createdAt(): Date {
     return this.props.createdAt;
   }
 
-  static async validate(props: AdminUserProps): Promise<void> {
-    const validator = AdminUserValidatorFactory.create();
-    await validator.validate(props);
-  }
-
-  static async create(
+  static create(
     props: AdminUserProps,
-    uuid?: string,
-  ): Promise<AdminUser> {
-    return new this(props, uuid);
-  }
-
-  static async createValidated(
-    props: AdminUserProps,
-    uuid?: string,
-  ): Promise<AdminUser> {
-    await this.validate(props);
-    return this.create(props, uuid);
+    uniqueEntityId?: UniqueEntityId,
+  ): AdminUser {
+    return new this(props, uniqueEntityId);
   }
 }

@@ -3,14 +3,14 @@ import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { CategoryValidations } from '@/features/category/application/validations/category.validations';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
-import { AbstractCategoryRemoveUseCase } from '@/features/category/domain/use-cases/abstract.category-remove.use-case';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Category } from '@/features/category/domain/core/category';
+import { Category } from '@/features/category/domain/entities/category';
+import { ICategoryRemoveUseCase } from '@/features/category/domain/use-cases/category-remove.use-case';
 
 @Injectable()
 export class CategoryRemoveUseCase
   extends Application
-  implements AbstractCategoryRemoveUseCase
+  implements ICategoryRemoveUseCase
 {
   constructor(
     @Inject(CategoryRepository)

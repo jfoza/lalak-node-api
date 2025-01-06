@@ -14,39 +14,53 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { Event } from '@/features/event/domain/core/event';
-import { AbstractEventListService } from '@/features/event/domain/services/abstract.event-list.service';
-import { AbstractEventListByUuidUseCase } from '@/features/event/domain/use-cases/abstract.event-list-by-uuid.use-case';
-import { AbstractEventCreateUseCase } from '@/features/event/domain/use-cases/abstract.event-create.use-case';
-import { AbstractEventUpdateUseCase } from '@/features/event/domain/use-cases/abstract.event-update.use-case';
-import { AbstractEventRemoveUseCase } from '@/features/event/domain/use-cases/abstract.event-remove.use-case';
-import { EventSearchParamsDto } from '@/features/event/application/dto/event-search-params.dto';
+import { Event } from '@/features/event/domain/entities/event';
+import { eventSearchParamsDto } from '@/features/event/application/dto/event-search-params.dto';
 import { EventCreateDto } from '@/features/event/application/dto/event-create.dto';
 import { EventUpdateDto } from '@/features/event/application/dto/event-update.dto';
+import { IEventListService } from '@/features/event/domain/services/event-list.service';
+import { IEventListByUuidUseCase } from '@/features/event/domain/use-cases/event-list-by-uuid.use-case';
+import { IEventRemoveUseCase } from '@/features/event/domain/use-cases/event-remove.use-case';
+import { IEventUpdateUseCase } from '@/features/event/domain/use-cases/event-update.use-case';
+import { IEventCreateUseCase } from '@/features/event/domain/use-cases/event-create.use-case';
+import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
+import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
+import { eventSearchParamsDtoSchema } from '@/features/event/presentation/zod/schemas';
+
+type TEventSearchParams = {
+  description?: string;
+} & TPaginationOrder;
 
 @UseGuards(AuthGuard)
 @Controller('admin/events')
 export class EventController {
-  @Inject(AbstractEventListService)
-  private readonly eventListService: AbstractEventListService;
+  @Inject(IEventListService)
+  private readonly eventListService: IEventListService;
 
-  @Inject(AbstractEventListByUuidUseCase)
-  private readonly eventListByUuidUseCase: AbstractEventListByUuidUseCase;
+  @Inject(IEventListByUuidUseCase)
+  private readonly eventListByUuidUseCase: IEventListByUuidUseCase;
 
-  @Inject(AbstractEventCreateUseCase)
-  private readonly eventCreateUseCase: AbstractEventCreateUseCase;
+  @Inject(IEventCreateUseCase)
+  private readonly eventCreateUseCase: IEventCreateUseCase;
 
-  @Inject(AbstractEventUpdateUseCase)
-  private readonly eventUpdateUseCase: AbstractEventUpdateUseCase;
+  @Inject(IEventUpdateUseCase)
+  private readonly eventUpdateUseCase: IEventUpdateUseCase;
 
-  @Inject(AbstractEventRemoveUseCase)
-  private readonly eventRemoveUseCase: AbstractEventRemoveUseCase;
+  @Inject(IEventRemoveUseCase)
+  private readonly eventRemoveUseCase: IEventRemoveUseCase;
 
   @Get()
   async index(
-    @Query() eventSearchParamsDto: EventSearchParamsDto,
-  ): Promise<ILengthAwarePaginator | Event[]> {
+    @Query(new ZodValidationPipe(eventSearchParamsDtoSchema))
+    query: TEventSearchParams,
+  ): Promise<Event[]> {
+    eventSearchParamsDto.description = query.description;
+
+    eventSearchParamsDto.paginationOrder.page = query.page;
+    eventSearchParamsDto.paginationOrder.perPage = query.perPage;
+    eventSearchParamsDto.paginationOrder.columnOrder = query.columnOrder;
+    eventSearchParamsDto.paginationOrder.columnName = query.columnName;
+
     return await this.eventListService.handle(eventSearchParamsDto);
   }
 

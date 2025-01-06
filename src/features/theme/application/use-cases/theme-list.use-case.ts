@@ -1,37 +1,20 @@
-import { AbstractThemeListUseCase } from '@/features/theme/domain/use-cases/abstract.theme-list.use-case';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { Theme } from '@/features/theme/domain/core/theme';
-import { ThemeSearchParamsDto } from '@/features/theme/application/dto/theme-search-params.dto';
-import {
-  ThemeSearchParams,
-  ThemeSearchParamsProps,
-} from '@/features/theme/domain/core/theme-search-params';
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { Injectable } from '@nestjs/common';
+import { IThemeListUseCase } from '@/features/theme/domain/use-cases/theme-list.use-case.interface';
+import { IThemeSearchParamsDto } from '@/features/theme/domain/dto/theme-search-params.dto.interface';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
 
 @Injectable()
-export class ThemeListUseCase implements AbstractThemeListUseCase {
+export class ThemeListUseCase implements IThemeListUseCase {
   constructor(private readonly themeRepository: ThemeRepository) {}
 
-  async execute(
-    themeSearchParamsDto: ThemeSearchParamsDto,
-  ): Promise<ILengthAwarePaginator | Theme[]> {
-    const { description, page, perPage, columnOrder, columnName } =
-      themeSearchParamsDto;
+  async execute(themeSearchParamsDto: IThemeSearchParamsDto): Promise<Theme[]> {
+    // const { page } = themeSearchParamsDto.paginationOrder;
+    //
+    // if (page) {
+    //   return await this.themeRepository.paginate(themeSearchParamsDto);
+    // }
 
-    const themeSearchParams = ThemeSearchParams.create({
-      description,
-      columnOrder,
-      columnName,
-    } as ThemeSearchParamsProps);
-
-    if (page) {
-      themeSearchParams.page = page;
-      themeSearchParams.perPage = perPage;
-
-      return await this.themeRepository.paginate(themeSearchParams);
-    }
-
-    return await this.themeRepository.findAll(themeSearchParams);
+    return await this.themeRepository.findAll(themeSearchParamsDto);
   }
 }

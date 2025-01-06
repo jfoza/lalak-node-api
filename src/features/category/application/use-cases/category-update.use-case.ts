@@ -1,18 +1,19 @@
 import { Application } from '@/common/application/application';
-import { Category } from '@/features/category/domain/core/category';
+import { Category } from '@/features/category/domain/entities/category';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { Inject, Injectable } from '@nestjs/common';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { CategoryValidations } from '@/features/category/application/validations/category.validations';
-import { AbstractCategoryUpdateUseCase } from '@/features/category/domain/use-cases/abstract.category-update.use-case';
-import { UpdateCategoryDto } from '@/features/category/application/dto/update-category.dto';
+import { CategoryUpdateDto } from '@/features/category/application/dto/category-update.dto';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { ICategoryUpdateUseCase } from '@/features/category/domain/use-cases/category-update.use-case';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 @Injectable()
 export class CategoryUpdateUseCase
   extends Application
-  implements AbstractCategoryUpdateUseCase
+  implements ICategoryUpdateUseCase
 {
   constructor(
     @Inject(CategoryRepository)
@@ -26,7 +27,7 @@ export class CategoryUpdateUseCase
 
   async execute(
     uuid: string,
-    updateCategoryDto: UpdateCategoryDto,
+    updateCategoryDto: CategoryUpdateDto,
   ): Promise<Category> {
     this.policy.can(AbilitiesEnum.CATEGORIES_UPDATE);
 
@@ -35,7 +36,7 @@ export class CategoryUpdateUseCase
       this.categoryRepository,
     );
 
-    const theme = await ThemeValidations.themeExists(
+    await ThemeValidations.themeExists(
       updateCategoryDto.themeUuid,
       this.themeRepository,
     );
@@ -46,8 +47,7 @@ export class CategoryUpdateUseCase
       this.categoryRepository,
     );
 
-    category.themeUuid = updateCategoryDto.themeUuid;
-    category.theme = theme;
+    category.themeUuid = UniqueEntityId.create(updateCategoryDto.themeUuid);
     category.description = updateCategoryDto.description;
     category.active = updateCategoryDto.active;
 

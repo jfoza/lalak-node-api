@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
 import { AuthEntity } from '@/features/auth/infra/database/typeorm/entities/auth.entity';
 import { Auth, AuthProps } from '@/features/auth/domain/entities/auth';
 import { Mapper } from '@/common/infra/database/typeorm/mappers/mapper';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
-@Injectable()
 export class AuthMapper extends Mapper<AuthEntity, Auth> {
+  static get toDomain(): AuthMapper {
+    return new this();
+  }
+
   async from(ormEntity: AuthEntity): Promise<Auth> {
     const props: AuthProps = {
       userUuid: ormEntity.user_uuid,
@@ -17,6 +20,6 @@ export class AuthMapper extends Mapper<AuthEntity, Auth> {
       createdAt: ormEntity.created_at,
     };
 
-    return Auth.create(props, ormEntity.uuid);
+    return Auth.create(props, UniqueEntityId.create(ormEntity.uuid));
   }
 }

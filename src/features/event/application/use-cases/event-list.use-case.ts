@@ -1,38 +1,17 @@
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
-import { Event } from '@/features/event/domain/core/event';
-import { Injectable } from '@nestjs/common';
-import { AbstractEventListUseCase } from '@/features/event/domain/use-cases/abstract.event-list.use-case';
+import { Event } from '@/features/event/domain/entities/event';
+import { Inject, Injectable } from '@nestjs/common';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventSearchParamsDto } from '@/features/event/application/dto/event-search-params.dto';
-import {
-  EventSearchParams,
-  EventSearchParamsProps,
-} from '@/features/event/domain/core/event-search-params';
+import { IEventListUseCase } from '@/features/event/domain/use-cases/event-list.use-case';
 
 @Injectable()
-export class EventListUseCase implements AbstractEventListUseCase {
-  constructor(private readonly eventRepository: EventRepository) {}
+export class EventListUseCase implements IEventListUseCase {
+  constructor(
+    @Inject(EventRepository)
+    private readonly eventRepository: EventRepository,
+  ) {}
 
-  async execute(
-    eventSearchParamsDto: EventSearchParamsDto,
-  ): Promise<ILengthAwarePaginator | Event[]> {
-    const { description, active, page, perPage, columnOrder, columnName } =
-      eventSearchParamsDto;
-
-    const eventSearchParams = EventSearchParams.create({
-      description,
-      active,
-      columnOrder,
-      columnName,
-    } as EventSearchParamsProps);
-
-    if (page) {
-      eventSearchParams.page = page;
-      eventSearchParams.perPage = perPage;
-
-      return await this.eventRepository.paginate(eventSearchParams);
-    }
-
-    return await this.eventRepository.findAll(eventSearchParams);
+  async execute(eventSearchParamsDto: EventSearchParamsDto): Promise<Event[]> {
+    return await this.eventRepository.findAll(eventSearchParamsDto);
   }
 }

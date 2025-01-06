@@ -1,26 +1,24 @@
 import { mapKeysToCamelCase } from '@/utils/to-camel-case';
 
-export abstract class OldMapper<TOrmEntity, TDomainEntity, TProps> {
-  protected abstract snakeCaseMapper: boolean;
+export abstract class OldMapper<TModel, TDomainEntity, TProps> {
+  protected snakeCaseMapper: boolean = false;
 
-  async from(ormEntity: TOrmEntity): Promise<TDomainEntity> {
-    const data = this.snakeCaseMapper
-      ? mapKeysToCamelCase(ormEntity)
-      : ormEntity;
+  async from(model: TModel): Promise<TDomainEntity> {
+    const data = this.snakeCaseMapper ? mapKeysToCamelCase(model) : model;
 
-    return await this.toDomainEntity(data, (ormEntity as any).uuid);
+    return await this.toDomainEntity(data, (model as any).uuid);
   }
 
-  async optional(ormEntity: TOrmEntity): Promise<TDomainEntity> | null {
-    if (!ormEntity) {
+  async optional(model: TModel): Promise<TDomainEntity> | null {
+    if (!model) {
       return null;
     }
 
-    return await this.from(ormEntity);
+    return await this.from(model);
   }
 
-  async collection(ormEntities: TOrmEntity[]): Promise<TDomainEntity[]> {
-    return Promise.all(ormEntities.map((entity) => this.from(entity)));
+  async collection(model: TModel[]): Promise<TDomainEntity[]> {
+    return Promise.all(model.map((entity) => this.from(entity)));
   }
 
   protected abstract toDomainEntity(

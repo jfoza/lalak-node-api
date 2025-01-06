@@ -1,13 +1,14 @@
 import { vi } from 'vitest';
-import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Event } from '@/features/event/domain/core/event';
+import { Event } from '@/features/event/domain/entities/event';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { UUID } from '@/utils/uuid';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { EventListByUuidUseCase } from '@/features/event/application/use-cases/event-list-by-uuid.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
+import { PolicyAdapter } from '@/acl/application/adapters/policy.adapter';
+import { Policy } from '@/acl/domain/value-objects/policy';
 
 describe('EventListByUuidUseCase Unit Tests', () => {
   let sut: EventListByUuidUseCase;
@@ -20,9 +21,7 @@ describe('EventListByUuidUseCase Unit Tests', () => {
 
     sut = new EventListByUuidUseCase(eventRepository);
 
-    sut.policy = new Policy();
-
-    sut.policy.abilities = [AbilitiesEnum.EVENTS_VIEW];
+    sut.policy = new PolicyAdapter(Policy.create([AbilitiesEnum.EVENTS_VIEW]));
   });
 
   it('Should return a unique Event', async () => {
@@ -47,7 +46,7 @@ describe('EventListByUuidUseCase Unit Tests', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new PolicyAdapter(Policy.create());
 
     await expect(sut.execute(UUID.generate())).rejects.toThrow(
       ForbiddenException,

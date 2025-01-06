@@ -1,22 +1,22 @@
-import { AbstractThemeCreateUseCase } from '@/features/theme/domain/use-cases/abstract.theme-create.use-case';
-import { CreateThemeDto } from '@/features/theme/application/dto/create-theme.dto';
-import { Theme, ThemeProps } from '@/features/theme/domain/core/theme';
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
+import { Theme, ThemeProps } from '@/features/theme/domain/entities/theme';
 import { Application } from '@/common/application/application';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
 import { Injectable } from '@nestjs/common';
+import { IThemeCreateUseCase } from '@/features/theme/domain/use-cases/theme-create.use-case.interface';
+import { IThemeCreateDto } from '@/features/theme/domain/dto/theme-create.dto.interface';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
 
 @Injectable()
 export class ThemeCreateUseCase
   extends Application
-  implements AbstractThemeCreateUseCase
+  implements IThemeCreateUseCase
 {
   constructor(private readonly themeRepository: ThemeRepository) {
     super();
   }
 
-  async execute(createThemeDto: CreateThemeDto): Promise<Theme> {
+  async execute(createThemeDto: IThemeCreateDto): Promise<Theme> {
     this.policy.can(AbilitiesEnum.THEMES_INSERT);
 
     await ThemeValidations.themeExistsByName(
@@ -24,7 +24,7 @@ export class ThemeCreateUseCase
       this.themeRepository,
     );
 
-    const theme = await Theme.create({
+    const theme = Theme.create({
       description: createThemeDto.description,
       active: createThemeDto.active,
     } as ThemeProps);

@@ -2,51 +2,70 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
 import { IUserListByEmailLoginUseCase } from '@/features/user/domain/use-cases/user-list-by-email-login.use-case.interface';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { User } from '@/features/user/domain/entities/user';
+import { PersonAuthUser } from '@/features/user/domain/entities/person-auth-user';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { PersonCustomerRepository } from '@/features/user/domain/repositories/person-customer.repository';
 
 @Injectable()
 export class UserListByEmailLoginUseCase
   implements IUserListByEmailLoginUseCase
 {
-  private user: User;
-
   constructor(
-    @Inject(IUserRepository)
-    private readonly userRepository: IUserRepository,
+    @Inject(PersonAdminUserRepository)
+    private readonly personAdminUserRepository: PersonAdminUserRepository,
+
+    @Inject(PersonCustomerRepository)
+    private readonly personCustomerRepository: PersonCustomerRepository,
   ) {}
 
-  async execute(email: string, loginType: LoginUserTypesEnum): Promise<User> {
-    this.user = await this.userRepository.findByEmailInLogin(email);
+  async execute(
+    email: string,
+    loginType: LoginUserTypesEnum,
+  ): Promise<PersonAuthUser | null> {
+    switch (loginType) {
+      case LoginUserTypesEnum.ADMIN:
+        return this.getAdminOrFail(email);
 
-    if (loginType === LoginUserTypesEnum.ADMIN) {
-      this.adminValidation();
-    }
+      case LoginUserTypesEnum.CUSTOMER:
+        return this.getCustomerOrFail(email);
 
-    if (loginType === LoginUserTypesEnum.CUSTOMER) {
-      this.customerValidation();
-    }
-
-    return this.user;
-  }
-
-  private adminValidation(): void {
-    if (!this.user) {
-      throw new UnauthorizedException(ErrorMessagesEnum.UNAUTHORIZED_LOGIN);
-    }
-
-    if (!this.user.adminUser) {
-      throw new UnauthorizedException(ErrorMessagesEnum.UNAUTHORIZED_LOGIN);
+      default:
+        throw new UnauthorizedException(ErrorMessagesEnum.UNAUTHORIZED_LOGIN);
     }
   }
 
-  private customerValidation(): void {
-    if (!this.user) {
+  private async getAdminOrFail(email: string): Promise<PersonAuthUser | null> {
+    const personAuthUser =
+      await this.personAdminUserRepository.findOneForLogin(email);
+
+    if (!personAuthUser) {
+      return null;
+    }
+
+    const haystack = ProfileUniqueNameEnum.ADMIN_USERS;
+
+    if (!haystack.includes(personAuthUser.profile.uniqueName)) {
       throw new UnauthorizedException(ErrorMessagesEnum.UNAUTHORIZED_LOGIN);
     }
 
-    if (!this.user.customer) {
+    return personAuthUser;
+  }
+
+  private async getCustomerOrFail(
+    email: string,
+  ): Promise<PersonAuthUser | null> {
+    const personAuthUser =
+      await this.personCustomerRepository.findOneForLogin(email);
+
+    if (!personAuthUser) {
+      return null;
+    }
+
+    if (personAuthUser.profile.uniqueName !== ProfileUniqueNameEnum.CUSTOMER) {
       throw new UnauthorizedException(ErrorMessagesEnum.UNAUTHORIZED_LOGIN);
     }
+
+    return personAuthUser;
   }
 }

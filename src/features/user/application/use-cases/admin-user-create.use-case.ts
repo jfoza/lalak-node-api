@@ -1,129 +1,118 @@
 import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-user-create.use-case.interface';
-import { User, UserProps } from '@/features/user/domain/entities/user';
-import { Inject, Injectable } from '@nestjs/common';
-import { Application } from '@/common/application/application';
-import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
+import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
+import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
 import { Person, PersonProps } from '@/features/user/domain/entities/person';
-import { Helper } from 'src/utils/helpers';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
+import { User, UserProps } from '@/features/user/domain/entities/user';
+import { ShortName } from '@/common/domain/value-objects/short-name';
+import { Name } from '@/common/domain/value-objects/name';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
+import { Password } from '@/features/user/domain/value-objects/password';
 import {
   AdminUser,
   AdminUserProps,
 } from '@/features/user/domain/entities/admin-user';
-import { Hash } from '@/utils/hash';
-import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
-import { IProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
-import { IPersonRepository } from '@/features/user/domain/repositories/person-repository.interface';
+import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
 import { Profile } from '@/features/user/domain/entities/profile';
-import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
-import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { IAdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository.interface';
-import { ICreateAdminUserDto } from '@/features/user/domain/dto/create-admin-user.dto.interface';
-import { AclForbiddenException } from '@/common/domain/exceptions/acl.forbbiden.exception';
 
 @Injectable()
-export class AdminUserCreateUseCase
-  extends Application
-  implements IAdminUserCreateUseCase
-{
-  private createAdminUserDto: ICreateAdminUserDto;
-  private profile: Profile;
-
+export class AdminUserCreateUseCase implements IAdminUserCreateUseCase {
   constructor(
-    @Inject(IPersonRepository)
-    private readonly personRepository: IPersonRepository,
+    @Inject(PersonAdminUserRepository)
+    private readonly personAdminUserRepository: PersonAdminUserRepository,
 
-    @Inject(IUserRepository)
-    private readonly userRepository: IUserRepository,
+    @Inject(PersonUserRepository)
+    private readonly personUserRepository: PersonUserRepository,
 
-    @Inject(IAdminUserRepository)
-    private readonly adminUserRepository: IAdminUserRepository,
+    @Inject(ProfileRepository)
+    private readonly profileRepository: ProfileRepository,
+  ) {}
 
-    @Inject(IProfileRepository)
-    private readonly profileRepository: IProfileRepository,
-  ) {
-    super();
-  }
+  public async createUserForAdminMaster(
+    createAdminUserDto: IAdminUserCreateDto,
+  ): Promise<Person> {
+    const { name, email, password, profileUuid } = createAdminUserDto;
 
-  async execute(createAdminUserDto: ICreateAdminUserDto): Promise<User> {
-    this.createAdminUserDto = createAdminUserDto;
-
-    switch (true) {
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT):
-        return this.createByAdminMaster();
-
-      case this.policy.has(AbilitiesEnum.ADMIN_USERS_EMPLOYEE_INSERT):
-        return this.createByEmployee();
-
-      default:
-        throw new AclForbiddenException();
-    }
-  }
-
-  private async createByAdminMaster(): Promise<User> {
-    await this.handleValidations();
-
-    this.profileHierarchyValidation(
-      this.profile.uniqueName,
-      [ProfileUniqueNameEnum.ADMIN_MASTER, ProfileUniqueNameEnum.EMPLOYEE],
-      ErrorMessagesEnum.PROFILE_NOT_ALLOWED,
-    );
-
-    return this.createAdminUser();
-  }
-
-  private async createByEmployee(): Promise<User> {
-    await this.handleValidations();
-
-    this.profileHierarchyValidation(
-      this.profile.uniqueName,
-      [ProfileUniqueNameEnum.EMPLOYEE],
-      ErrorMessagesEnum.PROFILE_NOT_ALLOWED,
-    );
-
-    return this.createAdminUser();
-  }
-
-  private async handleValidations(): Promise<void> {
     await UserValidations.userAlreadyExistsByEmail(
-      this.createAdminUserDto.email,
-      this.userRepository,
+      email,
+      this.personUserRepository,
     );
 
-    this.profile = await ProfileValidations.profileExists(
-      this.createAdminUserDto.profileUuid,
+    await this.getProfileOrFail(
+      createAdminUserDto.profileUuid,
+      ProfileUniqueNameEnum.ADMIN_USERS,
+    );
+
+    return this.createAdminUser({ name, email, password, profileUuid });
+  }
+
+  public async createUserForEmployee(
+    createAdminUserDto: IAdminUserCreateDto,
+  ): Promise<Person> {
+    const { name, email, password, profileUuid } = createAdminUserDto;
+
+    await UserValidations.userAlreadyExistsByEmail(
+      email,
+      this.personUserRepository,
+    );
+
+    await this.getProfileOrFail(
+      createAdminUserDto.profileUuid,
+      ProfileUniqueNameEnum.EMPLOYEE_USERS,
+    );
+
+    return this.createAdminUser({ name, email, password, profileUuid });
+  }
+
+  private async getProfileOrFail(
+    profileUuid: string,
+    haystack: string[],
+  ): Promise<Profile> {
+    const profile = await ProfileValidations.profileExists(
+      profileUuid,
       this.profileRepository,
     );
+
+    if (!haystack.includes(profile.uniqueName)) {
+      throw new ForbiddenException(ErrorMessagesEnum.PROFILE_NOT_ALLOWED);
+    }
+
+    return profile;
   }
 
-  private async createAdminUser(): Promise<User> {
-    const person = await Person.createValidated({
-      name: this.createAdminUserDto.name,
-      shortName: Helper.shortStringGenerate(this.createAdminUserDto.name),
+  private async createAdminUser({
+    name,
+    email,
+    password,
+    profileUuid,
+  }): Promise<Person> {
+    const person: Person = Person.create({
+      name: Name.createFrom(name),
+      shortName: ShortName.createFrom(name),
       active: true,
     } as PersonProps);
 
-    const password = await Hash.createHash(this.createAdminUserDto.password);
-
-    const user = await User.createValidated({
-      personUuid: person.uuid,
-      profileUuid: this.profile.uuid,
-      email: this.createAdminUserDto.email,
-      password,
-      person,
-      profile: this.profile,
+    const user: User = User.create({
+      email,
       active: true,
+      password: await Password.createFrom(password),
+      profileUuid: UniqueEntityId.create(profileUuid),
+      personUuid: UniqueEntityId.create(person.uuid),
     } as UserProps);
 
-    const adminUser = await AdminUser.createValidated({
-      userUuid: user.uuid,
+    user.adminUser = AdminUser.create({
+      userUuid: UniqueEntityId.create(user.uuid),
     } as AdminUserProps);
 
-    await this.personRepository.create(person);
-    await this.userRepository.create(user);
-    await this.adminUserRepository.create(adminUser);
+    person.user = user;
 
-    return user;
+    await this.personAdminUserRepository.create(person);
+
+    return person;
   }
 }

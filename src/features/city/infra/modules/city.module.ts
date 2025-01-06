@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CityEntity } from '@/features/city/infra/database/typeorm/entities/city.entity';
 import { TypeormCityRepository } from '@/features/city/infra/database/typeorm/repositories/typeorm-city.repository';
 import { CityMapper } from '@/features/city/infra/database/typeorm/mappers/city.mapper';
-import { ICityRepository } from '@/features/city/domain/interfaces/city.repository.interface';
+import { CityRepository } from '@/features/city/domain/repositories/city.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CityEntity])],
@@ -12,10 +12,10 @@ import { ICityRepository } from '@/features/city/domain/interfaces/city.reposito
     CityMapper,
     TypeormCityRepository,
     {
-      provide: ICityRepository,
+      provide: CityRepository,
       useExisting: TypeormCityRepository,
     },
   ],
-  exports: [CityMapper, ICityRepository],
+  exports: [CityMapper, CityRepository],
 })
 export class CityModule {}

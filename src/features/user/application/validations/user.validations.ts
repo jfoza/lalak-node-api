@@ -1,16 +1,16 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { User } from '@/features/user/domain/entities/user';
 import { IUserTokenRepository } from '@/features/user/domain/repositories/user-token.repository.interface';
 import { UserToken } from '@/features/user/domain/entities/user-token';
+import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { Person } from '@/features/user/domain/entities/person';
 
 export class UserValidations {
   static async userExistsByUuid(
     uuid: string,
-    userRepository: IUserRepository,
-  ): Promise<User> {
-    const user = await userRepository.findByUuid(uuid);
+    personUserRepository: PersonUserRepository,
+  ): Promise<Person> {
+    const user = await personUserRepository.findByUuid(uuid);
 
     if (!user) {
       throw new NotFoundException(ErrorMessagesEnum.USER_NOT_FOUND);
@@ -21,9 +21,9 @@ export class UserValidations {
 
   static async userExistsByEmail(
     email: string,
-    userRepository: IUserRepository,
-  ): Promise<User> {
-    const user = await userRepository.findByEmail(email);
+    personUserRepository: PersonUserRepository,
+  ): Promise<Person> {
+    const user = await personUserRepository.findByEmail(email);
 
     if (!user) {
       throw new NotFoundException(ErrorMessagesEnum.USER_NOT_FOUND);
@@ -34,9 +34,9 @@ export class UserValidations {
 
   static async userAlreadyExistsByEmail(
     email: string,
-    userRepository: IUserRepository,
+    personUserRepository: PersonUserRepository,
   ): Promise<void> {
-    if (await userRepository.findByEmail(email)) {
+    if (await personUserRepository.findByEmail(email)) {
       throw new ConflictException(ErrorMessagesEnum.EMAIL_ALREADY_EXISTS);
     }
   }
@@ -44,9 +44,9 @@ export class UserValidations {
   static async userAlreadyExistsByEmailInUpdate(
     uuid: string,
     email: string,
-    userRepository: IUserRepository,
+    personUserRepository: PersonUserRepository,
   ): Promise<void> {
-    const user = await userRepository.findByEmail(email);
+    const user = await personUserRepository.findByEmail(email);
 
     if (user && user.uuid !== uuid) {
       throw new ConflictException(ErrorMessagesEnum.EMAIL_ALREADY_EXISTS);

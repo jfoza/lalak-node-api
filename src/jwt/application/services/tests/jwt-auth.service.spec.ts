@@ -1,9 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { IJwtToken, JwtAuthService } from '../jwt-auth.service';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
-import { IUserRepository } from '@/features/user/domain/repositories/user-repository.interface';
-import { User } from '@/features/user/domain/entities/user';
 import { UserDataBuilder } from '../../../../../test/unit/user-data-builder';
+import { UUID } from '@/utils/uuid';
+import { PersonAuthUser } from '@/features/user/domain/entities/person-auth-user';
+import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 vi.mock('node:process', () => ({
   env: { JWT_EXPIRATION: '3600' },
@@ -17,14 +18,10 @@ describe('JwtAuthService', async () => {
     verifyAsync: vi.fn(),
   } as unknown as NestJwtService;
 
-  const mockUserRepository = {
-    findByUserLoggedByUuid: vi.fn(),
-  } as unknown as IUserRepository;
-
-  const mockUser = await UserDataBuilder.getUser();
+  const personAuthUserMock = await UserDataBuilder.getPersonAuthUser();
 
   beforeEach(() => {
-    sut = new JwtAuthService(mockJwtService, mockUserRepository);
+    sut = new JwtAuthService(mockJwtService);
   });
 
   describe('sign', () => {
@@ -60,51 +57,34 @@ describe('JwtAuthService', async () => {
     });
   });
 
-  describe('setAuthUser', () => {
+  describe('set user', () => {
     it('should set the authenticated user', async () => {
-      const userProps = await UserDataBuilder.getUserProps();
-      const uuid = 'user-uuid';
+      const personAuthUserProps =
+        await UserDataBuilder.getPersonAuthUserProps();
+      const uuid = UUID.generate();
 
-      vi.spyOn(User, 'create').mockResolvedValue(mockUser);
+      const personAuthUser = PersonAuthUser.create(
+        personAuthUserProps,
+        UniqueEntityId.create(uuid),
+      );
 
-      await sut.setAuthUser(userProps, uuid);
+      sut.user = personAuthUser;
 
-      expect(User.create).toHaveBeenCalledWith(userProps, uuid);
-      expect(sut['authUser']).toEqual(mockUser);
+      expect(sut.user).toEqual(personAuthUser);
     });
   });
 
   describe('user', () => {
     it('should return null if no authenticated user is set', async () => {
-      const result = await sut.user();
+      const result: PersonAuthUser = sut.user;
       expect(result).toBeNull();
     });
 
     it('should return the authenticated user if no relation is provided', async () => {
-      sut['authUser'] = mockUser;
+      sut['authUser'] = personAuthUserMock;
 
-      const result = await sut.user();
-      expect(result).toEqual(mockUser);
-    });
-
-    it('should return the user with relations if a relation is provided', async () => {
-      sut['authUser'] = mockUser;
-      const relation = 'person';
-      const userWithRelations = await UserDataBuilder.getUser();
-
-      userWithRelations.person = UserDataBuilder.getPerson();
-
-      vi.spyOn(mockUserRepository, 'findByUserLoggedByUuid').mockResolvedValue(
-        userWithRelations,
-      );
-
-      const result = await sut.user(relation);
-
-      expect(mockUserRepository.findByUserLoggedByUuid).toHaveBeenCalledWith(
-        mockUser.uuid,
-        relation,
-      );
-      expect(result).toEqual(userWithRelations);
+      const result = sut.user;
+      expect(result).toEqual(personAuthUserMock);
     });
   });
 });

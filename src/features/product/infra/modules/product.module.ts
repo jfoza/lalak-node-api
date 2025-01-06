@@ -11,30 +11,30 @@ import { ProductQueryRepository } from '@/features/product/domain/repositories/p
 import { TypeormProductCommandRepository } from '@/features/product/infra/database/typeorm/repositories/typeorm.product-command.repository';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
 import { ProductListService } from '@/features/product/application/services/product-list.service';
-import { AbstractProductListService } from '@/features/product/domain/services/abstract.product-list.service';
 import { PublicProductListService } from '@/features/product/application/services/public.product-list.service';
-import { AbstractPublicProductListService } from '@/features/product/domain/services/abstract.public.product-list.service';
 import { ProductListByUuidService } from '@/features/product/application/services/product-list-by-uuid.service';
-import { AbstractProductListByUuidService } from '@/features/product/domain/services/abstract.product-list-by-uuid.service';
 import { PublicProductListByUuidService } from '@/features/product/application/services/public.product-list-by-uuid.service';
-import { AbstractPublicProductListByUuidService } from '@/features/product/domain/services/abstract.public.product-list-by-uuid.service';
 import { ProductListUseCase } from '@/features/product/application/use-cases/product-list.use-case';
-import { AbstractProductListUseCase } from '@/features/product/domain/use-cases/abstract.product-list.use-case';
 import { ProductListByUuidUseCase } from '@/features/product/application/use-cases/product-list-by-uuid.use-case';
-import { AbstractProductListByUuidUseCase } from '@/features/product/domain/use-cases/abstract.product-list-by-uuid.use-case';
 import { ProductCreateUseCase } from '@/features/product/application/use-cases/product-create.use-case';
-import { AbstractProductCreateUseCase } from '@/features/product/domain/use-cases/abstract.product-create.use-case';
 import { ProductUpdateUseCase } from '@/features/product/application/use-cases/product-update.use-case';
-import { AbstractProductUpdateUseCase } from '@/features/product/domain/use-cases/abstract.product-update.use-case';
 import { ProductRemoveUseCase } from '@/features/product/application/use-cases/product-remove.use-case';
-import { AbstractProductRemoveUseCase } from '@/features/product/domain/use-cases/abstract.product-remove.use-case';
 import { ProductController } from '@/features/product/presentation/controllers/product.controller';
 import { UploadModule } from '@/upload/infra/modules/upload.module';
 import { ProductCreateService } from '@/features/product/application/services/product-create.service';
-import { AbstractProductCreateService } from '@/features/product/domain/services/abstract.product-create.service';
-import { AbstractProductCreateImageUseCase } from '@/features/product/domain/use-cases/abstract.product-create-image.use-case';
 import { ProductCreateImageUseCase } from '@/features/product/application/use-cases/product-create-image.use-case';
 import { ImageModule } from '@/features/image/infra/modules/image.module';
+import { IProductRemoveUseCase } from '@/features/product/domain/use-cases/product-remove.use-case';
+import { IProductListService } from '@/features/product/domain/services/product-list.service';
+import { IPublicProductListService } from '@/features/product/domain/services/public.product-list.service';
+import { IProductListByUuidService } from '@/features/product/domain/services/product-list-by-uuid.service';
+import { IPublicProductListByUuidService } from '@/features/product/domain/services/public.product-list-by-uuid.service';
+import { IProductCreateService } from '@/features/product/domain/services/product-create.service';
+import { IProductListUseCase } from '@/features/product/domain/use-cases/product-list.use-case';
+import { IProductListByUuidUseCase } from '@/features/product/domain/use-cases/product-list-by-uuid.use-case';
+import { IProductCreateUseCase } from '@/features/product/domain/use-cases/product-create.use-case';
+import { IProductCreateImageUseCase } from '@/features/product/domain/use-cases/product-create-image.use-case';
+import { IProductUpdateUseCase } from '@/features/product/domain/use-cases/product-update.use-case';
 
 @Module({
   imports: [
@@ -60,58 +60,58 @@ import { ImageModule } from '@/features/image/infra/modules/image.module';
 
     ProductListService,
     {
-      provide: AbstractProductListService,
+      provide: IProductListService,
       useExisting: ProductListService,
     },
     PublicProductListService,
     {
-      provide: AbstractPublicProductListService,
+      provide: IPublicProductListService,
       useExisting: PublicProductListService,
     },
     ProductListByUuidService,
     {
-      provide: AbstractProductListByUuidService,
+      provide: IProductListByUuidService,
       useExisting: ProductListByUuidService,
     },
     PublicProductListByUuidService,
     {
-      provide: AbstractPublicProductListByUuidService,
+      provide: IPublicProductListByUuidService,
       useExisting: PublicProductListByUuidService,
     },
     ProductCreateService,
     {
-      provide: AbstractProductCreateService,
+      provide: IProductCreateService,
       useExisting: ProductCreateService,
     },
 
     ProductListUseCase,
     {
-      provide: AbstractProductListUseCase,
+      provide: IProductListUseCase,
       useExisting: ProductListUseCase,
     },
     ProductListByUuidUseCase,
     {
-      provide: AbstractProductListByUuidUseCase,
+      provide: IProductListByUuidUseCase,
       useExisting: ProductListByUuidUseCase,
     },
     ProductCreateUseCase,
     {
-      provide: AbstractProductCreateUseCase,
+      provide: IProductCreateUseCase,
       useExisting: ProductCreateUseCase,
     },
     ProductCreateImageUseCase,
     {
-      provide: AbstractProductCreateImageUseCase,
+      provide: IProductCreateImageUseCase,
       useExisting: ProductCreateImageUseCase,
     },
     ProductUpdateUseCase,
     {
-      provide: AbstractProductUpdateUseCase,
+      provide: IProductUpdateUseCase,
       useExisting: ProductUpdateUseCase,
     },
     ProductRemoveUseCase,
     {
-      provide: AbstractProductRemoveUseCase,
+      provide: IProductRemoveUseCase,
       useExisting: ProductRemoveUseCase,
     },
   ],

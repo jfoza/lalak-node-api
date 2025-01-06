@@ -1,5 +1,4 @@
 import { vi } from 'vitest';
-import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { UUID } from '@/utils/uuid';
@@ -11,7 +10,9 @@ import {
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { CategoryRemoveUseCase } from '@/features/category/application/use-cases/category-remove.use-case';
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
-import { Category } from '@/features/category/domain/core/category';
+import { Category } from '@/features/category/domain/entities/category';
+import { PolicyAdapter } from '@/acl/application/adapters/policy.adapter';
+import { Policy } from '@/acl/domain/value-objects/policy';
 
 describe('CategoryRemoveUseCase Unit Tests', () => {
   let sut: CategoryRemoveUseCase;
@@ -25,9 +26,9 @@ describe('CategoryRemoveUseCase Unit Tests', () => {
 
     sut = new CategoryRemoveUseCase(categoryRepository);
 
-    sut.policy = new Policy();
-
-    sut.policy.abilities = [AbilitiesEnum.CATEGORIES_DELETE];
+    sut.policy = new PolicyAdapter(
+      Policy.create([AbilitiesEnum.CATEGORIES_DELETE]),
+    );
   });
 
   it('Should remove a unique Category', async () => {
@@ -53,7 +54,7 @@ describe('CategoryRemoveUseCase Unit Tests', () => {
 
   it('Should return exception if the category has products', async () => {
     const category: Category = ProductsDataBuilder.getCategory();
-    category.products = [ProductsDataBuilder.getProduct()];
+    category.products = [await ProductsDataBuilder.getProduct()];
 
     vi.spyOn(categoryRepository, 'findByUuid').mockResolvedValue(category);
 
@@ -66,7 +67,7 @@ describe('CategoryRemoveUseCase Unit Tests', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new PolicyAdapter(Policy.create());
 
     await expect(sut.execute(UUID.generate())).rejects.toThrow(
       ForbiddenException,

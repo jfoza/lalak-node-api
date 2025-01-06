@@ -1,6 +1,5 @@
-import { AbstractProductUpdateUseCase } from '@/features/product/domain/use-cases/abstract.product-update.use-case';
 import { ProductUpdateDto } from '@/features/product/application/dto/product-update.dto';
-import { Product } from '@/features/product/domain/core/product';
+import { Product } from '@/features/product/domain/entities/product';
 import { Inject, Injectable } from '@nestjs/common';
 import { Application } from '@/common/application/application';
 import { ProductQueryRepository } from '@/features/product/domain/repositories/product-query.repository';
@@ -8,17 +7,18 @@ import { ProductCommandRepository } from '@/features/product/domain/repositories
 import { CategoryRepository } from '@/features/category/domain/repositories/category.repository';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { ProductValidations } from '@/features/product/application/validations/product.validations';
-import { Category } from '@/features/category/domain/core/category';
+import { Category } from '@/features/category/domain/entities/category';
 import { CategoryValidations } from '@/features/category/application/validations/category.validations';
-import { Event } from '@/features/event/domain/core/event';
+import { Event } from '@/features/event/domain/entities/event';
 import { EventValidations } from '@/features/event/application/validations/event.validations';
-import { Helper } from 'src/utils/helpers';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
+import { IProductUpdateUseCase } from '@/features/product/domain/use-cases/product-update.use-case';
+import { UniqueName } from '@/common/domain/value-objects/unique-name';
 
 @Injectable()
 export class ProductUpdateUseCase
   extends Application
-  implements AbstractProductUpdateUseCase
+  implements IProductUpdateUseCase
 {
   constructor(
     @Inject(ProductQueryRepository)
@@ -72,16 +72,16 @@ export class ProductUpdateUseCase
 
     product.description = productUpdateDto.description;
     product.details = productUpdateDto.details;
-    product.uniqueName = Helper.stringUniqueName(productUpdateDto.description);
+    product.uniqueName = UniqueName.createFrom(productUpdateDto.description);
     product.value = productUpdateDto.value;
     product.quantity = productUpdateDto.quantity;
     product.balance = productUpdateDto.quantity;
-    product.categories = categories;
-    product.events = events;
+    // product.categories = categories;
+    // product.events = events;
 
     await this.productCommandRepository.update(product);
-    await this.productCommandRepository.saveCategories(product);
-    await this.productCommandRepository.saveEvents(product);
+    // await this.productCommandRepository.saveCategories(product);
+    // await this.productCommandRepository.saveEvents(product);
 
     return product;
   }

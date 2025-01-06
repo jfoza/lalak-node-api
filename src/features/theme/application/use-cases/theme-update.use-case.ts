@@ -1,22 +1,22 @@
-import { AbstractThemeUpdateUseCase } from '@/features/theme/domain/use-cases/abstract.theme-update.use-case';
-import { UpdateThemeDto } from '@/features/theme/application/dto/update-theme.dto';
-import { Theme } from '@/features/theme/domain/core/theme';
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
+import { ThemeUpdateDto } from '@/features/theme/application/dto/theme-update.dto';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { Application } from '@/common/application/application';
 import { Injectable } from '@nestjs/common';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { ThemeValidations } from '@/features/theme/application/validations/theme.validations';
+import { IThemeUpdateUseCase } from '@/features/theme/domain/use-cases/theme-update.use-case.interface';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
 
 @Injectable()
 export class ThemeUpdateUseCase
   extends Application
-  implements AbstractThemeUpdateUseCase
+  implements IThemeUpdateUseCase
 {
   constructor(private readonly themeRepository: ThemeRepository) {
     super();
   }
 
-  async execute(uuid: string, updateThemeDto: UpdateThemeDto): Promise<Theme> {
+  async execute(uuid: string, updateThemeDto: ThemeUpdateDto): Promise<Theme> {
     this.policy.can(AbilitiesEnum.THEMES_UPDATE);
 
     const theme = await ThemeValidations.themeExists(

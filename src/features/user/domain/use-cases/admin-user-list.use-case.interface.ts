@@ -1,10 +1,14 @@
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { IAdminUserSearchParamsDto } from '@/features/user/domain/dto/admin-user-search-params.dto.interface';
+import { Person } from '@/features/user/domain/entities/person';
 
 export interface IAdminUserListUseCase {
-  execute(
+  listUserForAdminMaster(
     adminUserSearchParamsDto: IAdminUserSearchParamsDto,
-  ): Promise<ILengthAwarePaginator>;
+  ): Promise<Person[]>;
+
+  listUserForEmployee(
+    adminUserSearchParamsDto: IAdminUserSearchParamsDto,
+  ): Promise<Person[]>;
 }
 
 export const IAdminUserListUseCase = Symbol('IAdminUserListUseCase');

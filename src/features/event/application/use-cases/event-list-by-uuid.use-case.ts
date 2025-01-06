@@ -1,17 +1,20 @@
-import { Event } from '@/features/event/domain/core/event';
+import { Event } from '@/features/event/domain/entities/event';
 import { Application } from '@/common/application/application';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { AbstractEventListByUuidUseCase } from '@/features/event/domain/use-cases/abstract.event-list-by-uuid.use-case';
 import { EventRepository } from '@/features/event/domain/repositories/event.repository';
 import { EventValidations } from '@/features/event/application/validations/event.validations';
+import { IEventListByUuidUseCase } from '@/features/event/domain/use-cases/event-list-by-uuid.use-case';
 
 @Injectable()
 export class EventListByUuidUseCase
   extends Application
-  implements AbstractEventListByUuidUseCase
+  implements IEventListByUuidUseCase
 {
-  constructor(private readonly eventRepository: EventRepository) {
+  constructor(
+    @Inject(EventRepository)
+    private readonly eventRepository: EventRepository,
+  ) {
     super();
   }
 

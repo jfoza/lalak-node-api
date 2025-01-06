@@ -1,19 +1,17 @@
-import { AbstractProductCreateImageUseCase } from '@/features/product/domain/use-cases/abstract.product-create-image.use-case';
-import { Product } from '@/features/product/domain/core/product';
+import { Product } from '@/features/product/domain/entities/product';
 import { File } from '@/upload/domain/entities/file';
 import { Inject, Injectable } from '@nestjs/common';
-import { Image, ImageProps } from '@/features/image/domain/core/image';
-import { AbstractImageRepository } from '@/features/image/domain/repositories/abstract.image.repository';
+import { Image, ImageProps } from '@/features/image/domain/entities/image';
 import { ProductCommandRepository } from '@/features/product/domain/repositories/product-command.repository';
 import { ImageTypeEnum } from '@/utils/enums/image-type.enum';
+import { IProductCreateImageUseCase } from '@/features/product/domain/use-cases/product-create-image.use-case';
+import { IImageRepository } from '@/features/image/domain/repositories/image.repository';
 
 @Injectable()
-export class ProductCreateImageUseCase
-  implements AbstractProductCreateImageUseCase
-{
+export class ProductCreateImageUseCase implements IProductCreateImageUseCase {
   constructor(
-    @Inject(AbstractImageRepository)
-    private readonly imageRepository: AbstractImageRepository,
+    @Inject(IImageRepository)
+    private readonly imageRepository: IImageRepository,
 
     @Inject(ProductCommandRepository)
     private readonly productCommandRepository: ProductCommandRepository,
@@ -29,10 +27,10 @@ export class ProductCreateImageUseCase
       }),
     );
 
-    product.images = images;
+    // product.images = images;
 
     await this.imageRepository.save(images);
-    await this.productCommandRepository.saveImages(product);
+    // await this.productCommandRepository.saveImages(product);
 
     return images;
   }

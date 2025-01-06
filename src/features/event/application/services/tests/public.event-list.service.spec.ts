@@ -1,13 +1,13 @@
 import { beforeEach, vi } from 'vitest';
-import { Event } from '@/features/event/domain/core/event';
+import { Event } from '@/features/event/domain/entities/event';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { PublicEventListService } from '@/features/event/application/services/public.event-list.service';
-import { AbstractEventListUseCase } from '@/features/event/domain/use-cases/abstract.event-list.use-case';
 import { EventSearchParamsDto } from '@/features/event/application/dto/event-search-params.dto';
+import { IEventListUseCase } from '@/features/event/domain/use-cases/event-list.use-case';
 
 describe('PublicEventListService Unit Tests', () => {
   let sut: PublicEventListService;
-  let eventListUseCase: AbstractEventListUseCase;
+  let eventListUseCase: IEventListUseCase;
   let eventSearchParamsDto: EventSearchParamsDto;
 
   const events: Event[] = [ProductsDataBuilder.getEvent()];
@@ -15,7 +15,7 @@ describe('PublicEventListService Unit Tests', () => {
   beforeEach(() => {
     eventListUseCase = {
       execute: vi.fn(async () => events),
-    } as AbstractEventListUseCase;
+    } as IEventListUseCase;
 
     sut = new PublicEventListService(eventListUseCase);
 

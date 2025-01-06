@@ -1,18 +1,19 @@
-import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository';
 import { beforeEach, vi } from 'vitest';
 import { ThemeCreateUseCase } from '@/features/theme/application/use-cases/theme-create.use-case';
-import { Policy } from '@/acl/domain/core/policy';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
-import { Theme } from '@/features/theme/domain/core/theme';
+import { Theme } from '@/features/theme/domain/entities/theme';
 import { ProductsDataBuilder } from '../../../../../../test/unit/products-data-builder';
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { CreateThemeDto } from '@/features/theme/application/dto/create-theme.dto';
+import { ThemeCreateDto } from '@/features/theme/application/dto/theme-create.dto';
+import { PolicyAdapter } from '@/acl/application/adapters/policy.adapter';
+import { Policy } from '@/acl/domain/value-objects/policy';
+import { ThemeRepository } from '@/features/theme/domain/repositories/theme.repository.interface';
 
 describe('ThemeCreateUseCase Unit Tests', () => {
   let sut: ThemeCreateUseCase;
   let themeRepository: ThemeRepository;
-  let createThemeDto: CreateThemeDto;
+  let createThemeDto: ThemeCreateDto;
 
   beforeEach(() => {
     themeRepository = {
@@ -22,12 +23,13 @@ describe('ThemeCreateUseCase Unit Tests', () => {
 
     sut = new ThemeCreateUseCase(themeRepository);
 
-    createThemeDto = new CreateThemeDto();
+    createThemeDto = new ThemeCreateDto();
     createThemeDto.description = 'test';
     createThemeDto.active = true;
 
-    sut.policy = new Policy();
-    sut.policy.abilities = [AbilitiesEnum.THEMES_INSERT];
+    sut.policy = new PolicyAdapter(
+      Policy.create([AbilitiesEnum.THEMES_INSERT]),
+    );
   });
 
   it('Should create a theme', async () => {
@@ -57,7 +59,7 @@ describe('ThemeCreateUseCase Unit Tests', () => {
   });
 
   it('Should return exception if user has not permission', async () => {
-    sut.policy.abilities = ['ABC'];
+    sut.policy = new PolicyAdapter(Policy.create());
 
     await expect(sut.execute(createThemeDto)).rejects.toThrow(
       ForbiddenException,

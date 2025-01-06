@@ -1,21 +1,19 @@
 import { ProductSearchParamsDto } from '@/features/product/application/dto/product-search-params.dto';
-import { ILengthAwarePaginator } from '@/common/domain/interfaces/length-aware-paginator.interface';
 import { Inject, Injectable } from '@nestjs/common';
-import { AbstractProductListUseCase } from '@/features/product/domain/use-cases/abstract.product-list.use-case';
-import { AbstractPublicProductListService } from '@/features/product/domain/services/abstract.public.product-list.service';
+import { IPublicProductListService } from '@/features/product/domain/services/public.product-list.service';
+import { IProductListUseCase } from '@/features/product/domain/use-cases/product-list.use-case';
+import { Product } from '@/features/product/domain/entities/product';
 
 @Injectable()
-export class PublicProductListService
-  implements AbstractPublicProductListService
-{
+export class PublicProductListService implements IPublicProductListService {
   constructor(
-    @Inject(AbstractProductListUseCase)
-    private readonly productListUseCase: AbstractProductListUseCase,
+    @Inject(IProductListUseCase)
+    private readonly productListUseCase: IProductListUseCase,
   ) {}
 
   async handle(
     productSearchParamsDto: ProductSearchParamsDto,
-  ): Promise<ILengthAwarePaginator> {
+  ): Promise<Product[]> {
     return await this.productListUseCase.execute(productSearchParamsDto);
   }
 }
