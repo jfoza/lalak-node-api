@@ -1,23 +1,23 @@
 import { IAdminUserUpdateUseCase } from '@/features/user/domain/use-cases/admin-user-update.use-case.interface';
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { IAdminUserUpdateDto } from '@/features/user/domain/dto/admin-user-update.dto.interface';
-import { Person } from '@/features/user/domain/entities/person';
 import { AdminUserValidations } from '@/features/user/application/validations/admin-user.validations';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { AdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
 import { ShortName } from '@/common/domain/value-objects/short-name';
 import { Name } from '@/common/domain/value-objects/name';
 import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 import { Profile } from '@/features/user/domain/entities/profile';
 import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository';
+import { User } from '@/features/user/domain/entities/user';
 
 type TDataBuilder = {
   uuid: string;
-  person: Person;
+  user: User;
   profile: Profile;
   updateAdminUserDto: IAdminUserUpdateDto;
 };
@@ -25,11 +25,11 @@ type TDataBuilder = {
 @Injectable()
 export class AdminUserUpdateUseCase implements IAdminUserUpdateUseCase {
   constructor(
-    @Inject(PersonAdminUserRepository)
-    private readonly personAdminUserRepository: PersonAdminUserRepository,
+    @Inject(AdminUserRepository)
+    private readonly personAdminUserRepository: AdminUserRepository,
 
-    @Inject(PersonUserRepository)
-    private readonly personUserRepository: PersonUserRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
 
     @Inject(ProfileRepository)
     private readonly profileRepository: ProfileRepository,
@@ -38,8 +38,8 @@ export class AdminUserUpdateUseCase implements IAdminUserUpdateUseCase {
   async updateUserForAdminMaster(
     uuid: string,
     updateAdminUserDto: IAdminUserUpdateDto,
-  ): Promise<Person> {
-    const person = await this.getUserOrFail(
+  ): Promise<User> {
+    const user = await this.getUserOrFail(
       uuid,
       ProfileUniqueNameEnum.ADMIN_USERS,
     );
@@ -52,7 +52,7 @@ export class AdminUserUpdateUseCase implements IAdminUserUpdateUseCase {
     const dataBuilder: TDataBuilder = {
       uuid,
       updateAdminUserDto,
-      person,
+      user,
       profile,
     };
 
@@ -62,8 +62,8 @@ export class AdminUserUpdateUseCase implements IAdminUserUpdateUseCase {
   async updateUserForEmployee(
     uuid: string,
     updateAdminUserDto: IAdminUserUpdateDto,
-  ): Promise<Person> {
-    const person = await this.getUserOrFail(
+  ): Promise<User> {
+    const user = await this.getUserOrFail(
       uuid,
       ProfileUniqueNameEnum.EMPLOYEE_USERS,
     );
@@ -76,35 +76,30 @@ export class AdminUserUpdateUseCase implements IAdminUserUpdateUseCase {
     const dataBuilder: TDataBuilder = {
       uuid,
       updateAdminUserDto,
-      person,
+      user,
       profile,
     };
 
     return await this.update(dataBuilder);
   }
 
-  private async getUserOrFail(
-    uuid: string,
-    haystack: string[],
-  ): Promise<Person> {
-    const person = await AdminUserValidations.adminUserExistsByUserUuid(
+  private async getUserOrFail(uuid: string, haystack: string[]): Promise<User> {
+    const user = await AdminUserValidations.adminUserExistsByUserUuid(
       uuid,
       this.personAdminUserRepository,
     );
 
-    const { user } = person;
-
     await UserValidations.userAlreadyExistsByEmailInUpdate(
       uuid,
       user.email,
-      this.personUserRepository,
+      this.userRepository,
     );
 
     if (!haystack.includes(user.profile.uniqueName)) {
       throw new ForbiddenException(ErrorMessagesEnum.USER_NOT_ALLOWED);
     }
 
-    return person;
+    return user;
   }
 
   private async getProfileOrFail(
@@ -123,19 +118,17 @@ export class AdminUserUpdateUseCase implements IAdminUserUpdateUseCase {
     return profile;
   }
 
-  private async update(dataBuilder: TDataBuilder): Promise<Person> {
-    const { person, updateAdminUserDto } = dataBuilder;
+  private async update(dataBuilder: TDataBuilder): Promise<User> {
+    const { user, updateAdminUserDto } = dataBuilder;
 
-    person.name = Name.createFrom(updateAdminUserDto.name);
-    person.shortName = ShortName.createFrom(updateAdminUserDto.name);
+    user.person.name = Name.createFrom(updateAdminUserDto.name);
+    user.person.shortName = ShortName.createFrom(updateAdminUserDto.name);
 
-    person.user.email = updateAdminUserDto.email;
-    person.user.profileUuid = UniqueEntityId.create(
-      updateAdminUserDto.profileUuid,
-    );
+    user.email = updateAdminUserDto.email;
+    user.profileUuid = UniqueEntityId.create(updateAdminUserDto.profileUuid);
 
-    await this.personAdminUserRepository.update(person);
+    await this.personAdminUserRepository.update(user);
 
-    return person;
+    return user;
   }
 }

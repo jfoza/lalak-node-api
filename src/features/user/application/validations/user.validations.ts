@@ -1,16 +1,16 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { UserToken } from '@/features/user/domain/entities/user-token';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
-import { Person } from '@/features/user/domain/entities/person';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { UserTokenRepository } from '@/features/user/domain/repositories/user-token.repository';
+import { User } from '@/features/user/domain/entities/user';
 
 export class UserValidations {
   static async userExistsByUuid(
     uuid: string,
-    personUserRepository: PersonUserRepository,
-  ): Promise<Person> {
-    const user = await personUserRepository.findByUuid(uuid);
+    userRepository: UserRepository,
+  ): Promise<User> {
+    const user = await userRepository.findUserByUuid(uuid);
 
     if (!user) {
       throw new NotFoundException(ErrorMessagesEnum.USER_NOT_FOUND);
@@ -21,9 +21,9 @@ export class UserValidations {
 
   static async userExistsByEmail(
     email: string,
-    personUserRepository: PersonUserRepository,
-  ): Promise<Person> {
-    const user = await personUserRepository.findByEmail(email);
+    userRepository: UserRepository,
+  ): Promise<User> {
+    const user = await userRepository.findUserByEmail(email);
 
     if (!user) {
       throw new NotFoundException(ErrorMessagesEnum.USER_NOT_FOUND);
@@ -34,9 +34,9 @@ export class UserValidations {
 
   static async userAlreadyExistsByEmail(
     email: string,
-    personUserRepository: PersonUserRepository,
+    userRepository: UserRepository,
   ): Promise<void> {
-    if (await personUserRepository.findByEmail(email)) {
+    if (await userRepository.findUserByEmail(email)) {
       throw new ConflictException(ErrorMessagesEnum.EMAIL_ALREADY_EXISTS);
     }
   }
@@ -44,9 +44,9 @@ export class UserValidations {
   static async userAlreadyExistsByEmailInUpdate(
     uuid: string,
     email: string,
-    personUserRepository: PersonUserRepository,
+    userRepository: UserRepository,
   ): Promise<void> {
-    const user = await personUserRepository.findByEmail(email);
+    const user = await userRepository.findUserByEmail(email);
 
     if (user && user.uuid !== uuid) {
       throw new ConflictException(ErrorMessagesEnum.EMAIL_ALREADY_EXISTS);

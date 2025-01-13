@@ -1,11 +1,11 @@
 import { UUID } from '@/utils/uuid';
-import { CityMapper } from '@/features/city/infra/database/typeorm/mappers/city.mapper';
+import { TypeormCityMapper } from '@/features/city/infra/database/typeorm/mappers/typeorm.city.mapper';
 import { CityEntity } from '@/features/city/infra/database/typeorm/entities/city.entity';
 import { BrazilianStates } from '@/utils/enums/brazilian-states.enum';
 import { City } from '@/features/city/domain/entities/city';
 
 describe('CityMapper Unit Tests', () => {
-  let sut: CityMapper;
+  let sut: TypeormCityMapper;
 
   const cityEntity: CityEntity = Object.assign({
     uuid: UUID.generate(),
@@ -15,7 +15,7 @@ describe('CityMapper Unit Tests', () => {
   } as CityEntity);
 
   beforeEach(async () => {
-    sut = new CityMapper();
+    sut = new TypeormCityMapper();
   });
 
   it('from method should return AdminUser class instance', async () => {
@@ -47,31 +47,33 @@ describe('CityMapper Unit Tests', () => {
   });
 
   it('toDomain method should return ThemeMapper class instance', async () => {
-    const result = CityMapper.toDomain;
+    const result = TypeormCityMapper.toDomain;
 
-    expect(result).toBeInstanceOf(CityMapper);
+    expect(result).toBeInstanceOf(TypeormCityMapper);
   });
 
   it('toDomain from method should return Ability class instance', async () => {
-    const result = await CityMapper.toDomain.from(cityEntity);
+    const result = await TypeormCityMapper.toDomain.from(cityEntity);
 
     expect(result).toBeInstanceOf(City);
   });
 
   it('toDomain optional method should return AdminUser class instance', async () => {
-    const result = await CityMapper.toDomain.optional(cityEntity);
+    const result = await TypeormCityMapper.toDomain.optional(cityEntity);
 
     expect(result).toBeInstanceOf(City);
   });
 
   it('toDomain optional method should return null', async () => {
-    const result = await CityMapper.toDomain.optional(undefined);
+    const result = await TypeormCityMapper.toDomain.optional(undefined);
 
     expect(result).toBeNull();
   });
 
   it('toDomain collection method should return Ability class instance', async () => {
-    const result: City[] = await CityMapper.toDomain.collection([cityEntity]);
+    const result: City[] = await TypeormCityMapper.toDomain.collection([
+      cityEntity,
+    ]);
 
     expect(Array.isArray(result)).toBe(true);
     result.forEach((city) => {

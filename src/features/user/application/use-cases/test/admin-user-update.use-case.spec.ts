@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { AdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 import { Person } from '@/features/user/domain/entities/person';
 import { UUID } from '@/utils/uuid';
@@ -9,7 +9,7 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
 import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
 import { AdminUserCreateDto } from '@/features/user/application/dto/admin-user-create.dto';
@@ -17,8 +17,8 @@ import { AdminUserUpdateUseCase } from '@/features/user/application/use-cases/ad
 
 describe('AdminUserUpdateUseCase Unit Tests', async () => {
   let sut: AdminUserUpdateUseCase;
-  let personAdminUserRepository: PersonAdminUserRepository;
-  let personUserRepository: PersonUserRepository;
+  let personAdminUserRepository: AdminUserRepository;
+  let personUserRepository: UserRepository;
   let profileRepository: ProfileRepository;
   let createAdminUserDto: IAdminUserCreateDto;
   const uuid: string = UUID.generate();
@@ -27,11 +27,11 @@ describe('AdminUserUpdateUseCase Unit Tests', async () => {
     personAdminUserRepository = {
       findByUuid: vi.fn(() => null),
       update: vi.fn(() => null),
-    } as unknown as PersonAdminUserRepository;
+    } as unknown as AdminUserRepository;
 
     personUserRepository = {
       findByEmail: vi.fn(() => null),
-    } as unknown as PersonUserRepository;
+    } as unknown as UserRepository;
 
     profileRepository = {
       findByUuid: vi.fn(() => null),

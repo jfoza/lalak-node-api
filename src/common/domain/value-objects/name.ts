@@ -2,8 +2,12 @@ import { SimpleValueObject } from '@/common/domain/value-objects/simple-value-ob
 import { Helper } from '@/utils/helpers';
 
 export class Name extends SimpleValueObject<string> {
-  private constructor(private readonly value: string) {
+  protected value: string;
+
+  private constructor(value: string) {
     super();
+
+    this.value = value;
   }
 
   toValue(): string {

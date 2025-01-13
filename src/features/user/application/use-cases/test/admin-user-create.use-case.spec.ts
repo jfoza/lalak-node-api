@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { AdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 import { Person } from '@/features/user/domain/entities/person';
 import { UUID } from '@/utils/uuid';
@@ -10,15 +10,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AdminUserCreateUseCase } from '@/features/user/application/use-cases/admin-user-create.use-case';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository.interface';
 import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
 import { AdminUserCreateDto } from '@/features/user/application/dto/admin-user-create.dto';
 
 describe('AdminUserCreateUseCase Unit Tests', async () => {
   let sut: AdminUserCreateUseCase;
-  let personAdminUserRepository: PersonAdminUserRepository;
-  let personUserRepository: PersonUserRepository;
+  let personAdminUserRepository: AdminUserRepository;
+  let personUserRepository: UserRepository;
   let profileRepository: ProfileRepository;
   let createAdminUserDto: IAdminUserCreateDto;
 
@@ -26,11 +26,11 @@ describe('AdminUserCreateUseCase Unit Tests', async () => {
     personAdminUserRepository = {
       findByUuid: vi.fn(() => null),
       create: vi.fn(() => null),
-    } as unknown as PersonAdminUserRepository;
+    } as unknown as AdminUserRepository;
 
     personUserRepository = {
       findByEmail: vi.fn(() => null),
-    } as unknown as PersonUserRepository;
+    } as unknown as UserRepository;
 
     profileRepository = {
       findByUuid: vi.fn(() => null),

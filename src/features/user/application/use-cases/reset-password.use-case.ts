@@ -4,14 +4,14 @@ import { isAfter, addHours } from 'date-fns';
 import { Hash } from '@/utils/hash';
 import { IResetPasswordUseCase } from '@/features/user/domain/use-cases/reset-password.use-case.interface';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { UserTokenRepository } from '@/features/user/domain/repositories/user-token.repository';
 
 @Injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
-    @Inject(PersonUserRepository)
-    private readonly personUserRepository: PersonUserRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
 
     @Inject(UserTokenRepository)
     private readonly userTokenRepository: UserTokenRepository,
@@ -25,7 +25,7 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
 
     const user = await UserValidations.userExistsByUuid(
       userToken.userUuid,
-      this.personUserRepository,
+      this.userRepository,
     );
 
     const compareDate = addHours(userToken.createdAt, 2);
@@ -36,6 +36,6 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
 
     const newPasswordAux = await Hash.create(newPassword);
 
-    await this.personUserRepository.updatePassword(user.uuid, newPasswordAux);
+    await this.userRepository.updateUserPassword(user.uuid, newPasswordAux);
   }
 }

@@ -13,8 +13,8 @@ import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/p
 import { AdminUserEntity } from '@/features/user/infra/database/typeorm/entities/admin-user.entity';
 import { AmqpModule } from '@/amqp/infra/modules/amqp.module';
 import { MailModule } from '@/mail/infra/modules/mail.module';
-import { AdminUserController } from '@/features/user/presentation/controllers/admin-user.controller';
-import { ForgotPasswordController } from '@/features/user/presentation/controllers/forgot-password.controller';
+import { AdminUserController } from '@/features/user/presentation/http/controllers/admin-user.controller';
+import { ForgotPasswordController } from '@/features/user/presentation/http/controllers/forgot-password.controller';
 import { SendForgotPasswordEmailJob } from '../../application/jobs/send-forgot-password-email.job';
 import { UserListByEmailLoginUseCase } from '@/features/user/application/use-cases/user-list-by-email-login.use-case';
 import { AdminUserListUseCase } from '@/features/user/application/use-cases/admin-user-list.use-case';
@@ -29,10 +29,10 @@ import { AdminUserCreateService } from '@/features/user/application/services/adm
 import { AdminUserListByUuidService } from '@/features/user/application/services/admin-user-list-by-uuid.service';
 import { IAdminUserListByUuidService } from '@/features/user/domain/services/admin-user-list-by-uuid.service';
 import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository';
-import { TypeormPersonAdminUserRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.person-admin-user.repository';
-import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
-import { TypeormPersonUserRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.person-user.repository';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { TypeormAdminUserRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.admin-user.repository';
+import { AdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository';
+import { TypeormUserRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.user.repository';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { TypeormProfileRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.profile.repository';
 import { TypeormUserTokenRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.user-token.repository';
 import { UserTokenRepository } from '@/features/user/domain/repositories/user-token.repository';
@@ -40,6 +40,9 @@ import { AdminUserListService } from '@/features/user/application/services/admin
 import { IAdminUserListService } from '@/features/user/domain/services/admin-user-list.service';
 import { AdminUserUpdateService } from '@/features/user/application/services/admin-user-update.service';
 import { IAdminUserUpdateService } from '@/features/user/domain/services/admin-user-update.service';
+import { IAdminUserListByUuidUseCase } from '@/features/user/domain/use-cases/admin-user-list-by-uuid.use-case.interface';
+import { AdminUserListByUuidUseCase } from '@/features/user/application/use-cases/admin-user-list-by-uuid.use-case';
+import { CustomerEntity } from '@/features/user/infra/database/typeorm/entities/customer.entity';
 
 @Module({
   imports: [
@@ -49,6 +52,7 @@ import { IAdminUserUpdateService } from '@/features/user/domain/services/admin-u
       UserEntity,
       UserTokenEntity,
       AdminUserEntity,
+      CustomerEntity,
     ]),
     AmqpModule,
     MailModule,
@@ -59,16 +63,16 @@ import { IAdminUserUpdateService } from '@/features/user/domain/services/admin-u
   providers: [
     SendForgotPasswordEmailJob,
 
-    TypeormPersonAdminUserRepository,
+    TypeormAdminUserRepository,
     {
-      provide: PersonAdminUserRepository,
-      useClass: TypeormPersonAdminUserRepository,
+      provide: AdminUserRepository,
+      useClass: TypeormAdminUserRepository,
     },
 
-    TypeormPersonUserRepository,
+    TypeormUserRepository,
     {
-      provide: PersonUserRepository,
-      useClass: TypeormPersonUserRepository,
+      provide: UserRepository,
+      useClass: TypeormUserRepository,
     },
 
     TypeormProfileRepository,
@@ -87,6 +91,12 @@ import { IAdminUserUpdateService } from '@/features/user/domain/services/admin-u
     {
       provide: IAdminUserListService,
       useClass: AdminUserListService,
+    },
+
+    AdminUserListByUuidService,
+    {
+      provide: IAdminUserListByUuidService,
+      useExisting: AdminUserListByUuidService,
     },
 
     AdminUserCreateService,
@@ -113,10 +123,10 @@ import { IAdminUserUpdateService } from '@/features/user/domain/services/admin-u
       useExisting: AdminUserListUseCase,
     },
 
-    AdminUserListByUuidService,
+    AdminUserListByUuidUseCase,
     {
-      provide: IAdminUserListByUuidService,
-      useExisting: AdminUserListByUuidService,
+      provide: IAdminUserListByUuidUseCase,
+      useExisting: AdminUserListByUuidUseCase,
     },
 
     AdminUserCreateUseCase,
@@ -145,8 +155,8 @@ import { IAdminUserUpdateService } from '@/features/user/domain/services/admin-u
   ],
   exports: [
     SendForgotPasswordEmailJob,
-    PersonAdminUserRepository,
-    PersonUserRepository,
+    AdminUserRepository,
+    UserRepository,
     ProfileRepository,
     IUserListByEmailLoginUseCase,
   ],

@@ -1,7 +1,7 @@
-import { Person } from '@/features/user/domain/entities/person';
+import { User } from '@/features/user/domain/entities/user';
 
 export interface ICustomerListByUuidService {
-  execute(userUuid: string): Promise<Person>;
+  execute(userUuid: string): Promise<User>;
 }
 
 export const ICustomerListByUuidService = Symbol('ICustomerListByUuidService');

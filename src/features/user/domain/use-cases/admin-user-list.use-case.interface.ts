@@ -1,14 +1,14 @@
 import { IAdminUserSearchParamsDto } from '@/features/user/domain/dto/admin-user-search-params.dto.interface';
-import { Person } from '@/features/user/domain/entities/person';
+import { User } from '@/features/user/domain/entities/user';
 
 export interface IAdminUserListUseCase {
   listUserForAdminMaster(
     adminUserSearchParamsDto: IAdminUserSearchParamsDto,
-  ): Promise<Person[]>;
+  ): Promise<User[]>;
 
   listUserForEmployee(
     adminUserSearchParamsDto: IAdminUserSearchParamsDto,
-  ): Promise<Person[]>;
+  ): Promise<User[]>;
 }
 
 export const IAdminUserListUseCase = Symbol('IAdminUserListUseCase');

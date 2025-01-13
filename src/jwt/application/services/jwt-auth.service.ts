@@ -1,22 +1,19 @@
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { Injectable, Scope } from '@nestjs/common';
 import { JwtVerifyOptions } from '@nestjs/jwt/dist/interfaces';
-import { IJwtAuthService } from '@/jwt/domain/services/jwt-auth.service.interface';
-import { PersonAuthUser } from '@/features/user/domain/entities/person-auth-user';
-
-export interface IJwtToken {
-  token: string;
-  type: string;
-  expiration: number;
-}
+import {
+  IJwtAuthService,
+  IJwtToken,
+} from '@/jwt/domain/services/jwt-auth.service.interface';
+import { IAuthUser } from '@/features/auth/domain/services/login.service.interface';
 
 @Injectable({ scope: Scope.REQUEST })
 export class JwtAuthService implements IJwtAuthService {
-  private authUser: PersonAuthUser;
+  private authUser: IAuthUser;
 
   constructor(private readonly nestJwtService: NestJwtService) {}
 
-  get user(): PersonAuthUser | null {
+  get user(): IAuthUser | null {
     if (!this.authUser) {
       return null;
     }
@@ -24,8 +21,52 @@ export class JwtAuthService implements IJwtAuthService {
     return this.authUser;
   }
 
-  set user(personAuthUser: PersonAuthUser) {
-    this.authUser = personAuthUser;
+  set user(authUser: IAuthUser) {
+    const {
+      userUuid,
+      name,
+      email,
+      password,
+      shortName,
+      profileUuid,
+      profileDescription,
+      profileUniqueName,
+      active,
+      createdAt,
+      birthDate,
+      phone,
+      zipCode,
+      address,
+      numberAddress,
+      complement,
+      district,
+      uf,
+      cityUuid,
+      cityDescription,
+    } = authUser;
+
+    this.authUser = {
+      userUuid,
+      name,
+      email,
+      password,
+      shortName,
+      profileUuid,
+      profileDescription,
+      profileUniqueName,
+      active,
+      createdAt,
+      birthDate,
+      phone,
+      zipCode,
+      address,
+      numberAddress,
+      complement,
+      district,
+      uf,
+      cityUuid,
+      cityDescription,
+    };
   }
 
   sign(payload: Buffer | object): IJwtToken {

@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { AdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
 import { Person } from '@/features/user/domain/entities/person';
 import { AdminUserListByUuidUseCase } from '@/features/user/application/use-cases/admin-user-list-by-uuid.use-case';
@@ -9,12 +9,12 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 
 describe('AdminUserListByUuidUseCase Unit Tests', () => {
   let sut: AdminUserListByUuidUseCase;
-  let personAdminUserRepository: PersonAdminUserRepository;
+  let personAdminUserRepository: AdminUserRepository;
 
   beforeEach(() => {
     personAdminUserRepository = {
       findByUuid: vi.fn(async () => await UserDataBuilder.getPerson()),
-    } as unknown as PersonAdminUserRepository;
+    } as unknown as AdminUserRepository;
 
     sut = new AdminUserListByUuidUseCase(personAdminUserRepository);
   });

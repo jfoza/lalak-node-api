@@ -10,19 +10,19 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
 import { UUID } from '@/utils/uuid';
 import { UserDataBuilder } from '../../../../../../test/unit/user-data-builder';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
 describe('Send Forgot Password Email UseCase', () => {
   let sut: ResetPasswordUseCase;
-  let personUserRepository: PersonUserRepository;
+  let personUserRepository: UserRepository;
   let userTokenRepository: IUserTokenRepository;
 
   beforeEach(async () => {
     personUserRepository = {
       findByEmail: vi.fn(async () => null),
       updatePassword: vi.fn(),
-    } as unknown as PersonUserRepository;
+    } as unknown as UserRepository;
 
     userTokenRepository = {
       findByToken: vi.fn(async () => null),

@@ -22,9 +22,9 @@ import { ProductCreateDto } from '@/features/product/application/dto/product-cre
 import { ProductUpdateDto } from '@/features/product/application/dto/product-update.dto';
 import { FileDto } from '@/upload/application/dto/file.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
+import { ZodValidationPipe } from '@/common/presentation/http/zod/validation-pipes/zod.validation-pipe';
 import { productSearchParamsDtoSchema } from '@/features/product/presentation/zod/schemas';
-import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
+import { TPaginationOrder } from '@/common/presentation/http/types/pagination-order.type';
 import { IProductRemoveUseCase } from '@/features/product/domain/use-cases/product-remove.use-case';
 import { IProductListService } from '@/features/product/domain/services/product-list.service';
 import { IProductListByUuidService } from '@/features/product/domain/services/product-list-by-uuid.service';

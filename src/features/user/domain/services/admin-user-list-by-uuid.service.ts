@@ -1,7 +1,7 @@
-import { Person } from '@/features/user/domain/entities/person';
+import { User } from '@/features/user/domain/entities/user';
 
 export interface IAdminUserListByUuidService {
-  handle(uuid: string): Promise<Person>;
+  handle(uuid: string): Promise<User>;
 }
 
 export const IAdminUserListByUuidService = Symbol(

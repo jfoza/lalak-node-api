@@ -2,7 +2,7 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { IAclRepository } from '@/acl/domain/repositories/acl.repository.interface';
 import { IAclService } from '@/acl/domain/services/acl.service.interface';
 import { IJwtAuthService } from '@/jwt/domain/services/jwt-auth.service.interface';
-import { PersonAuthUser } from '@/features/user/domain/entities/person-auth-user';
+import { IAuthUser } from '@/features/auth/domain/services/login.service.interface';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AclService implements IAclService {
@@ -15,10 +15,8 @@ export class AclService implements IAclService {
   ) {}
 
   async execute(): Promise<string[]> {
-    const personAuthUser: PersonAuthUser = this.jwtAuthService.user;
+    const user: IAuthUser = this.jwtAuthService.user;
 
-    return await this.aclRepository.findDescriptionByUserUuid(
-      personAuthUser.uuid,
-    );
+    return await this.aclRepository.findDescriptionByUserUuid(user.userUuid);
   }
 }

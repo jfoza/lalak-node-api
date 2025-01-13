@@ -1,8 +1,8 @@
-import { Person } from '@/features/user/domain/entities/person';
+import { User } from '@/features/user/domain/entities/user';
 
 export interface IAdminUserListByUuidUseCase {
-  listUserForAdminMaster(uuid: string): Promise<Person>;
-  listUserForEmployee(uuid: string): Promise<Person>;
+  listUserForAdminMaster(uuid: string): Promise<User>;
+  listUserForEmployee(uuid: string): Promise<User>;
 }
 
 export const IAdminUserListByUuidUseCase = Symbol(

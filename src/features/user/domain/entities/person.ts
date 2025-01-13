@@ -6,7 +6,6 @@ import { Phone } from '@/common/domain/value-objects/phone';
 import { ZipCode } from '@/common/domain/value-objects/zip-code';
 import { Address } from '@/common/domain/value-objects/address';
 import { AggregateRoot } from '@/common/domain/entities/aggregate-root';
-import { User } from '@/features/user/domain/entities/user';
 import { Name } from '@/common/domain/value-objects/name';
 import { Uf } from '@/common/domain/value-objects/uf';
 
@@ -25,7 +24,6 @@ export type PersonProps = {
   active: boolean;
   createdAt?: Date;
   city?: City;
-  user?: User;
 };
 
 export class Person extends AggregateRoot<PersonProps> {
@@ -89,10 +87,6 @@ export class Person extends AggregateRoot<PersonProps> {
     return this.props.createdAt;
   }
 
-  get user(): User {
-    return this.props.user;
-  }
-
   get city(): City {
     return this.props.city;
   }
@@ -147,10 +141,6 @@ export class Person extends AggregateRoot<PersonProps> {
 
   set city(city: City) {
     this.props.city = city;
-  }
-
-  set user(user: User) {
-    this.props.user = user;
   }
 
   static create(props: PersonProps, uniqueEntityId?: UniqueEntityId): Person {

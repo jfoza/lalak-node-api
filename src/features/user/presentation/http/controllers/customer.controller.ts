@@ -13,15 +13,15 @@ import {
 import { AuthGuard } from '@/features/auth/infra/config/auth.guard';
 import { customerSearchParamsDto } from '@/features/user/application/dto/customer-search-params.dto';
 import { CustomerUpdateDto } from '@/features/user/application/dto/customer-update.dto';
-import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
-import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
+import { ZodValidationPipe } from '@/common/presentation/http/zod/validation-pipes/zod.validation-pipe';
+import { TPaginationOrder } from '@/common/presentation/http/types/pagination-order.type';
 import { ICustomerListService } from '@/features/user/domain/services/customer-list.service';
 import { ICustomerListByUuidService } from '@/features/user/domain/services/customer-list-by-uuid.service';
 import { ICustomerCreateService } from '@/features/user/domain/services/customer-create.service';
 import { ICustomerUpdateService } from '@/features/user/domain/services/customer-update.service';
-import { customerSearchParamsDtoSchema } from '@/features/user/presentation/zod/schemas';
-import { Person } from '@/features/user/domain/entities/person';
+import { customerSearchParamsDtoSchema } from '@/features/user/presentation/http/zod/schemas';
 import { CustomerCreateDto } from '@/features/user/application/dto/create-customer.dto';
+import { User } from '@/features/user/domain/entities/user';
 
 type TCustomerSearchParams = {
   name?: string;
@@ -47,7 +47,7 @@ export class CustomerController {
   async index(
     @Query(new ZodValidationPipe(customerSearchParamsDtoSchema))
     query: TCustomerSearchParams,
-  ): Promise<Person[]> {
+  ): Promise<User[]> {
     customerSearchParamsDto.name = query.name;
     customerSearchParamsDto.email = query.email;
 
@@ -60,14 +60,12 @@ export class CustomerController {
   }
 
   @Get(':uuid')
-  async show(
-    @Param('uuid', new ParseUUIDPipe()) uuid: string,
-  ): Promise<Person> {
+  async show(@Param('uuid', new ParseUUIDPipe()) uuid: string): Promise<User> {
     return await this.customerListByUuidService.execute(uuid);
   }
 
   @Post()
-  async insert(@Body() createCustomerDto: CustomerCreateDto): Promise<Person> {
+  async insert(@Body() createCustomerDto: CustomerCreateDto): Promise<User> {
     return await this.customerCreateService.execute(createCustomerDto);
   }
 
@@ -75,7 +73,7 @@ export class CustomerController {
   async update(
     @Param('uuid', new ParseUUIDPipe()) uuid: string,
     @Body() updateCustomerDto: CustomerUpdateDto,
-  ): Promise<Person> {
+  ): Promise<User> {
     return await this.customerUpdateService.execute(uuid, updateCustomerDto);
   }
 }

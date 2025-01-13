@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerEntity } from '@/features/user/infra/database/typeorm/entities/customer.entity';
 import { UserEntity } from '@/features/user/infra/database/typeorm/entities/user.entity';
-import { CustomerController } from '@/features/user/presentation/controllers/customer.controller';
+import { CustomerController } from '@/features/user/presentation/http/controllers/customer.controller';
 import { PersonEntity } from '@/features/user/infra/database/typeorm/entities/person.entity';
 import { ProfileEntity } from '@/features/user/infra/database/typeorm/entities/profile.entity';
 import { CityModule } from '@/features/city/infra/modules/city.module';
@@ -15,8 +15,8 @@ import { ICustomerListService } from '@/features/user/domain/services/customer-l
 import { ICustomerListByUuidService } from '@/features/user/domain/services/customer-list-by-uuid.service';
 import { ICustomerCreateService } from '@/features/user/domain/services/customer-create.service';
 import { ICustomerUpdateService } from '@/features/user/domain/services/customer-update.service';
-import { TypeormPersonCustomerRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.person-customer.repository';
-import { PersonCustomerRepository } from '@/features/user/domain/repositories/person-customer.repository';
+import { TypeormCustomerRepository } from '@/features/user/infra/database/typeorm/repositories/typeorm.customer.repository';
+import { CustomerRepository } from '@/features/user/domain/repositories/customer.repository';
 
 @Module({
   imports: [
@@ -31,10 +31,10 @@ import { PersonCustomerRepository } from '@/features/user/domain/repositories/pe
   ],
   controllers: [CustomerController],
   providers: [
-    TypeormPersonCustomerRepository,
+    TypeormCustomerRepository,
     {
-      provide: PersonCustomerRepository,
-      useClass: TypeormPersonCustomerRepository,
+      provide: CustomerRepository,
+      useClass: TypeormCustomerRepository,
     },
 
     CustomerListService,
@@ -61,6 +61,6 @@ import { PersonCustomerRepository } from '@/features/user/domain/repositories/pe
       useClass: CustomerUpdateService,
     },
   ],
-  exports: [PersonCustomerRepository],
+  exports: [CustomerRepository],
 })
 export class CustomerModule {}

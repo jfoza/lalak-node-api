@@ -1,19 +1,19 @@
 import { NotFoundException } from '@nestjs/common';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { Person } from '@/features/user/domain/entities/person';
-import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { AdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository';
+import { User } from '@/features/user/domain/entities/user';
 
 export class AdminUserValidations {
   static async adminUserExistsByUserUuid(
     uuid: string,
-    personAdminUserRepository: PersonAdminUserRepository,
-  ): Promise<Person> {
-    const person = await personAdminUserRepository.findByUuid(uuid);
+    personAdminUserRepository: AdminUserRepository,
+  ): Promise<User> {
+    const user = await personAdminUserRepository.findByUuid(uuid);
 
-    if (!person) {
+    if (!user) {
       throw new NotFoundException(ErrorMessagesEnum.USER_NOT_FOUND);
     }
 
-    return person;
+    return user;
   }
 }

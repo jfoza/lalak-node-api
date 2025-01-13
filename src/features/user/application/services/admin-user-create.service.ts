@@ -1,10 +1,10 @@
 import { IAdminUserCreateService } from '@/features/user/domain/services/admin-user-create.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-user-create.use-case.interface';
-import { Person } from '@/features/user/domain/entities/person';
 import { AbilitiesEnum } from '@/utils/enums/abilities.enum';
 import { Application } from '@/common/application/application';
 import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
+import { User } from '@/features/user/domain/entities/user';
 
 @Injectable()
 export class AdminUserCreateService
@@ -18,10 +18,10 @@ export class AdminUserCreateService
     super();
   }
 
-  async handle(adminUserCreateDto: IAdminUserCreateDto): Promise<Person> {
+  async handle(adminUserCreateDto: IAdminUserCreateDto): Promise<User> {
     const policy = this.policy;
 
-    return policy.match<Person>([
+    return policy.match<User>([
       {
         has: policy.has(AbilitiesEnum.ADMIN_USERS_ADMIN_MASTER_INSERT),
         action: async () =>

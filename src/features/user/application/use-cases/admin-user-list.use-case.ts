@@ -1,20 +1,20 @@
 import { IAdminUserListUseCase } from '@/features/user/domain/use-cases/admin-user-list.use-case.interface';
 import { Inject, Injectable } from '@nestjs/common';
 import { IAdminUserSearchParamsDto } from '@/features/user/domain/dto/admin-user-search-params.dto.interface';
-import { Person } from '@/features/user/domain/entities/person';
-import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { AdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
+import { User } from '@/features/user/domain/entities/user';
 
 @Injectable()
 export class AdminUserListUseCase implements IAdminUserListUseCase {
   constructor(
-    @Inject(PersonAdminUserRepository)
-    private readonly personAdminUserRepository: PersonAdminUserRepository,
+    @Inject(AdminUserRepository)
+    private readonly personAdminUserRepository: AdminUserRepository,
   ) {}
 
   async listUserForAdminMaster(
     adminUserSearchParamsDto: IAdminUserSearchParamsDto,
-  ): Promise<Person[]> {
+  ): Promise<User[]> {
     adminUserSearchParamsDto.profilesUniqueName =
       ProfileUniqueNameEnum.ADMIN_USERS;
 
@@ -25,7 +25,7 @@ export class AdminUserListUseCase implements IAdminUserListUseCase {
 
   async listUserForEmployee(
     adminUserSearchParamsDto: IAdminUserSearchParamsDto,
-  ): Promise<Person[]> {
+  ): Promise<User[]> {
     adminUserSearchParamsDto.profilesUniqueName =
       ProfileUniqueNameEnum.EMPLOYEE_USERS;
 

@@ -1,33 +1,29 @@
 import { IAdminUserCreateUseCase } from '@/features/user/domain/use-cases/admin-user-create.use-case.interface';
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
-import { PersonAdminUserRepository } from '@/features/user/domain/repositories/person-admin-user.repository';
+import { AdminUserRepository } from '@/features/user/domain/repositories/admin-user.repository';
 import { UserValidations } from '@/features/user/application/validations/user.validations';
 import { ProfileValidations } from '@/features/user/application/validations/profile.validations';
-import { Person, PersonProps } from '@/features/user/domain/entities/person';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { ProfileUniqueNameEnum } from '@/utils/enums/profile-unique-name.enum';
 import { ErrorMessagesEnum } from '@/utils/enums/error-messages.enum';
-import { User, UserProps } from '@/features/user/domain/entities/user';
 import { ShortName } from '@/common/domain/value-objects/short-name';
 import { Name } from '@/common/domain/value-objects/name';
 import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 import { Password } from '@/features/user/domain/value-objects/password';
-import {
-  AdminUser,
-  AdminUserProps,
-} from '@/features/user/domain/entities/admin-user';
 import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
 import { Profile } from '@/features/user/domain/entities/profile';
 import { ProfileRepository } from '@/features/user/domain/repositories/profile-repository';
+import { User, UserProps } from '@/features/user/domain/entities/user';
+import { Person, PersonProps } from '@/features/user/domain/entities/person';
 
 @Injectable()
 export class AdminUserCreateUseCase implements IAdminUserCreateUseCase {
   constructor(
-    @Inject(PersonAdminUserRepository)
-    private readonly personAdminUserRepository: PersonAdminUserRepository,
+    @Inject(AdminUserRepository)
+    private readonly personAdminUserRepository: AdminUserRepository,
 
-    @Inject(PersonUserRepository)
-    private readonly personUserRepository: PersonUserRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
 
     @Inject(ProfileRepository)
     private readonly profileRepository: ProfileRepository,
@@ -35,13 +31,10 @@ export class AdminUserCreateUseCase implements IAdminUserCreateUseCase {
 
   public async createUserForAdminMaster(
     createAdminUserDto: IAdminUserCreateDto,
-  ): Promise<Person> {
+  ): Promise<User> {
     const { name, email, password, profileUuid } = createAdminUserDto;
 
-    await UserValidations.userAlreadyExistsByEmail(
-      email,
-      this.personUserRepository,
-    );
+    await UserValidations.userAlreadyExistsByEmail(email, this.userRepository);
 
     await this.getProfileOrFail(
       createAdminUserDto.profileUuid,
@@ -53,13 +46,10 @@ export class AdminUserCreateUseCase implements IAdminUserCreateUseCase {
 
   public async createUserForEmployee(
     createAdminUserDto: IAdminUserCreateDto,
-  ): Promise<Person> {
+  ): Promise<User> {
     const { name, email, password, profileUuid } = createAdminUserDto;
 
-    await UserValidations.userAlreadyExistsByEmail(
-      email,
-      this.personUserRepository,
-    );
+    await UserValidations.userAlreadyExistsByEmail(email, this.userRepository);
 
     await this.getProfileOrFail(
       createAdminUserDto.profileUuid,
@@ -90,29 +80,23 @@ export class AdminUserCreateUseCase implements IAdminUserCreateUseCase {
     email,
     password,
     profileUuid,
-  }): Promise<Person> {
-    const person: Person = Person.create({
+  }): Promise<User> {
+    const person = Person.create({
       name: Name.createFrom(name),
       shortName: ShortName.createFrom(name),
       active: true,
     } as PersonProps);
 
-    const user: User = User.create({
-      email,
-      active: true,
-      password: await Password.createFrom(password),
-      profileUuid: UniqueEntityId.create(profileUuid),
+    const user = User.create({
       personUuid: UniqueEntityId.create(person.uuid),
+      profileUuid: UniqueEntityId.create(profileUuid),
+      email,
+      password: await Password.createFrom(password),
+      active: true,
     } as UserProps);
 
-    user.adminUser = AdminUser.create({
-      userUuid: UniqueEntityId.create(user.uuid),
-    } as AdminUserProps);
+    await this.personAdminUserRepository.create(user);
 
-    person.user = user;
-
-    await this.personAdminUserRepository.create(person);
-
-    return person;
+    return user;
   }
 }

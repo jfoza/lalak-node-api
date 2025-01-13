@@ -10,7 +10,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { TokenTypesEnum } from '@/utils/enums/token-types.enum';
 import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 import { UserTokenType } from '@/features/user/domain/value-objects/user-token-type';
-import { PersonUserRepository } from '@/features/user/domain/repositories/person-user-repository';
+import { UserRepository } from '@/features/user/domain/repositories/user-repository';
 import { UserTokenRepository } from '@/features/user/domain/repositories/user-token.repository';
 
 @Injectable()
@@ -21,20 +21,18 @@ export class SendForgotPasswordEmailUseCase
     @InjectQueue('email')
     private readonly emailQueue: Queue,
 
-    @Inject(PersonUserRepository)
-    private readonly personUserRepository: PersonUserRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
 
     @Inject(UserTokenRepository)
     private readonly userTokenRepository: UserTokenRepository,
   ) {}
 
   async execute(email: string): Promise<void> {
-    const person = await UserValidations.userExistsByEmail(
+    const user = await UserValidations.userExistsByEmail(
       email,
-      this.personUserRepository,
+      this.userRepository,
     );
-
-    const { user } = person;
 
     const userToken = UserToken.create({
       userUuid: UniqueEntityId.create(user.uuid),

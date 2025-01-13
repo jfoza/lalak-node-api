@@ -2,19 +2,23 @@ import { SimpleValueObject } from '@/common/domain/value-objects/simple-value-ob
 import { EntityValidationException } from '@/common/domain/exceptions/entity.validation.exception';
 
 export class BirthDate extends SimpleValueObject<Date> {
-  private constructor(private readonly birthDate: Date) {
+  private constructor(private readonly value: Date) {
     super();
   }
 
-  toString(): string {
-    const year = this.birthDate.getUTCFullYear();
-    const month = String(this.birthDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(this.birthDate.getUTCDate()).padStart(2, '0');
+  toString(): string | null {
+    if (!this.value) {
+      return null;
+    }
+
+    const year = this.value.getUTCFullYear();
+    const month = String(this.value.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(this.value.getUTCDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
 
   toValue(): Date {
-    return this.birthDate;
+    return this.value;
   }
 
   static create(birthDate: Date): BirthDate {

@@ -1,13 +1,11 @@
-import { Person } from '@/features/user/domain/entities/person';
 import { IAdminUserCreateDto } from '@/features/user/domain/dto/admin-user-create.dto.interface';
+import { User } from '@/features/user/domain/entities/user';
 
 export interface IAdminUserCreateUseCase {
   createUserForAdminMaster(
     createAdminUserDto: IAdminUserCreateDto,
-  ): Promise<Person>;
-  createUserForEmployee(
-    createAdminUserDto: IAdminUserCreateDto,
-  ): Promise<Person>;
+  ): Promise<User>;
+  createUserForEmployee(createAdminUserDto: IAdminUserCreateDto): Promise<User>;
 }
 
 export const IAdminUserCreateUseCase = Symbol('IAdminUserCreateUseCase');

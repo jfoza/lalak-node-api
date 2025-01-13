@@ -4,8 +4,8 @@ import { Mapper } from '@/common/infra/database/typeorm/mappers/mapper';
 import { Uf } from '@/common/domain/value-objects/uf';
 import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 
-export class CityMapper extends Mapper<CityEntity, City> {
-  static get toDomain(): CityMapper {
+export class TypeormCityMapper extends Mapper<CityEntity, City> {
+  static get toDomain(): TypeormCityMapper {
     return new this();
   }
 

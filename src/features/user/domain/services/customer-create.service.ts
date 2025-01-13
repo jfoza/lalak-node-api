@@ -1,8 +1,8 @@
 import { ICustomerCreateDto } from '@/features/user/domain/dto/customer-create.dto.interface';
-import { Person } from '@/features/user/domain/entities/person';
+import { User } from '@/features/user/domain/entities/user';
 
 export interface ICustomerCreateService {
-  execute(customerCreateDto: ICustomerCreateDto): Promise<Person>;
+  execute(customerCreateDto: ICustomerCreateDto): Promise<User>;
 }
 
 export const ICustomerCreateService = Symbol('ICustomerCreateService');

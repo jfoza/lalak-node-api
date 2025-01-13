@@ -1,11 +1,11 @@
 import { LoginUserTypesEnum } from '@/utils/enums/login-user-types.enum';
-import { PersonAuthUser } from '@/features/user/domain/entities/person-auth-user';
+import { IAuthUser } from '@/features/auth/domain/services/login.service.interface';
 
 export interface IUserListByEmailLoginUseCase {
   execute(
     email: string,
     loginType: LoginUserTypesEnum,
-  ): Promise<PersonAuthUser | null>;
+  ): Promise<IAuthUser | null>;
 }
 
 export const IUserListByEmailLoginUseCase = Symbol(

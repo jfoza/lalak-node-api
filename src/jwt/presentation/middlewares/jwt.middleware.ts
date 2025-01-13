@@ -2,7 +2,7 @@ import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { IJwtAuthService } from '@/jwt/domain/services/jwt-auth.service.interface';
-import { PersonAuthUser } from '@/features/user/domain/entities/person-auth-user';
+import { IPayload } from '@/features/auth/domain/services/login.service.interface';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
@@ -19,13 +19,15 @@ export class JwtMiddleware implements NestMiddleware {
 
       if (token) {
         try {
-          const personAuthUser: PersonAuthUser =
-            await this.jwtAuthService.verifyAsync(token, {
+          const payload: IPayload = await this.jwtAuthService.verifyAsync(
+            token,
+            {
               secret: this.configService.get<string>('JWT_SECRET'),
-            });
+            },
+          );
 
-          if (personAuthUser) {
-            this.jwtAuthService.user = personAuthUser;
+          if (payload.user) {
+            this.jwtAuthService.user = payload.user;
           }
         } catch {}
       }

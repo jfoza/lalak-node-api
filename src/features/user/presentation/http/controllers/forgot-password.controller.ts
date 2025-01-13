@@ -10,12 +10,12 @@ import {
 } from '@nestjs/common';
 import { IResetPasswordUseCase } from '@/features/user/domain/use-cases/reset-password.use-case.interface';
 import { ISendForgotPasswordEmailUseCase } from '@/features/user/domain/use-cases/send-forgot-password-email.use-case.interface';
-import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
+import { ZodValidationPipe } from '@/common/presentation/http/zod/validation-pipes/zod.validation-pipe';
 import {
   emailSchema,
   updatePasswordSchema,
   uuidSchema,
-} from '@/common/presentation/zod/schemas';
+} from '@/common/presentation/http/zod/schemas';
 
 @Controller('password')
 export class ForgotPasswordController {

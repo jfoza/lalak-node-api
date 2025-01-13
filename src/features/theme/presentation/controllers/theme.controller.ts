@@ -23,8 +23,8 @@ import { IThemeRemoveUseCase } from '@/features/theme/domain/use-cases/theme-rem
 import { IThemeUpdateUseCase } from '@/features/theme/domain/use-cases/theme-update.use-case.interface';
 import { IThemeCreateUseCase } from '@/features/theme/domain/use-cases/theme-create.use-case.interface';
 import { IThemeListByUuidUseCase } from '@/features/theme/domain/use-cases/theme-list-by-uuid.use-case.interface';
-import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
-import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
+import { TPaginationOrder } from '@/common/presentation/http/types/pagination-order.type';
+import { ZodValidationPipe } from '@/common/presentation/http/zod/validation-pipes/zod.validation-pipe';
 import { themeSearchParamsDtoSchema } from '@/features/theme/presentation/zod/schemas';
 
 type TThemeSearchParams = {

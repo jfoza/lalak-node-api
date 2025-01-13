@@ -4,6 +4,7 @@ import { Customer } from '@/features/user/domain/entities/customer';
 import { UniqueEntityId } from '@/common/domain/value-objects/unique-entity-id';
 import { AggregateRoot } from '@/common/domain/entities/aggregate-root';
 import { Password } from '@/features/user/domain/value-objects/password';
+import { Person } from '@/features/user/domain/entities/person';
 
 export type UserProps = {
   personUuid: UniqueEntityId;
@@ -12,6 +13,7 @@ export type UserProps = {
   password: Password;
   active: boolean;
   createdAt?: Date;
+  person?: Person;
   profile?: Profile;
   adminUser?: AdminUser;
   customer?: Customer;
@@ -50,16 +52,16 @@ export class User extends AggregateRoot<UserProps> {
     return this.props.createdAt;
   }
 
+  get person(): Person {
+    return this.props.person;
+  }
+
   get profile(): Profile {
     return this.props.profile;
   }
 
   get adminUser(): AdminUser {
     return this.props.adminUser;
-  }
-
-  get customer(): Customer {
-    return this.props.customer;
   }
 
   set email(email: string) {
@@ -78,12 +80,12 @@ export class User extends AggregateRoot<UserProps> {
     this.props.active = active;
   }
 
-  set profile(profile: Profile) {
-    this.props.profile = profile;
+  set person(person: Person) {
+    this.props.person = person;
   }
 
-  set adminUser(adminUser: AdminUser) {
-    this.props.adminUser = adminUser;
+  set profile(profile: Profile) {
+    this.props.profile = profile;
   }
 
   static create(props: UserProps, uniqueEntityId?: UniqueEntityId): User {

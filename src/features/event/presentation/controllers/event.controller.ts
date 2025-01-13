@@ -23,8 +23,8 @@ import { IEventListByUuidUseCase } from '@/features/event/domain/use-cases/event
 import { IEventRemoveUseCase } from '@/features/event/domain/use-cases/event-remove.use-case';
 import { IEventUpdateUseCase } from '@/features/event/domain/use-cases/event-update.use-case';
 import { IEventCreateUseCase } from '@/features/event/domain/use-cases/event-create.use-case';
-import { TPaginationOrder } from '@/common/presentation/types/pagination-order.type';
-import { ZodValidationPipe } from '@/common/presentation/zod/validation-pipes/zod.validation-pipe';
+import { TPaginationOrder } from '@/common/presentation/http/types/pagination-order.type';
+import { ZodValidationPipe } from '@/common/presentation/http/zod/validation-pipes/zod.validation-pipe';
 import { eventSearchParamsDtoSchema } from '@/features/event/presentation/zod/schemas';
 
 type TEventSearchParams = {

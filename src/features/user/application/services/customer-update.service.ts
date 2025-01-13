@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Application } from '@/common/application/application';
 import { ICustomerUpdateDto } from '@/features/user/domain/dto/customer-update.dto.interface';
 import { ICustomerUpdateService } from '@/features/user/domain/services/customer-update.service';
-import { Person } from '@/features/user/domain/entities/person';
+import { User } from '@/features/user/domain/entities/user';
 
 @Injectable()
 export class CustomerUpdateService
@@ -12,7 +12,7 @@ export class CustomerUpdateService
   async execute(
     uuid: string,
     updateCustomerDto: ICustomerUpdateDto,
-  ): Promise<Person> {
+  ): Promise<User> {
     return Promise.resolve(undefined);
   }
 }
