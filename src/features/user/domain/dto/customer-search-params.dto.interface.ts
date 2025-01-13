@@ -1,7 +1,7 @@
-import { PaginationOrder } from '@/common/application/dto/pagination-order';
+import { IPaginationOrder } from '@/common/domain/dto/pagination-order.interface';
 
 export class ICustomerSearchParamsDto {
   name?: string;
   email?: string;
-  paginationOrder: PaginationOrder;
+  paginationOrder: IPaginationOrder;
 }

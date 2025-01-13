@@ -20,7 +20,7 @@ export type UserProps = {
 };
 
 export class User extends AggregateRoot<UserProps> {
-  constructor(
+  private constructor(
     public readonly props: UserProps,
     uniqueEntityId?: UniqueEntityId,
   ) {

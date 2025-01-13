@@ -10,7 +10,7 @@ export type UserTokenProps = {
 };
 
 export class UserToken extends Entity<UserTokenProps> {
-  constructor(
+  private constructor(
     public readonly props: UserTokenProps,
     uniqueEntityId?: UniqueEntityId,
   ) {

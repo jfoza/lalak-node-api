@@ -8,7 +8,7 @@ export type CustomerProps = {
 };
 
 export class Customer extends Entity<CustomerProps> {
-  constructor(
+  private constructor(
     public readonly props: CustomerProps,
     uniqueEntityId?: UniqueEntityId,
   ) {

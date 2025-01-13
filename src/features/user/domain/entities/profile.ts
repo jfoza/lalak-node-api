@@ -8,7 +8,7 @@ export type ProfileProps = {
 };
 
 export class Profile extends Entity<ProfileProps> {
-  constructor(
+  private constructor(
     public readonly props: ProfileProps,
     uniqueEntityId?: UniqueEntityId,
   ) {

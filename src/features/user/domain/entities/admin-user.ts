@@ -7,7 +7,7 @@ export type AdminUserProps = {
 };
 
 export class AdminUser extends Entity<AdminUserProps> {
-  constructor(
+  private constructor(
     public readonly props: AdminUserProps,
     uniqueEntityId?: UniqueEntityId,
   ) {
